@@ -23,12 +23,21 @@ app.use(morgan('dev'));
 
 // routes import
 import userRouter from './src/routes/user.route.js'
+import postsRouter from './src/routes/post.route.js'
+import conversationRouter from './src/routes/conversation.route.js'
+import messageRouter from './src/routes/message.route.js'
+import commentRouter from './src/routes/message.route.js'
 
 // routes decalaration   here mounting the specific routers to the app , this each router's will use Router.use('path',(rq,res));
 app.use("/api/v1/users", userRouter);
 
+app.use('/api/v1/posts',postsRouter);
 
+app.use("/api/v1/comment", commentRouter);
 
+app.use("/api/v1/conversation", conversationRouter);
+
+app.use("/api/v1/message", messageRouter);
 
 const port = process.env.PORT || 3001;
 
