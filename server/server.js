@@ -21,18 +21,16 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 
-const port = process.env.PORT || 3001;
+// routes import
+import userRouter from './src/routes/user.route.js'
 
-app.get('/', async (req, res)=>{
-   try {
-       const results = await db("select * from person");
-       console.log(results.rows);
-       res.send("loda");
-       
-   } catch (error) {
-    console.log(error)
-   }
-})
+// routes decalaration   here mounting the specific routers to the app , this each router's will use Router.use('path',(rq,res));
+app.use("/api/v1/users", userRouter);
+
+
+
+
+const port = process.env.PORT || 3001;
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
