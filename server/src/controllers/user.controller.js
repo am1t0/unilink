@@ -97,6 +97,9 @@ const registerUser = asyncHandler(async (req, res) => {
          VALUES ($1, $2, $3)`,
         [user.id, enrollment_year, current_year]
       );
+
+      user.studentData = studentData;
+
     } else if (role === 'alumni') {
       const { graduation_year = null, willing_to_mentor = false, event_contribution = false } = alumniData;
       if (!graduation_year) {
@@ -109,6 +112,8 @@ const registerUser = asyncHandler(async (req, res) => {
          VALUES ($1, $2, $3, $4)`,
         [user.id, graduation_year, willing_to_mentor, event_contribution]
       );
+
+      user.alumniData = alumniData;
     }
 
     const {accessToken, refreshToken} = await generateTokens(user.id);
@@ -137,5 +142,94 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
+const loginUser = asyncHandler(async (req, res) => {
 
-export { registerUser };
+  try {
+  
+  // Take input from user: username or email, password
+  const { usernameOrEmail, password } = req.body;
+
+  if (!usernameOrEmail) {
+    throw new ApiError(400, "Username or email is required");
+  }
+
+  // Find user by either username or email
+  const result = await db(
+    `SELECT * FROM users WHERE username = $1 OR email = $1`,
+    [usernameOrEmail]
+  );
+
+  const user = result.rows[0];
+
+  // If user does not exist
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
+
+  // Check if the password is correct
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid user credentials");
+  }
+
+  // Generate access and refresh tokens
+  const { accessToken, refreshToken } = await generateTokens(user.id);
+
+  // Update the refresh token in the database
+  await db(
+    `UPDATE users SET refresh_token = $1 WHERE id = $2`,
+    [refreshToken, user.id]
+  );
+
+  // Prepare the user data to return, excluding password and refreshToken
+  const loggedInUser = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    phone_number: user.phone_number,
+    profile_img: user.profile_img,
+    bio: user.bio,
+    branch: user.branch,
+    college_name: user.college_name,
+    degree: user.degree,
+    gender: user.gender,
+    dob: user.dob,
+    city: user.city,
+    state: user.state,
+    address: user.address,
+    role: user.role,
+    created_at: user.created_at,
+    updated_at: user.updated_at,
+  };
+
+  if(user.studentData) loggedInUser.studentData = user.studentData;
+
+  else if(user.alumniData) loggedInUser.alumniData = user.alumniData;
+
+  // Send the response
+  return res.status(200).json(new ApiResponse(200, {user: loggedInUser,accessToken},"User logged in successfully"));
+
+   
+} catch (error) {
+    
+   // Check for specific error cases or default to 500 Internal Server Error
+   if (error instanceof ApiError) {
+    // Return the error as it is, since it's already an ApiError
+    return res.status(error.statusCode).json({ status: error.statusCode, message: error.message });
+
+  } else {
+    // Log the error for internal use and return a generic message
+    console.error("Unexpected Error: ", error);
+    return res.status(500).json(new ApiError(500, "An unexpected error occurred"));
+ }
+
+}
+
+});
+
+
+
+
+
+export { registerUser, loginUser };
