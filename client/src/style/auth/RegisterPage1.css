@@ -1,0 +1,38 @@
+.registerpage1-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+  }
+  
+  .registerpage1-title {
+    text-align: center;
+  }
+  
+  .registerpage1-label {
+    display: block;
+    margin-top: 10px;
+  }
+  
+  .registerpage1-input, .registerpage1-select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .registerpage1-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .registerpage1-button:hover {
+    background-color: #45a049;
+  }
+  
