@@ -37,7 +37,6 @@ const registerUser = asyncHandler(async (req, res) => {
       name,
       email,
       password,
-      username,
       phone_number = null, // If phone_number is not provided, set it to null
       profile_img = null,  // Same for profile_img
       bio = null,          // Same for bio
