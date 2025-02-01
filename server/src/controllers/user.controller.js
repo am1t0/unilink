@@ -1,3 +1,4 @@
+import User from "../models/user.model.js";
 import ApiError from "../utilities/ApiError.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import jwt from "jsonwebtoken";
@@ -13,18 +14,31 @@ const registerUser = asyncHandler(async (req, res) => {
   try {
     const {name , email, password, collageName} = req.body;
     if(!name || !email || !password || !collageName){
-      return new ApiError(400, "All fields are required")
+      return res.status(400).json({
+				success: false,
+				message: "All fields are required",
+			});
     }
 
     if(password.length < 6){
-      return new ApiError(400, "Password must be at least 6 characters long")
+      return res.status(400).json({
+				success: false,
+				message: "Password must be at least 6 characters",
+			});
+    }
+
+    if(await User.findOne({email})){
+      return res.status(400).json({
+				success: false,
+				message: "User already exist",
+			});
     }
 
     const newLink = await User.create({
 			name,
 			email,
 			password,
-			collageName,
+			collage : collageName,
 		});
 
     const token = signToken(newLink._id);
@@ -66,7 +80,7 @@ const loginUser = asyncHandler(async (req, res) => {
 			});
 		}
 
-		const token = signToken(user._id);
+		const token = signToken(link._id);
 
 		res.cookie("jwt", token, {
 			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
