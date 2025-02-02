@@ -49,6 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
       sameSite: "strict", // prevents CSRF attacks
       secure: process.env.NODE_ENV === "production",
     });
+
     res.status(201).json({
       success: true,
       link: newLink,

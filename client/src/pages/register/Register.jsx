@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./register.css";
 import { useAuthStore } from "../../store/useAuthStore.";
+import { Link } from "react-router-dom";
 
 const Register = () => {
     const {registerUser} = useAuthStore()
@@ -13,7 +14,7 @@ const Register = () => {
       <div className="register-box">
         <h2 className="register-title">REGISTER</h2>
         <p className="register-subtitle">
-          Already have an account <span className="register-login">login</span>
+          Already have an account <Link to="/login" className="register-login">login</Link>
         </p>
 
         <form className="register-form" onSubmit={(e) =>{
