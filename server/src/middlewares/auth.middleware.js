@@ -7,6 +7,8 @@ export const protectRoute = asyncHandler(async (req, res, next) => {
   try {
     const token = req.cookies.jwt;
 
+    console.log(token)
+
     if(!token){
         return res.status(401).json({
             success : false,
@@ -27,6 +29,7 @@ export const protectRoute = asyncHandler(async (req, res, next) => {
 
     req.user = currentUser;
 
+    console.log(req.user)
     next();
 } catch (error) {
     console.log("Error in Protected Route", error);

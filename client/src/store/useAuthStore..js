@@ -8,9 +8,11 @@ export const useAuthStore = create((set) => ({
 
     checkAuth : async () => {
         try {
-            const res = await axios.get("http://localhost:3001/api/v1/auth/me")
+            const res = await axios.get("http://localhost:3001/api/v1/auth/me",{
+                withCredentials:true
+            })
             set({authUser : res.data.user})
-            console.log(authUser); 
+            console.log("Authenticated User:", useAuthStore.getState().authUser);
         } catch (error) {
             set({authUser : null})
         }finally{
@@ -22,7 +24,7 @@ export const useAuthStore = create((set) => ({
         try {
             console.log(data)
             const res = await axios.post("http://localhost:3001/api/v1/auth/register", data,{
-                withCredentials: true
+                withCredentials: true,
             })
             set({authUser : res.data.user})
         } catch (error) {

@@ -12,6 +12,12 @@ const app = express();
 //   origin: process.env.CORS_ORIGIN |"http://localhost:3000" ,
 //   credentials: true
 // }));
+app.use(cors(
+  {
+    origin: "http://localhost:3000", // Replace with your frontend URL
+    credentials: true, // Allow credentials (cookies)
+  }
+));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true , limit:"16kb"}));
@@ -20,12 +26,6 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 
-app.use(cors(
-  {
-    origin: "http://localhost:3000", // Replace with your frontend URL
-    credentials: true, // Allow credentials (cookies)
-  }
-));
 
 
 // routes import
