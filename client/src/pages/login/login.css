@@ -1,0 +1,83 @@
+.login-body {
+    background-color: #131C35;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background-color: #011A25;
+    padding: 40px;
+    text-align: center;
+    width: 500px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    height: 616px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-title {
+    color: white;
+    margin-bottom:0px;
+}
+
+.login-register-text {
+    color: white;
+    font-size: 20px;
+    margin: 10px 0px 20px 0px;
+}
+
+.login-label {
+    color: white;
+    display: block;
+    text-align: left;
+    margin-top: 10px;
+}
+
+.login-input {
+    width: 95%;
+    padding: 14px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    background-color: #D3D3D3;
+    border: none;
+    border-radius: 5px;
+}
+
+.login-btn-primary {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #007BFF; /* Bootstrap primary button color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-btn-primary:hover {
+    background-color: #0056b3; /* Darker shade for hover effect */
+}
+
+.login-box-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.login-small-box {
+    width: 40px;
+    height: 40px;
+    /* background-color: #011A25; */
+    background-color: white;
+}
+
+.link-login-link{
+    color: #007BFF;
+    text-decoration: none;
+}

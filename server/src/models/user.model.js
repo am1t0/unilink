@@ -35,7 +35,6 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       default: "",
-      match: /^\d{10}$/, // Ensures valid 10-digit phone numbers
     },
     position: {
       type: String,

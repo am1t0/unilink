@@ -1,0 +1,97 @@
+/* Main Container */
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #131c35;
+  }
+  
+  /* Box */
+  .register-box {
+    background-color: #011a25;
+    padding: 30px;
+    border-radius: 10px;
+    width: 350px;
+    text-align: center;
+  }
+  
+  /* Title and Subtitle */
+  .register-title {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .register-subtitle {
+    color: white;
+    font-size: 14px;
+  }
+  
+  .register-login {
+    color: #7b8cff;
+    cursor: pointer;
+  }
+  
+  /* Form */
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+  
+  .register-label {
+    text-align: left;
+    color: white;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+  
+  .register-input,
+  .register-select {
+    background-color: #d9d9d9;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  /* Button */
+  .register-btn-primary {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .register-btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Icons */
+  .register-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .register-refresh {
+    font-size: 22px;
+    cursor: pointer;
+    margin: 0 10px;
+  }
+  
+  .register-circle {
+    width: 30px;
+    height: 30px;
+    background-color: #d9d9d9;
+    border-radius: 50%;
+    margin: 0 5px;
+  }
+  

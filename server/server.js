@@ -1,10 +1,10 @@
 import express from 'express'
 import 'dotenv/config'
-import cors from 'cors'
 import morgan from 'morgan'
 import {query as db} from './src/db/index.js'
 import cookieParser from 'cookie-parser'
 import connectDB from './src/db/connectdb.js'
+import cors from "cors"
 
 const app = express();
 
@@ -18,6 +18,12 @@ app.use(express.urlencoded({ extended: true , limit:"16kb"}));
 app.use(express.static("public"))
 app.use(cookieParser());
 app.use(morgan('dev'));
+app.use(cors(
+  {
+    origin: "http://localhost:3000", // Replace with your frontend URL
+    credentials: true, // Allow credentials (cookies)
+  }
+));
 
 
 // routes import
