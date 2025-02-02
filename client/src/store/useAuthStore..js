@@ -23,7 +23,7 @@ export const useAuthStore = create((set) => ({
         try {
             set({loading: true})
             const res = await axiosInstance.post("/auth/register", data)
-            set({authUser : res.data.user})
+            set({authUser : res.data.link})
         } catch (error) {
             set({authUser: null})
         }finally{
@@ -34,7 +34,7 @@ export const useAuthStore = create((set) => ({
         try {
             set({ loading: true });
             const res = await axiosInstance.post("/auth/login", loginData);
-            set({ authUser: res.data.user });
+            set({ authUser: res.data.link });
           } catch (error) {
             set({ authUser: null });
           } finally {

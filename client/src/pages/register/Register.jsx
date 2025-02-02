@@ -21,6 +21,7 @@ const Register = () => {
         <form className="register-form" onSubmit={(e) =>{
             e.preventDefault();
             registerUser({name, email, password, collageName})
+            .then(()=> navigate('/'))
         }}>
           <label className="register-label">Name</label>
           <input type="text" className="register-input" onChange={(e) => setName(e.target.value)} value={name}/>

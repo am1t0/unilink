@@ -16,6 +16,7 @@ const Login = () => {
         <form onSubmit={e=>{
           e.preventDefault();
           loginUser({email, password})
+          .then(()=> navigate('/'));
         }}>
         <label htmlFor="email" className="login-label">
           Email ID
