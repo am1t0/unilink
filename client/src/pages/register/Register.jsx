@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./register.css";
 import { useAuthStore } from "../../store/useAuthStore.";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
     const {registerUser} = useAuthStore()
@@ -9,6 +9,7 @@ const Register = () => {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [collageName, setCollageName] = useState("");
+  const navigate = useNavigate();
   return (
     <div className="register-container">
       <div className="register-box">
@@ -20,7 +21,6 @@ const Register = () => {
         <form className="register-form" onSubmit={(e) =>{
             e.preventDefault();
             registerUser({name, email, password, collageName})
-
         }}>
           <label className="register-label">Name</label>
           <input type="text" className="register-input" onChange={(e) => setName(e.target.value)} value={name}/>

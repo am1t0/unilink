@@ -1,5 +1,6 @@
 import {create} from "zustand"
 import axios from "axios"
+import { axiosInstance } from "../lib/axios"
 
 export const useAuthStore = create((set) => ({
     authUser: null,
@@ -8,9 +9,9 @@ export const useAuthStore = create((set) => ({
 
     checkAuth : async () => {
         try {
-            const res = await axios.get("http://localhost:3001/api/v1/auth/me")
+            set({checkingAuth : true})
+            const res = await axiosInstance.get("/auth/me")
             set({authUser : res.data.user})
-            console.log(authUser); 
         } catch (error) {
             set({authUser : null})
         }finally{
@@ -20,15 +21,24 @@ export const useAuthStore = create((set) => ({
 
     registerUser : async (data) => {
         try {
-            console.log(data)
-            const res = await axios.post("http://localhost:3001/api/v1/auth/register", data,{
-                withCredentials: true
-            })
+            set({loading: true})
+            const res = await axiosInstance.post("/auth/register", data)
             set({authUser : res.data.user})
         } catch (error) {
-            console.log("Error response:", error.response?.data);
             set({authUser: null})
-
+        }finally{
+            set({loading: false})
         }
+    },
+    loginUser : async (loginData) => {
+        try {
+            set({ loading: true });
+            const res = await axiosInstance.post("/auth/login", loginData);
+            set({ authUser: res.data.user });
+          } catch (error) {
+            set({ authUser: null });
+          } finally {
+            set({ loading: false });
+          }
     }
 }))

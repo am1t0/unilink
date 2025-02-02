@@ -8,17 +8,21 @@ import cors from "cors";
 
 const app = express();
 
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true, limit: "16kb" }));
-app.use(express.static("public"));
-app.use(morgan("dev"));
-app.use(
-  cors({
+app.use(cors(
+  {
     origin: "http://localhost:3000", // Replace with your frontend URL
     credentials: true, // Allow credentials (cookies)
-  })
-);
+  }
+));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true , limit:"16kb"}));
+app.use(express.static("public"))
+app.use(cookieParser());
+app.use(morgan('dev'));
+
+
+
 
 // routes import
 import authRouter from "./src/routes/authuser.route.js";

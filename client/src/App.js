@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth, authUser]);
+  }, [checkAuth]);
 
   
   return (
