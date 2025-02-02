@@ -47,7 +47,7 @@ const registerUser = asyncHandler(async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       httpOnly: true, // prevents XSS attacks
       sameSite: "strict", // prevents CSRF attacks
-      secure: process.env.NODE_ENV === "production" ? true : false,
+      secure: process.env.NODE_ENV === "production" ?true : false,
     });
     res.status(201).json({
       success: true,
