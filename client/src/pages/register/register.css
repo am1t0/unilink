@@ -10,22 +10,22 @@
   /* Box */
   .register-box {
     background-color: #011a25;
-    padding: 30px;
-    border-radius: 10px;
-    width: 350px;
+    padding: 40px;
+    padding-top: 80px;
+    width: 500px;
     text-align: center;
   }
   
   /* Title and Subtitle */
   .register-title {
     color: white;
-    font-size: 24px;
+    font-size: 26px;
     margin-bottom: 5px;
   }
   
   .register-subtitle {
     color: white;
-    font-size: 14px;
+    font-size: 17px;
   }
   
   .register-login {
@@ -43,30 +43,40 @@
   .register-label {
     text-align: left;
     color: white;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 5px;
   }
   
-  .register-input,
-  .register-select {
-    background-color: #d9d9d9;
+  .register-input {
+    width: 95%;
+    padding: 14px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    background-color: #D3D3D3;
     border: none;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    font-size: 16px;
+    border-radius: 5px;
+  }
+
+  .register-select {
+    width: 100%;
+    padding: 14px;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    background-color: #D3D3D3;
+    border: none;
+    border-radius: 5px;
   }
   
   /* Button */
   .register-btn-primary {
     background-color: #007bff;
     color: white;
-    padding: 10px;
+    padding: 12px;
     border: none;
     border-radius: 8px;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 10px;
+    width: -webkit-fill-available;
   }
   
   .register-btn-primary:hover {
@@ -95,3 +105,38 @@
     margin: 0 5px;
   }
   
+  .link-login-link{
+    color: #007BFF;
+    text-decoration: none;
+}
+
+.register-buttons{
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 15px;
+}
+
+.refresh-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: white;
+}
+
+.login-loader{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+@keyframes spin {
+  to {
+      transform: rotate(360deg);
+  }
+}
+.animate-spin {
+  animation: spin 1s linear infinite;
+}

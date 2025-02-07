@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast"
 import { useAuthStore } from "../../store/useAuthStore.";
+import { Loader } from "lucide-react";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const {loginUser} = useAuthStore()
+  const {loginUser,loading} = useAuthStore()
   const navigate = useNavigate();
 
   //form submission for login
@@ -18,13 +19,14 @@ const Login = () => {
     if (!response.success) {
       if (response.type === "validation") {
         // Handle validation errors
-        setErrorMessage(response.errors.join(", ")); // Combine all validation error messages
+        toast.error(response.errors.join(", ")); // Combine all validation error messages
       } else {
         // Handle other errors (API or generic)
-        setErrorMessage(response.message);
+        toast.error(response.message);
       }
     } else {
       // Login successful
+      toast.success("Login successful");
       navigate("/");
     }
   }
@@ -34,9 +36,6 @@ const Login = () => {
       <div className="login-container">
         <h2 className="login-title">LOGIN</h2>
         <p className="login-register-text">don't have an account? <Link to="/register" className="link-login-link">register</Link></p>
-         
-          {/* Error Message */}
-        {errorMessage && <p className="error-message">*{errorMessage}</p>}
 
         <form onSubmit={handleSubmit}>
         <label htmlFor="email" className="login-label">
@@ -63,7 +62,7 @@ const Login = () => {
           onChange={e=> setPassword(e.target.value)}
         />
 
-        <button className="login-btn-primary" type="submit">Login</button>
+        <button className="login-btn-primary" type="submit" disabled={loading}>{loading ?(<div className="login-loader"> <Loader className="animate-spin" style={{height:"18px"}}/> Loging in.....</div> ): "Login"}</button>
         </form>
 
         {/* <div className="login-box-container">

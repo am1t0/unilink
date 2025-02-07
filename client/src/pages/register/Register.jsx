@@ -1,70 +1,80 @@
 import React, { useState } from "react";
 import "./register.css";
-import { useAuthStore } from "../../store/useAuthStore.";
+import { Loader, RefreshCcw } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useAuthStore } from "../../store/useAuthStore.";
 
 const Register = () => {
-  const {registerUser} = useAuthStore()
+  const { registerUser, loading } = useAuthStore();
   const [name, setName] = useState("");
-	const [email, setEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-	const [password, setPassword] = useState("");
-	const [collageName, setCollageName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [collageName, setCollageName] = useState("");
   const navigate = useNavigate();
 
-    //form submission for login
   const handleSubmit = async (e) => {
-      e.preventDefault();
-      const registerData = { email, password , name, collageName};
-  
-      const response = await registerUser(registerData); // Call loginUser
-      if (!response.success) {
-        if (response.type === "validation") {
-          // Handle validation errors
-          setErrorMessage(response.errors.join(", ")); // Combine all validation error messages
-        } else {
-          // Handle other errors (API or generic)
-          setErrorMessage(response.message);
-        }
+    e.preventDefault();
+    const registerData = { email, password, name, collageName };
+
+    const response = await registerUser(registerData);
+    if (!response.success) {
+      if (response.type === "validation") {
+        toast.error(response.errors.join(", "));
       } else {
-        // Login successful
-        navigate("/");
+        toast.error(response.message);
       }
-  }
+    } else {
+      toast.success("Registration successful");
+      navigate("/");
+    }
+  };
+
+  const handleReset = () => {
+    setName("");
+    setEmail("");
+    setPassword("");
+    setCollageName("");
+  };
 
   return (
     <div className="register-container">
       <div className="register-box">
         <h2 className="register-title">REGISTER</h2>
         <p className="register-subtitle">
-          Already have an account <Link to="/login" className="register-login">login</Link>
+          Already have an account? <Link to="/login" className="link-login-link">Login</Link>
         </p>
-
-         {/* Error Message */}
-         {errorMessage && <p className="error-message">*{errorMessage}</p>}
-
         <form className="register-form" onSubmit={handleSubmit}>
           <label className="register-label">Name</label>
-          <input type="text" className="register-input" onChange={(e) => setName(e.target.value)} value={name}/>
+          <input type="text" className="register-input" placeholder="Enter your name" onChange={(e) => setName(e.target.value)} value={name} />
 
           <label className="register-label">Email ID</label>
-          <input type="email" className="register-input" onChange={(e) => setEmail(e.target.value)} value={email} />
+          <input type="email" className="register-input" placeholder="Enter your email" onChange={(e) => setEmail(e.target.value)} value={email} />
 
           <label className="register-label">Password</label>
-          <input type="password" className="register-input" onChange={(e) => setPassword(e.target.value)} value={password}/>
+          <input type="password" className="register-input" placeholder="Enter your password" onChange={(e) => setPassword(e.target.value)} value={password} />
 
           <label className="register-label">Your College</label>
           <select className="register-select" onChange={(e) => setCollageName(e.target.value)} value={collageName}>
-            <option>Select Your College</option>
+            <option value="">Select Your College</option>
             <option>IET-Davv</option>
+            <option>LNCT Bhopal</option>
+            <option>SGSITS Indore</option>
+            <option>MIT Pune</option>
+            <option>VIT Vellore</option>
+            <option>SRM University</option>
+            <option>Delhi Technological University</option>
+            <option>Manipal Institute of Technology</option>
+            <option>PES University</option>
+            <option>KIIT Bhubaneswar</option>
           </select>
 
-          <button type="submit" className="register-btn-primary">
-            Create Account
-          </button>
+          <div className="register-buttons">
+            <button type="submit" disabled={loading} className="register-btn-primary">{loading ? (<div className="login-loader"> <Loader className="animate-spin" style={{height:"18px"}}/> Creating.....</div> ): "Create Account"}</button>
+            <div className="refresh-button"  onClick={handleReset}><RefreshCcw /></div>
+          </div>
 
           <div className="register-icons">
-            <div className="register-refresh">🔄</div>
             <div className="register-circle"></div>
             <div className="register-circle"></div>
             <div className="register-circle"></div>

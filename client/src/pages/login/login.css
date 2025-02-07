@@ -85,3 +85,19 @@
     color: #007BFF;
     text-decoration: none;
 }
+
+.login-loader{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
