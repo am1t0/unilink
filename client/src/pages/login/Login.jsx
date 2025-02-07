@@ -5,14 +5,28 @@ import { useAuthStore } from "../../store/useAuthStore.";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const {loginUser} = useAuthStore()
   const navigate = useNavigate();
 
+  //form submission for login
   const handleSubmit = async (e) => {
     e.preventDefault();
     const loginData = { email, password };
-    loginUser(loginData)
-    navigate("/")
+
+    const response = await loginUser(loginData); // Call loginUser
+    if (!response.success) {
+      if (response.type === "validation") {
+        // Handle validation errors
+        setErrorMessage(response.errors.join(", ")); // Combine all validation error messages
+      } else {
+        // Handle other errors (API or generic)
+        setErrorMessage(response.message);
+      }
+    } else {
+      // Login successful
+      navigate("/");
+    }
   }
 
   return (
@@ -20,6 +34,9 @@ const Login = () => {
       <div className="login-container">
         <h2 className="login-title">LOGIN</h2>
         <p className="login-register-text">don't have an account? <Link to="/register" className="link-login-link">register</Link></p>
+         
+          {/* Error Message */}
+        {errorMessage && <p className="error-message">*{errorMessage}</p>}
 
         <form onSubmit={handleSubmit}>
         <label htmlFor="email" className="login-label">

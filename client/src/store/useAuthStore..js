@@ -28,6 +28,9 @@ const registerSchema = yup.object().shape({
         .string()
         .min(8, "Password must be at least 8 characters")
         .required("Password is required"),
+    collageName: yup
+        .string()
+        .required("College is required"),
 });
 
 export const useAuthStore = create((set) => ({
@@ -49,11 +52,28 @@ export const useAuthStore = create((set) => ({
 
     registerUser: async (data) => {
         try {
+            // Validate input
+            await registerSchema.validate(data, { abortEarly: false })
+
             set({ loading: true })
+            // Make API request
             const res = await axiosInstance.post("/auth/register", data)
             set({ authUser: res.data.link })
+
+            return { success: true }
+
         } catch (error) {
-            set({ authUser: null })
+             if (error.name === "ValidationError") {
+                // If Yup validation error, return structured error messages
+                const validationErrors = error.inner.map((err) => err.message); // Extract all validation error messages
+                return { success: false, type: "validation", errors: validationErrors };
+              } else if (error.response) {
+                // If API error, handle based on backend response
+                return { success: false, type: "api", message: error.response.data.message || "An error occurred" };
+              } else {
+                // Other errors (e.g., network issues)
+                return { success: false, type: "other", message: "Something went wrong. Please try again." };
+              }
         } finally {
             set({ loading: false })
         }
@@ -64,16 +84,24 @@ export const useAuthStore = create((set) => ({
             await loginSchema.validate(loginData, { abortEarly: false });
 
             set({ loading: true });
-            // const res = await axiosInstance.post("/auth/login", loginData);
-            // set({ authUser: res.data.link });
+            // Make API request
+            const res = await axiosInstance.post("/auth/login", loginData);
+            set({ authUser: res.data.link });
 
+            return { success: true };
+            
         } catch (error) {
             if (error.name === "ValidationError") {
-                // Handle validation errors
-                console.error("Validation errors:", error.errors);
-                return { validationErrors: error.errors }; // Return validation errors
-            }
-            set({ authUser: null });
+                // If Yup validation error, return structured error messages
+                const validationErrors = error.inner.map((err) => err.message); // Extract all validation error messages
+                return { success: false, type: "validation", errors: validationErrors };
+              } else if (error.response) {
+                // If API error, handle based on backend response
+                return { success: false, type: "api", message: error.response.data.message || "An error occurred" };
+              } else {
+                // Other errors (e.g., network issues)
+                return { success: false, type: "other", message: "Something went wrong. Please try again." };
+              }
         } finally {
             set({ loading: false });
         }

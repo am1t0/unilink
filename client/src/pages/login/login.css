@@ -30,6 +30,10 @@
     margin: 10px 0px 20px 0px;
 }
 
+.error-message {
+    color: red;
+}
+
 .login-label {
     color: white;
     display: block;
