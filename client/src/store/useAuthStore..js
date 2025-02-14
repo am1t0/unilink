@@ -116,8 +116,19 @@ export const useAuthStore = create((set) => ({
   },
 
   updateProfile: async (data) => {
+    console.log("data is ",data);
     try {
+
       set({ loading: true });
+
+    //validate phone input if given
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if(data.phone && !phoneRegex.test(data.phone)){
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+
+      // Make API request
       const res = await axiosInstance.put("/auth/profileedit", data);
       set({ authUser: res.data.user });
       toast.success("Profile updated successfully");

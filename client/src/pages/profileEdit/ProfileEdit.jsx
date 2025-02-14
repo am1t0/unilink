@@ -7,6 +7,7 @@ import { useAuthStore } from "../../store/useAuthStore.";
 const ProfileEdit = () => {
   const [loading, setLoading] = useState(false);
   const { updateProfile, authUser } = useAuthStore();
+ 
   const [profile, setProfile] = useState({
     name: authUser.name || "",
     collage: authUser.collage || "",
@@ -142,6 +143,8 @@ const ProfileEdit = () => {
             <option>Select Your Year</option>
             <option>1st Year</option>
             <option>2nd Year</option>
+            <option>3rd Year</option>
+            <option>4th Year</option>
           </select>
 
           <label className="profile-edit-label">Bio</label>
