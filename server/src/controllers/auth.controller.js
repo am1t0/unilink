@@ -1,5 +1,5 @@
 import User from "../models/user.model.js";
-import ApiError from "../utilities/ApiError.js";
+import cloudinary from "../utilities/cloudinary.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import jwt from "jsonwebtoken";
 
@@ -109,5 +109,63 @@ export const sendMe = asyncHandler((req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+
+export const updateProfile = async (req, res) => {
+	// image => cloudinary -> image.cloudinary.your => mongodb
+
+	try {
+		const { image, ...otherData } = req.body;
+
+		let updatedData = otherData;
+
+		if (image) {
+			// base64 format
+			if (image.startsWith("data:image")) {
+        // Calculate the file size in bytes
+        const base64Length = image.length;
+        const padding = (image.endsWith("==") ? 2 : (image.endsWith("=") ? 1 : 0));
+        const fileSizeInBytes = (base64Length * 3) / 4 - padding;
+
+        // Define the upload limit (e.g., 0.1 MB)
+        const uploadLimitInBytes = 0.1 * 1024 * 1024; // 0.1 MB
+
+        // Check if the file size exceeds the limit
+        if (fileSizeInBytes > uploadLimitInBytes) {
+            return res.status(400).json({
+                success: false,
+                message: "Image size exceeds the upload limit of 100kb",
+            });
+        }
+
+				try {
+					const uploadResponse = await cloudinary.uploader.upload(image);
+					updatedData.avatar = uploadResponse.secure_url;
+				} catch (error) {
+					console.error("Error uploading image:", error);
+
+					return res.status(400).json({
+						success: false,
+						message: "Error uploading image",
+					});
+				}
+			}
+		}
+
+		const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedData, { new: true });
+
+		return res.status(200).json({
+			success: true,
+			user: updatedUser,
+		});
+	} catch (error) {
+		console.log("Error in updateProfile: ", error);
+		return res.status(500).json({
+			success: false,
+			message: "Internal server error",
+		});
+	}
+};
+
 
 export { registerUser, loginUser };

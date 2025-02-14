@@ -6,6 +6,8 @@ import { useAuthStore } from "./store/useAuthStore.";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Register from "./pages/register/Register";
 import Home from "./pages/home/Home";
+import ProfilePage from "./pages/profilePage/ProfilePage";
+import ProfileEdit from "./pages/profileEdit/ProfileEdit";
 
 function App() {
   const { authUser, checkAuth, checkingAuth } = useAuthStore();
@@ -22,6 +24,8 @@ function App() {
       <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }/>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
+      <Route path="/profilePage" element={authUser? <ProfilePage /> : <Navigate to={"/login"}/> }/>
+      <Route path="/profileedit" element={authUser? <ProfileEdit /> : <Navigate to={"/login"}/> }/>
     </Routes>
       <Toaster/>
     </>

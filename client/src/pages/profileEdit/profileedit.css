@@ -1,0 +1,162 @@
+.profile-edit-body {
+    background-color: #131c35;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+  }
+  
+  .profile-edit-container {
+    background-color: #011a25;
+    padding: 40px;
+    text-align: center;
+    width: 500px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 10px;
+  }
+  
+  .profile-edit-title {
+    color: white;
+    margin-bottom: 20px;
+  }
+  
+  .profile-edit-label {
+    color: white;
+    display: block;
+    text-align: left;
+    margin-top: 25px;
+    font-size: 14px;
+  }
+  
+  .profile-edit-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .profile-edit-input,
+  .profile-edit-textarea {
+    padding: 14px;
+    margin-top: 5px;
+    background-color: #d3d3d3;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .profile-edit-textarea {
+    height: 80px;
+    resize: none;
+  }
+  
+  .profile-edit-image-container {
+    display: flex;
+    flex-direction: column;
+    color: white;
+  }
+  
+  .profile-edit-image-input {
+    display: none;
+  }
+  
+  .profile-edit-image-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 2px solid white;
+  }
+  
+  .file-input-container {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  
+  /* Style the custom file input button */
+  .custom-file-input {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #23303f;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .custom-file-input:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Optional: Add an icon */
+  .custom-file-input::before {
+    content: "📷"; /* You can use an icon or emoji */
+    margin-right: 10px;
+  }
+  
+  .profile-edit-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .profile-edit-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .profile-edit-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Image preview container */
+  .image-preview-container {
+    position: relative;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  
+  /* Remove image button */
+  .remove-image-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+  }
+  
+  .remove-image-button:hover {
+    background-color: #cc0000;
+  }

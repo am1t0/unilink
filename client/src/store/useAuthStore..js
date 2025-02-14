@@ -1,7 +1,7 @@
 import { create } from "zustand";
-import axios from "axios";
 import { axiosInstance } from "../lib/axios";
 import * as yup from "yup";
+import toast from "react-hot-toast";
 
 //validation schema for login
 const loginSchema = yup.object().shape({
@@ -81,7 +81,7 @@ export const useAuthStore = create((set) => ({
   loginUser: async (loginData) => {
     try {
       set({ loading: true });
-      
+
       // Validate input
       await loginSchema.validate(loginData, { abortEarly: false });
 
@@ -109,6 +109,24 @@ export const useAuthStore = create((set) => ({
           type: "other",
           message: "Something went wrong. Please try again.",
         };
+      }
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  updateProfile: async (data) => {
+    try {
+      set({ loading: true });
+      const res = await axiosInstance.put("/auth/profileedit", data);
+      set({ authUser: res.data.user });
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.status === 413) {
+        toast.error("Image size exceeds the upload limit of 100 kB");
+      } else {
+        toast.error(error.response?.data?.message || "Something went wrong");
       }
     } finally {
       set({ loading: false });
