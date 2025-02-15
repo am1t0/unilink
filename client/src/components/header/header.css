@@ -27,6 +27,7 @@
     display: flex;
     gap: 20%;
   }
+
   
   .icon-wrapper {
     text-decoration: none;
@@ -43,6 +44,11 @@
     margin-bottom: 4px;
   }
   
+  .icon-active {
+    color: #007bff; /* Professional blue */
+    /* font-weight: bold; */
+  }
+
   /* Right Section */
   .header-right {
     width: 40%;
