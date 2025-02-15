@@ -21,7 +21,12 @@ function App() {
   return (
     <>
     <Routes>
-      <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }/>
+      <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }
+      >
+        {/* <Route path="/home" element={<Home />} /> */}
+        <Route path="/notifications" element={<><h1>Hellow Notification</h1></>} />
+        <Route path="/messages" element={<><h1>Hellow message</h1></>} />
+      </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
       <Route path="/profilePage" element={authUser? <ProfilePage /> : <Navigate to={"/login"}/> }/>
