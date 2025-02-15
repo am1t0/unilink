@@ -22,9 +22,9 @@ function App() {
     <>
     <Routes>
       <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }
-      >
-        {/* <Route path="/home" element={<Home />} /> */}
-        <Route path="/notifications" element={<><h1>Hellow Notification</h1></>} />
+      > 
+        <Route path="/" element={<><h1>Hellow home</h1></>} />
+        <Route path="/notifications" element={<><h1>Hellow notifications</h1></>} />
         <Route path="/messages" element={<><h1>Hellow message</h1></>} />
       </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
