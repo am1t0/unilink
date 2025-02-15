@@ -8,6 +8,8 @@ import Register from "./pages/register/Register";
 import Home from "./pages/home/Home";
 import ProfilePage from "./pages/profilePage/ProfilePage";
 import ProfileEdit from "./pages/profileEdit/ProfileEdit";
+import HomeScene  from "./scenes/home";
+import PostCreate from "./pages/postCreate/PostCreate";
 
 function App() {
   const { authUser, checkAuth, checkingAuth } = useAuthStore();
@@ -23,7 +25,7 @@ function App() {
     <Routes>
       <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }
       > 
-        <Route path="/" element={<><h1>Hellow home</h1></>} />
+        <Route path="/" element={<HomeScene/>} />
         <Route path="/notifications" element={<><h1>Hellow notifications</h1></>} />
         <Route path="/messages" element={<><h1>Hellow message</h1></>} />
       </Route>
@@ -31,6 +33,7 @@ function App() {
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
       <Route path="/profilePage" element={authUser? <ProfilePage /> : <Navigate to={"/login"}/> }/>
       <Route path="/profileedit" element={authUser? <ProfileEdit /> : <Navigate to={"/login"}/> }/>
+      <Route path="/post-create" element={authUser? <PostCreate /> : <Navigate to={"/login"}/> }/>
     </Routes>
     <Toaster/>
     </>
