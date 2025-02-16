@@ -2,9 +2,9 @@ import cloudinary from "../utilities/cloudinary.js";
 import Post from "../models/post.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 
-export const createPost = asyncHandler( async (req, res) => {
+export const createPost = asyncHandler(async (req, res) => {
     try {
-        const { user ,description, tag, endDate } = req.body;
+        const { user, description, tag, endDate } = req.body;
 
         if (tag === "Event" && !endDate) {
             return res.status(400).json({
@@ -13,31 +13,39 @@ export const createPost = asyncHandler( async (req, res) => {
             });
         }
 
-         // Access the uploaded files
-         const files = req.files;
-         let media = [];
+        // Access the uploaded files
+        const files = req.files;
+        let media = [];
 
-         if(req.files){
+        if (req.files) {
 
-         // Loop through the files to process each one
-           media = await Promise.all(files.map(async (file, index) => {
-             // Upload file to Cloudinary
-             const cloudinaryResponse = await cloudinary.uploader.upload(file.path);
- 
-             if (!cloudinaryResponse) {
-                 throw new ApiError(404, "Failed to upload file to Cloudinary");
-             }
- 
-             // Determine file type (e.g., based on MIME type or file extension)
-             const fileType = file.mimetype.startsWith('image') ? 'photo' : 'video';
- 
-             // Return the media object in the required format
-             return {
-                 url: cloudinaryResponse.url,    // Cloudinary's response URL
-                 type: fileType,                       // 'photo' or 'video'
-                 index: index                          // Index based on the file's order
-             };
-         }));
+            // Loop through the files to process each one
+            media = await Promise.all(files.map(async (file, index) => {
+                // Upload file to Cloudinary
+                const cloudinaryResponse = await cloudinary.uploader.upload(file.path);
+
+                if (!cloudinaryResponse) {
+                    throw new ApiError(404, "Failed to upload file to Cloudinary");
+                }
+
+                // Determine file type (e.g., based on MIME type or file extension)
+                const fileType = file.mimetype.startsWith('image') ? 'photo' : 'video';
+
+                // Return the media object in the required format
+                return {
+                    url: cloudinaryResponse.url,    // Cloudinary's response URL
+                    type: fileType,                       // 'photo' or 'video'
+                    index: index                          // Index based on the file's order
+                };
+            }));
+        }
+
+        //atleast one of them required to create post
+        if (!media?.length && !description) {
+            return res.status(400).json({
+                success: false,
+                message: "Either description or media is required."
+            });
         }
 
         //create the post
@@ -48,6 +56,8 @@ export const createPost = asyncHandler( async (req, res) => {
             tag,
             endDate
         });
+
+        await newPost.save();
 
         return res.status(201).json({
             success: true,
@@ -61,19 +71,40 @@ export const createPost = asyncHandler( async (req, res) => {
     }
 });
 
-export const getPost = async (req, res) => {
+export const getPost = asyncHandler( async (req, res) => {
+    const {postId} = req.params;
     try {
-        const post = await Post.findById(req.params.postId).populate("user", "name avatar");
+        //fetch post by it's id
+        let post = await Post.findById(postId)
+        .populate('user', 'name email avatar');    //stuff user's data
+        
+        //post not exists
         if (!post) {
-            return res.status(404).json({ success: false, message: "Post not found" });
+            return res.status(404).json({ 
+                success: false,
+                message: "Post not found" 
+            });
         }
-        return res.status(200).json({ success: true, post });
+
+        //also we have to do with the comments??
+
+        return res.status(200).json({
+            success: true, 
+            post: post
+        });
+
     } catch (error) {
         console.error("Error in getPost:", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+       });
     }
-};
+});
 
+
+
+// OPTIMIZE IT : TAKE IN FRAGEMENTS
 export const getAllPosts = async (req, res) => {
     try {
         const posts = await Post.find().populate("user", "name avatar");
@@ -81,6 +112,26 @@ export const getAllPosts = async (req, res) => {
     } catch (error) {
         console.error("Error in getAllPosts:", error);
         return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
+export const getAllUserPosts = async (req, res) => {
+    const {userId} = req.params;
+    try {
+        //get all posts for a user
+        const posts = await Post.find({user: userId})
+        .populate("user", "name avatar email"); // stuff user details
+
+        return res.status(200).json({ 
+            success: true, 
+            posts });
+
+    } catch (error) {
+        console.error("Error in getAllPosts:", error);
+        return res.status(500).json({
+             success: false, 
+             message: "Internal server error" 
+        });
     }
 };
 
@@ -92,7 +143,7 @@ export const updatePost = async (req, res) => {
             return res.status(400).json({ success: false, message: "Either description or media is required." });
         }
 
-        const updatedPost = await Post.findByIdAndUpdate(req.params.postId, 
+        const updatedPost = await Post.findByIdAndUpdate(req.params.postId,
             { description, media, tag, endDate },
             { new: true }
         );
