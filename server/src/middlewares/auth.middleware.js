@@ -5,13 +5,13 @@ import User from "../models/user.model.js";
 export const protectRoute = asyncHandler(async (req, res, next) => {
   try {
     
-    const token = req.cookies.jwt;
+    let token = req.cookies.jwt;
 
      // Check for token in headers if not found in cookies
      if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
     }
-    
+
     if(!token){
         return res.status(401).json({
             success : false,

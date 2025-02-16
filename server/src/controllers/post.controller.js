@@ -4,7 +4,7 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
 
 export const createPost = asyncHandler( async (req, res) => {
     try {
-        const { user ,description, media, tag, endDate } = req.body;
+        const { user ,description, tag, endDate } = req.body;
 
         //atleast one of them required to create post
         if (!media?.length && !description) {
@@ -21,20 +21,38 @@ export const createPost = asyncHandler( async (req, res) => {
             });
         }
 
-        //upload each media on cloudinary and take it's url in array
-        let mediaUrls = [];
-        if (media?.length) {
-            for (const file of media) {
-                const uploadResponse = await cloudinary.uploader.upload(file);
-                mediaUrls.push(uploadResponse.secure_url);
-            }
+         // Access the uploaded files
+         const files = req.files;
+         let media = [];
+
+         if(req.files){
+
+         // Loop through the files to process each one
+           media = await Promise.all(files.map(async (file, index) => {
+             // Upload file to Cloudinary
+             const cloudinaryResponse = await cloudinary.uploader.upload(file.path);
+ 
+             if (!cloudinaryResponse) {
+                 throw new ApiError(404, "Failed to upload file to Cloudinary");
+             }
+ 
+             // Determine file type (e.g., based on MIME type or file extension)
+             const fileType = file.mimetype.startsWith('image') ? 'photo' : 'video';
+ 
+             // Return the media object in the required format
+             return {
+                 url: cloudinaryResponse.url,    // Cloudinary's response URL
+                 type: fileType,                       // 'photo' or 'video'
+                 index: index                          // Index based on the file's order
+             };
+         }));
         }
 
         //create the post
         const newPost = await Post.create({
             user,
             description,
-            media: mediaUrls,
+            media,
             tag,
             endDate
         });

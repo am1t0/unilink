@@ -11,10 +11,11 @@ const PostSchema = mongoose.Schema({
         type: String,
     },
     media: [
-       { 
-        type: String,
-        required: true,
-       }
+        {
+            url: { type: String },
+            type: { type: String, enum: ['photo', 'video'] },
+            index: { type: Number }
+        },
     ],
     tag: {
         type: String,
@@ -23,18 +24,18 @@ const PostSchema = mongoose.Schema({
     },
     likedBy: [
         {
-          type: mongoose.Schema.Types.ObjectId, 
-          ref: "User",  // Reference to users who liked the post
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",  // Reference to users who liked the post
         }
     ],
-    share:{
-        type: Number,   
+    share: {
+        type: Number,
         default: 0,
     },
-    endDate:{
+    endDate: {
         type: Date,
     },
-} ,{timestamps: true})
+}, { timestamps: true })
 
 
 export default mongoose.model('Post', PostSchema);
