@@ -19,6 +19,7 @@ const PostSchema = mongoose.Schema({
     tag: {
         type: String,
         enum: ['Personal', 'Event', 'Job & Internship'],
+        required: true
     },
     likedBy: [
         {

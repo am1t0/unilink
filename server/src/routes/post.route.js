@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { protectRoute } from "../middlewares/auth.middleware";
+import { protectRoute } from "../middlewares/auth.middleware.js";
+import { createPost, getPost, getAllPosts, deletePost, updatePost } from "../controllers/post.controller.js";
 
 const router = Router();
 
