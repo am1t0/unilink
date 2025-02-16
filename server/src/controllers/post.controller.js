@@ -6,14 +6,6 @@ export const createPost = asyncHandler( async (req, res) => {
     try {
         const { user ,description, tag, endDate } = req.body;
 
-        //atleast one of them required to create post
-        if (!media?.length && !description) {
-            return res.status(400).json({
-                success: false,
-                message: "Either description or media is required."
-            });
-        }
-
         if (tag === "Event" && !endDate) {
             return res.status(400).json({
                 success: false,
