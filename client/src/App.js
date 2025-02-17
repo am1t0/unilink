@@ -10,6 +10,8 @@ import ProfilePage from "./pages/profilePage/ProfilePage";
 import ProfileEdit from "./pages/profileEdit/ProfileEdit";
 import HomeScene  from "./scenes/home";
 import PostCreate from "./pages/postCreate/PostCreate";
+import Header from "./components/header/Header";
+import FilterPost from "./components/filterPost/FilterPost";
 
 function App() {
   const { authUser, checkAuth, checkingAuth } = useAuthStore();
@@ -23,11 +25,8 @@ function App() {
   return (
     <>
     <Routes>
-      <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }
-      > 
-        <Route path="/" element={<HomeScene/>} />
-        <Route path="/notifications" element={<><h1>Hellow notifications</h1></>} />
-        <Route path="/messages" element={<><h1>Hellow message</h1></>} />
+      <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
+        <Route path="/" element={<FilterPost />} />
       </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
