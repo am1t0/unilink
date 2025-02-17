@@ -16,7 +16,7 @@ router.get('/getAll-posts/:userId', protectRoute, getAllUserPosts);
 //route for fetching all post
 router.get('/getAll-posts', protectRoute, getAllPosts);
 
-router.patch('/update-post/:postId', protectRoute, updatePost);
+router.patch('/update-post/:postId', protectRoute ,updatePost);
 
 router.delete('/delete-post/:postId', protectRoute, deletePost);
 
