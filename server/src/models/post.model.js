@@ -28,6 +28,11 @@ const PostSchema = mongoose.Schema({
             ref: "User",  // Reference to users who liked the post
         }
     ],
+    likeCount: {
+        type: Number,
+        default: 0,
+    },
+    
     share: {
         type: Number,
         default: 0,

@@ -30,6 +30,7 @@ import postsRouter from "./src/routes/post.route.js";
 import conversationRouter from "./src/routes/conversation.route.js";
 import messageRouter from "./src/routes/message.route.js";
 import commentRouter from "./src/routes/message.route.js";
+import postInteractionRouter from "./src/routes/post-interaction.router.js";
 
 // routes decalaration   here mounting the specific routers to the app , this each router's will use Router.use('path',(rq,res));
 app.use("/api/v1/auth", authRouter);
@@ -41,6 +42,8 @@ app.use("/api/v1/comment", commentRouter);
 app.use("/api/v1/conversation", conversationRouter);
 
 app.use("/api/v1/message", messageRouter);
+
+app.use("/api/v1/post-interaction", postInteractionRouter);
 
 const port = process.env.PORT || 3001;
 
