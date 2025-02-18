@@ -1,15 +1,34 @@
-import React from 'react'
-import "./home.css"
-import Header from "../../components/header/Header"
-import { Outlet } from 'react-router-dom'
+import React, { useEffect } from 'react';
+import './home.css';
+import Header from '../../components/header/Header';
+import { Outlet } from 'react-router-dom';
+import Post from '../../components/post/Post';
+import { usePostStore } from '../../store/usePostStore';
 
 const Home = () => {
-  return (
-   <div style={{backgroundColor: "#131C35", height: "100vh"}}>
-   <Header/>
-   <Outlet/>
-   </div>
-  )
-}
+  const { getAllPosts, posts } = usePostStore();
 
-export default Home
+  useEffect(() => {
+    getAllPosts();
+  }, [getAllPosts]);
+
+  console.log(posts);
+
+  return (
+    <div style={{ backgroundColor: '#131C35' }}>
+      <Header />
+      <Outlet />
+      {posts.map((post) => (
+        <Post
+          key={post._id} 
+          mediaArray={post.media} 
+          description={post.description} 
+          createdAt={post.createdAt}
+          user={post.user}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default Home;

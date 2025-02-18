@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios';
 
 export const usePostStore = create((set) => ({
-  post: null,
+  posts: null,
   loading: false,
 
   createPost: async (postData) => {
@@ -14,7 +14,7 @@ export const usePostStore = create((set) => ({
           "Content-Type": "multipart/form-data",
         },
       });
-      set({ post: response.data });
+      set({ posts: [...posts , response.data.post] });
       toast.success("Post created successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Post could not be created");
@@ -22,4 +22,16 @@ export const usePostStore = create((set) => ({
       set({ loading: false });
     }
   },
+
+  getAllPosts : async () => {
+    try {
+      const response = await axiosInstance.get("/posts/getAll-posts");
+      console.log(response.data.posts);
+      set({ posts: response.data.posts });
+    } catch (error) {
+      console.log(error);
+      
+      toast.error(error.response?.data?.message || "Cant Fetch Posts");
+    }
+  }
 }));
