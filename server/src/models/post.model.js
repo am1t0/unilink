@@ -9,6 +9,7 @@ const PostSchema = mongoose.Schema({
     },
     description: {
         type: String,
+        default : ""
     },
     media: [
         {

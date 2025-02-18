@@ -33,8 +33,8 @@ import commentRouter from "./src/routes/message.route.js";
 
 // routes decalaration   here mounting the specific routers to the app , this each router's will use Router.use('path',(rq,res));
 app.use("/api/v1/auth", authRouter);
-
 app.use("/api/v1/posts", postsRouter);
+
 
 app.use("/api/v1/comment", commentRouter);
 
