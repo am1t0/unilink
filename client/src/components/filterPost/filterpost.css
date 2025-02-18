@@ -1,0 +1,115 @@
+.filter-post-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #0a0f1e;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 50px;
+  }
+  
+  /* Left Section */
+  .filter-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 40px; /* Increased spacing between icon-text groups */
+  }
+  
+  /* Grouping icon and text together */
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  
+  /* Spacing after "Filter Your Posts:" */
+  .filter-left .filter-group:first-child {
+    margin-right: 60px;
+  }
+  
+  /* User Icon with Tick */
+  .filter-user {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Rounded White Tick */
+  .verified-icon {
+    position: absolute;
+    top: -3px;
+    right: -40px;
+    background-color: white;
+    color: black;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+  }
+  
+  .verified-check {
+    width: 10px;
+    height: 10px;
+    color: black; /* Black check inside */
+  }
+  
+  /* Right Section */
+  .filter-right {
+    display: flex;
+    align-items: center;
+  }
+  
+  .add-post {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .add-post:hover {
+    background-color: white;
+    color: #0a0f1e;
+  }
+  
+  /* Icons */
+  .filter-icon {
+    width: 18px;
+    height: 18px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .filter-post-container {
+      flex-direction: column;
+      align-items: flex-start;
+      margin: 0px;
+    }
+  
+    .filter-left {
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+  
+    .filter-left .filter-group:first-child {
+      margin-right: 0;
+    }
+  
+    .filter-right {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
