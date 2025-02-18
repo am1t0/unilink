@@ -4,41 +4,52 @@ import Comment from "../models/comments.model.js";
 import SavedPost from "../models/saved_post.model.js";
 /**
  * @desc Like or unlike a post
- * @route PUT /api/v1/post-interaction/:postId/like
+ * @route PUT /api/v1/post-interaction/like/:postId
  * @access Private
  */
-export const likePost = asyncHandler(async (req, res) => {
+export const toggleLike = asyncHandler(async (req, res) => {
     const { postId } = req.params;
     const userId = req.user.id;
 
     try {
-        let post = await Post.findById(postId);
+        const post = await Post.findById(postId);
         if (!post) {
-            return res.status(404).json({ success: false, message: "Post not found" });
+            return res.status(404).json({ 
+                success: false, 
+                message: "Post not found" 
+            });
         }
 
-        const isLiked = post.likedBy.includes(userId);
+        const likedIndex = post.likedBy.indexOf(userId);
+        
+        //user has already liked the post
 
-        if (isLiked) {
-            // Unlike the post
-            post.likedBy = post.likedBy.filter(id => id.toString() !== userId);
-        } else {
+        if (likedIndex === -1) {
             // Like the post
             post.likedBy.push(userId);
+            post.likeCount += 1;
+        } else {
+            // Unlike the post
+            post.likedBy.splice(likedIndex, 1);
+            post.likeCount -= 1;
         }
 
         await post.save();
 
-        return res.status(200).json({
-            success: true,
-            message: isLiked ? "Post unliked" : "Post liked",
+        return res.status(200).json({ 
+            success: true, 
+            message: likedIndex === -1 ? "Post liked" : "Post unliked",
+            likeCount: post.likeCount
         });
 
     } catch (error) {
-        console.error("Error in likePost:", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+       });
     }
 });
+
 
 /**
  * @desc Comment on a post
