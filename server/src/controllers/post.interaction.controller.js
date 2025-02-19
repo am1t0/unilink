@@ -2,6 +2,7 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
 import Post from "../models/post.model.js";
 import Comment from "../models/comments.model.js";
 import SavedPost from "../models/saved_post.model.js";
+import mongoose from "mongoose";
 /**
  * @desc Like or unlike a post
  * @route PUT /api/v1/post-interaction/like/:postId
@@ -53,26 +54,43 @@ export const toggleLike = asyncHandler(async (req, res) => {
 
 /**
  * @desc Comment on a post
- * @route POST /api/v1/post-interaction/:postId/comment
+ * @route POST /api/v1/post-interaction/comment/:postId
  * @access Private
  */
 export const addComment = asyncHandler(async (req, res) => {
     const { postId } = req.params;
+
+    //comment text and parent comment id
     const { text, parentId } = req.body;
     const userId = req.user.id;
+    
+    //INCREASE THE COMMENT COUNT ON POST------
 
     try {
-        if (!text) {
-            return res.status(400).json({ success: false, message: "Comment text is required" });
+          // empty comment text
+        if (!text) {        
+            return res.status(400).json({ 
+                success: false, 
+                message: "Comment text is required" 
+            });
         }
 
         const post = await Post.findById(postId);
+
+        //post not exists
         if (!post) {
-            return res.status(404).json({ success: false, message: "Post not found" });
+            return res.status(404).json({ 
+                success: false, 
+                message: "Post not found"
+             });
         }
 
+        //if this comment is a child of another comment check for valid id of parent
         if (parentId && !mongoose.Types.ObjectId.isValid(parentId)) {
-            return res.status(400).json({ success: false, message: "Invalid parent comment ID" });
+            return res.status(400).json({ 
+                success: false, 
+                message: "Invalid parent comment ID" 
+            });
         }
 
         const newComment = await Comment.create({
