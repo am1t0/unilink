@@ -12,6 +12,8 @@ import HomeScene  from "./scenes/home";
 import PostCreate from "./pages/postCreate/PostCreate";
 import Header from "./components/header/Header";
 import FilterPost from "./components/filterPost/FilterPost";
+import Post from "./components/post/Post";
+
 
 function App() {
   const { authUser, checkAuth, checkingAuth } = useAuthStore();

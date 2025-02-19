@@ -1,10 +1,13 @@
+import fs from "fs";
+import path from "path"
 import cloudinary from "../utilities/cloudinary.js";
 import Post from "../models/post.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 
 export const createPost = asyncHandler(async (req, res) => {
     try {
-        const { user, description, tag, endDate } = req.body;
+        const { description, tag, endDate } = req.body;
+        const user = req.user;
 
         if (tag === "Event" && !endDate) {
             return res.status(400).json({
@@ -14,29 +17,52 @@ export const createPost = asyncHandler(async (req, res) => {
         }
 
         // Access the uploaded files
-        const files = req.files;
+        const files = req.files || [];
         let media = [];
 
-        if (req.files) {
-
+        if (req.files.length > 0) {
+            
             // Loop through the files to process each one
             media = await Promise.all(files.map(async (file, index) => {
                 // Upload file to Cloudinary
-                const cloudinaryResponse = await cloudinary.uploader.upload(file.path);
+                 try {
+                    // Upload file to Cloudinary with resource_type set to "auto"
+                    const cloudinaryResponse = await cloudinary.uploader.upload(file.path, {
+                        resource_type: "auto", // Automatically detect image or video
+                    });
 
-                if (!cloudinaryResponse) {
-                    throw new ApiError(404, "Failed to upload file to Cloudinary");
+                    if (!cloudinaryResponse) {
+                        return res.status(400).json({
+                            success: false,
+                            message: "Failed to upload file to Cloudinary."
+                        });
+                    }
+
+                    // Determine file type (e.g., based on MIME type or file extension)
+                    const fileType = file.mimetype.startsWith('image') ? 'photo' : 'video';
+
+                    //del file from local storage
+                    fs.unlink(file.path, (err) => {
+                        if (err) {
+                            console.error("Failed to delete file:", file.path, err);
+                        } else {
+                            console.log("Successfully deleted file:", file.path);
+                        }
+                    });
+
+                    // Return the media object in the required format
+                    return {
+                        url: cloudinaryResponse.url,
+                        type: fileType,
+                        index: index,
+                    };
+                } catch (error) {
+                    console.error("Cloudinary upload error:", error);
+                    return res.status(400).json({
+                        success: false,
+                        message: "Failed to upload file to Cloudinary.",
+                    });
                 }
-
-                // Determine file type (e.g., based on MIME type or file extension)
-                const fileType = file.mimetype.startsWith('image') ? 'photo' : 'video';
-
-                // Return the media object in the required format
-                return {
-                    url: cloudinaryResponse.url,    // Cloudinary's response URL
-                    type: fileType,                       // 'photo' or 'video'
-                    index: index                          // Index based on the file's order
-                };
             }));
         }
 
@@ -51,10 +77,10 @@ export const createPost = asyncHandler(async (req, res) => {
         //create the post
         const newPost = await Post.create({
             user,
-            description,
+            description: description || "", 
             media,
             tag,
-            endDate
+            endDate: tag === "Event" ? endDate : undefined,
         });
 
         await newPost.save();
@@ -63,13 +89,17 @@ export const createPost = asyncHandler(async (req, res) => {
             success: true,
             post: newPost
         });
+
     } catch (error) {
+        console.log("error in post route",  error);
+        
         return res.status(500).json({
             success: false,
             message: "Internal server error"
         });
     }
 });
+
 
 export const getPost = asyncHandler(async (req, res) => {
     const { postId } = req.params;
