@@ -32,7 +32,10 @@ const PostSchema = mongoose.Schema({
         type: Number,
         default: 0,
     },
-    
+    commentCount: {
+        type: Number,
+        default: 0,
+    },
     share: {
         type: Number,
         default: 0,
