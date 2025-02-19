@@ -54,7 +54,7 @@ export const toggleLike = asyncHandler(async (req, res) => {
 
 /**
  * @desc Comment on a post
- * @route POST /api/v1/post-interaction/comment/:postId
+ * @route POST /api/v1/post-interaction/add-comment/:postId
  * @access Private
  */
 export const addComment = asyncHandler(async (req, res) => {
@@ -63,8 +63,6 @@ export const addComment = asyncHandler(async (req, res) => {
     //comment text and parent comment id
     const { text, parentId } = req.body;
     const userId = req.user.id;
-    
-    //INCREASE THE COMMENT COUNT ON POST------
 
     try {
           // empty comment text
@@ -100,17 +98,126 @@ export const addComment = asyncHandler(async (req, res) => {
             parentId: parentId || null,
         });
 
-        return res.status(201).json({ success: true, message: "Comment added", comment: newComment });
+         // Increase comment count of post
+         await Post.findByIdAndUpdate(postId, { $inc: { commentCount: 1 } });
+
+         // If it's a reply (child comment), increase repliesCount on the parent comment
+        if (parentId) {
+            await Comment.findByIdAndUpdate(parentId, { $inc: { repliesCount: 1 } });
+        }
+
+        return res.status(201).json({ 
+            success: true, 
+            message: "Comment added", 
+            comment: newComment 
+        });
 
     } catch (error) {
         console.error("Error in addComment:", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+        });
     }
 });
 
+
+
+/**
+ * @desc Comment fetch of a post
+ * @route GET /api/v1/post-interaction/get-parent-comments/:postId
+ * @access Private
+ */
+export const getParentComments = asyncHandler(async (req, res) => {
+    const { postId } = req.params;
+    const { page = 1, limit = 5 } = req.query; // Default pagination
+
+    try {
+        // Check if the post exists
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found",
+            });
+        }
+
+        // Convert page and limit to numbers
+        const pageNumber = Number(page);
+        const limitNumber = Number(limit);
+
+        // Fetch parent comments (excluding replies)
+        const parentComments = await Comment.find({ postId, parentId: null })
+            .populate("userId", "name avatar") // Fetch user details (optional)
+            .sort({ createdAt: -1 }) // Latest first
+            .skip((pageNumber - 1) * limitNumber)
+            .limit(limitNumber);
+
+        // Check if there are more comments after the current page
+        const totalComments = await Comment.countDocuments({ postId, parentId: null });
+        const hasMore = pageNumber * limitNumber < totalComments; // True if more pages exist
+
+        return res.status(200).json({
+            success: true,
+            comments: parentComments,
+            hasMore, // Indicates whether more comments are available
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+});
+
+
+/**
+ * @desc Comment fetch of a post
+ * @route GET /api/v1/post-interaction/child-comments/:parentId
+ * @access Private
+ */
+export const getChildComments = asyncHandler(async (req, res) => {
+    const { parentId } = req.params;
+
+    const { page = 1, limit = 5 } = req.query; // Default pagination
+
+    try {
+        // Convert page and limit to numbers
+        const pageNumber = Number(page);
+        const limitNumber = Number(limit);
+
+        // Fetch parent comments (excluding replies)
+        const childComments = await Comment.find({parentId})
+            .populate("userId", "name avatar") // Fetch user details (optional)
+            .sort({ createdAt: -1 }) // Latest first
+            .skip((pageNumber - 1) * limitNumber)
+            .limit(limitNumber);
+
+        // Check if there are more comments after the current page
+        const totalComments = await Comment.countDocuments({ parentId});
+        const hasMore = pageNumber * limitNumber < totalComments; // True if more pages exist
+
+        return res.status(200).json({
+            success: true,
+            comments: childComments,
+            hasMore, // Indicates whether more comments are available
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error",
+        });
+    }
+});
+
+
+
 /**
  * @desc Delete a comment
- * @route DELETE /api/v1/post-interaction/:postId/comment/:commentId
+ * @route DELETE /api/v1/post-interaction/remove/:commentId
  * @access Private
  */
 export const deleteComment = asyncHandler(async (req, res) => {
@@ -123,16 +230,44 @@ export const deleteComment = asyncHandler(async (req, res) => {
             return res.status(404).json({ success: false, message: "Comment not found" });
         }
 
+        //owner can only delete his/her comments
         if (comment.userId.toString() !== userId) {
-            return res.status(403).json({ success: false, message: "Unauthorized" });
+            return res.status(403).json({ success: 
+                false, 
+                message: "Unauthorized" 
+            });
         }
 
+        const postId = comment.postId;
+        let totalDeletedComments = 1; // Track number of deleted comments
+
+        if (comment.parentId) {
+            // If it's a child comment, decrease repliesCount of parent
+            await Comment.findByIdAndUpdate(comment.parentId, { $inc: { repliesCount: -1 } });
+        } else {
+            // If it's a parent comment, delete all child comments
+            const deletedChildren = await Comment.deleteMany({ parentId: commentId });
+            totalDeletedComments += deletedChildren.deletedCount; // Track number of deleted child comments
+        }
+
+        // Delete the comment itself
         await Comment.findByIdAndDelete(commentId);
-        return res.status(200).json({ success: true, message: "Comment deleted" });
+
+        // Decrease commentCount in the Post model
+        await Post.findByIdAndUpdate(postId, { $inc: { commentCount: -totalDeletedComments } });
+
+        return res.status(200).json({
+            success: true,
+            message: "Comment deleted",
+            deletedCount: totalDeletedComments
+        });
 
     } catch (error) {
         console.error("Error in deleteComment:", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+        });
     }
 });
 

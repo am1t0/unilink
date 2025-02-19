@@ -31,6 +31,10 @@ const commentSchema = new mongoose.Schema(
     likeCount:{
       type: Number,
       default: 0
+    },
+    repliesCount: {
+      type: Number,
+      default: 0
     }
   },
   { timestamps: true }
