@@ -389,6 +389,8 @@ export const toggleSave = asyncHandler(async (req, res) => {
  * @route POST /api/v1/post-interaction/:postId/share
  * @access Private
  */
+
+// WHEN LINKS CONTROLLER OR STRUCUTRE FORMED THEN IMPLEMENT
 export const sharePost = asyncHandler(async (req, res) => {
     const { postId } = req.params;
 

@@ -2,24 +2,24 @@ import mongoose from "mongoose";
 
 const linkSchema = new mongoose.Schema(
   {
-    userId: {
+    user1: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true, // Ensuring no null values
+      required: true, 
     },
-    requestPersonId: {
+    user2: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     status: {
       type: String,
-      enum: ["requested", "accepted"],
+      enum: ["Requested", "Link"],
       required: true,
-      default: "requested", // Default status when a request is created
+      default: "Requested", // Default status when a request is created
     },
   },
-  { timestamps: true } // Fixed typo
+  { timestamps: true } 
 );
 
 export default mongoose.model("Link", linkSchema);
