@@ -14,7 +14,7 @@ const linkSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Requested", "Link"],
+      enum: ["Requested", "Link", "Blocked"],
       required: true,
       default: "Requested", // Default status when a request is created
     },
