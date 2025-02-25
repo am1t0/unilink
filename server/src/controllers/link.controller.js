@@ -1,7 +1,6 @@
 import Link from "../models/links.model.js";
 import User from "../models/user.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
-
 import mongoose from "mongoose";
 
 /**
@@ -138,6 +137,54 @@ export const acceptLink = asyncHandler(async (req, res) => {
         return res.status(500).json({ 
             success: false, 
             message: "Internal server error" 
+        });
+    }
+});
+
+/**
+ * @desc Fetch all links
+ * @route GET /api/v1/links/all-links?status=abc?page=x?limit=y
+ * @access Private
+ */
+export const getLinks = asyncHandler(async (req, res) => {
+    const userId = req.user.id;
+    const { status = "Link", limit = 20, page = 1 } = req.query;
+
+    console.log(page);
+    try {
+        // Convert page and limit to numbers
+        const pageNumber = Number(page);
+        const limitNumber = Number(limit);
+
+        // Find all links where the user is either user1 or user2
+        const links = await Link.find({
+            $or: [{ user1: userId }, { user2: userId }],
+            status: status
+        })
+        .populate({
+            path: "user1",
+            select: "name email",
+            match: { _id: { $ne: userId } } // Exclude logged-in user's data
+        })
+        .populate({
+            path: "user2",
+            select: "name email",
+            match: { _id: { $ne: userId } } // Exclude logged-in user's data
+        })
+        .sort({ createdAt: -1 }) // Sort by most recent
+        .skip(limitNumber * (pageNumber - 1))
+        .limit(limitNumber);
+
+        return res.status(200).json({
+            success: true,
+            links
+        });
+
+    } catch (error) {
+        console.error("Error in getLinks:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
         });
     }
 });
