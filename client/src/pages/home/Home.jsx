@@ -18,7 +18,7 @@ const Home = () => {
     <div style={{ backgroundColor: '#131C35' }}>
       <Header />
       <Outlet />
-      {posts.map((post) => (
+      {posts?.map((post) => (
         <Post
           key={post._id} 
           mediaArray={post.media} 

@@ -43,15 +43,15 @@ const Post = ({ mediaArray, description, createdAt, user }) => {
           </button>
         )}
         <div className="post-media-wrapper">
-          {mediaArray[currentMediaIndex].type === 'photo' ? (
+          {mediaArray[currentMediaIndex]?.type === 'photo' ? (
             <img
-              src={mediaArray[currentMediaIndex].url}
+              src={mediaArray[currentMediaIndex]?.url}
               alt={`Post Media ${currentMediaIndex}`}
               className="post-media"
             />
           ) : (
             <video
-              src={mediaArray[currentMediaIndex].url}
+              src={mediaArray[currentMediaIndex]?.url}
               controls
               className="post-media"
             />
