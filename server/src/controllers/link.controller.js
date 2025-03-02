@@ -86,8 +86,7 @@ export const requestLink = asyncHandler(async (req, res) => {
 export const acceptLink = asyncHandler(async (req, res) => {
     const { requestId } = req.params;
     const userId = req.user.id;
-    
-    console.log(userId);
+
     
     try {
         // Validate requestId format
@@ -140,6 +139,7 @@ export const acceptLink = asyncHandler(async (req, res) => {
         });
     }
 });
+
 
 /**
  * @desc Fetch all links
