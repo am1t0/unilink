@@ -13,6 +13,7 @@ import PostCreate from "./pages/postCreate/PostCreate";
 import Header from "./components/header/Header";
 import FilterPost from "./components/filterPost/FilterPost";
 import Post from "./components/post/Post";
+import Chats from "./pages/chats/Chats";
 
 
 function App() {
@@ -27,8 +28,9 @@ function App() {
   return (
     <>
     <Routes>
-      <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
+      < Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
         <Route path="/" element={<FilterPost />} />
+        <Route path="/chat/:conversationId?" element= { <Chats/> }/>
       </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
