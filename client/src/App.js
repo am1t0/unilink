@@ -30,7 +30,7 @@ function App() {
     <Routes>
       < Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
         <Route path="/" element={<FilterPost />} />
-        <Route path="/chat/:conversationId?" element= { <Chats/> }/>
+        <Route path="/chats/:conversationId?" element= { <Chats/> }/>
       </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
