@@ -32,7 +32,7 @@ const Header = () => {
           </a>
           <a href="#" className="headder-nav-item">
             <MessageCircle size={20} className="headder-icon" />
-            <Link to="/chat" className="headder-nav-text">Message</Link>
+            <Link to="/chats" className="headder-nav-text">Message</Link>
           </a>
           <a href="#" className="headder-nav-item">
             <Bell size={20} className="headder-icon" />

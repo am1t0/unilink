@@ -8,11 +8,8 @@ import Register from "./pages/register/Register";
 import Home from "./pages/home/Home";
 import ProfilePage from "./pages/profilePage/ProfilePage";
 import ProfileEdit from "./pages/profileEdit/ProfileEdit";
-import HomeScene  from "./scenes/home";
 import PostCreate from "./pages/postCreate/PostCreate";
-import Header from "./components/header/Header";
 import FilterPost from "./components/filterPost/FilterPost";
-import Post from "./components/post/Post";
 import Chats from "./pages/chats/Chats";
 
 

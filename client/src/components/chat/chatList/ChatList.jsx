@@ -1,51 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import './chatList.css';
 import { Link } from 'react-router';
+import { useAuthStore } from '../../../store/useAuthStore.';
+import { useMessageStore } from '../../../store/useMessageStore';
 
 export default function ChatList() {
-    const currentUser = 'John Doe'; // This should come from authentication later
-    
-    const [conversations, setConversations] = useState([
-        {
-            id: 1,
-            members: ['John Doe', 'Jane Doe'],
-            lastMessage: 'Hello, how are you?',
-            avatar: 'https://api.dicebear.com/6.x/avataaars/svg?seed=Jane'
-        },
-        {
-            id: 2,
-            members: ['John Doe', 'Rahul Kumar'],
-            lastMessage: 'Can you help me with the project?',
-            avatar: 'https://api.dicebear.com/6.x/avataaars/svg?seed=Rahul'
-        },
-        {
-            id: 3,
-            members: ['John Doe', 'Sarah Wilson'],
-            lastMessage: 'The meeting is at 3 PM tomorrow',
-            avatar: 'https://api.dicebear.com/6.x/avataaars/svg?seed=Sarah'
-        },
-        {
-            id: 4,
-            members: ['John Doe', 'Mike Chen'],
-            lastMessage: 'Thanks for your help!',
-            avatar: 'https://api.dicebear.com/6.x/avataaars/svg?seed=Mike'
-        },
-        {
-            id: 5,
-            members: ['John Doe', 'Emily Brown'],
-            lastMessage: 'Did you check the latest updates?',
-            avatar: 'https://api.dicebear.com/6.x/avataaars/svg?seed=Emily'
-        },
-        {
-            id: 6,
-            members: ['John Doe', 'Alex Martinez'],
-            lastMessage: 'See you at the library',
-            avatar: 'https://api.dicebear.com/6.x/avataaars/svg?seed=Alex'
-        }
-    ]);
+   
+    const { authUser } = useAuthStore();
+    const { getConversations, conversations } = useMessageStore();
 
-    const getOtherMemberName = (members) => {
-        return members.find(member => member !== currentUser) || members[0];
+    useEffect(() => {
+        getConversations();
+    },[]);
+
+    const getOtherMember = (members) => {
+        return members.find(member => member._id !== authUser?._id) || members[0];
     };
 
     return (
@@ -58,23 +27,26 @@ export default function ChatList() {
            </div>
            <ul className="conversation-list">
               {
-                conversations.map((conversation, index) => (
-                    <Link to={`/chats/${conversation.id}`}>
-                    <li key={index} className="conversation-item">
-                        <div className="conversation-avatar">
-                            <img 
-                                src={conversation.avatar} 
-                                alt={`${getOtherMemberName(conversation.members)}'s avatar`}
-                                className="avatar-image"
-                                />
-                        </div>
-                        <div className="conversation-info">
-                            <h3>{getOtherMemberName(conversation.members)}</h3>
-                            <p>{conversation.lastMessage}</p>
-                        </div>
-                    </li>
-                    </Link>
-                ))
+                conversations?.map((conversation) => {
+                    const otherMember = getOtherMember(conversation.members);
+                    return (
+                        <Link to={`/chats/${conversation._id}`} key={conversation._id}>
+                            <li className="conversation-item">
+                                <div className="conversation-avatar">
+                                    <img 
+                                        src={otherMember.avatar || `https://api.dicebear.com/6.x/avataaars/svg?seed=${otherMember.name}`}
+                                        alt={`${otherMember.name}'s avatar`}
+                                        className="avatar-image"
+                                    />
+                                </div>
+                                <div className="conversation-info">
+                                    <h3>{otherMember.name}</h3>
+                                    <p>{conversation.lastMessage || 'No messages yet'}</p>
+                                </div>
+                            </li>
+                        </Link>
+                    )
+                })
               }
            </ul>
        </aside>

@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 
 /**
  * @desc Conversation create
- * @route POST /api/v1/conversations/new
+ * @route POST /api/v1/conversation/new
  * @access Private
  */
 export const createConversation = asyncHandler(async (req, res) => {
@@ -68,12 +68,12 @@ export const getConversations = asyncHandler(async (req, res) => {
         const userId = req.user.id;
         const conversations = await Conversation.find({ 
               members: { $in: [userId] } })
-             .populate("members", "name email")
+             .populate("members", "name email avatar")
              .populate("lastMessage", "text createdAt")
 
         res.status(200).json({
             success: true,
-            data: conversations
+            conversations
         });
         
     } catch (error) {

@@ -14,7 +14,7 @@ export const usePostStore = create((set) => ({
           "Content-Type": "multipart/form-data",
         },
       });
-      set({ posts: [...posts , response.data.post] });
+      set((state) => ({ posts: [...state.posts || [], response.data.post] }));
       toast.success("Post created successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Post could not be created");
@@ -26,10 +26,9 @@ export const usePostStore = create((set) => ({
   getAllPosts : async () => {
     try {
       const response = await axiosInstance.get("/posts/getAll-posts");
-      console.log(response.data.posts);
+
       set({ posts: response.data.posts });
     } catch (error) {
-      console.log(error);
       
       toast.error(error.response?.data?.message || "Cant Fetch Posts");
     }

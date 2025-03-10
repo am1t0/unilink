@@ -12,7 +12,6 @@ const Home = () => {
     getAllPosts();
   }, [getAllPosts]);
 
-  console.log(posts);
 
   return (
     <div style={{ backgroundColor: '#131C35' }}>
