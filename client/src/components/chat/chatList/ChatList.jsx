@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import './chatList.css';
 import { Link } from 'react-router';
 import { useAuthStore } from '../../../store/useAuthStore.';
 import { useMessageStore } from '../../../store/useMessageStore';
+import {io} from 'socket.io-client';
 
 export default function ChatList() {
    

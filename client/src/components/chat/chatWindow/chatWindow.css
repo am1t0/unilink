@@ -193,3 +193,32 @@
 .send-button:active {
     transform: scale(0.95);
 }
+
+.welcome-chat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.welcome-chat img {
+    width: 140px;
+    height: 140px;
+    opacity: 0.8;
+}
+
+.welcome-chat h2 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0;
+    margin-top: 20px;
+}
+
+.welcome-chat p {
+    color: #a8a8a8;
+    font-size: 16px;
+    margin: 0;
+}
