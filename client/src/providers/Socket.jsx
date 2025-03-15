@@ -10,10 +10,7 @@ export const useSocket = () => {
 export const SocketProvider = (props) => {
   const socket = useMemo(
     () =>
-      io({
-        host: "localhost",
-        port: "8900",
-      }),
+      io("ws://localhost:8900"),
     []
   );
 

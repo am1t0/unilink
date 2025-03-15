@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { BsCameraVideo, BsTelephone, BsThreeDotsVertical, BsSend, BsPaperclip, BsEmojiSmile } from 'react-icons/bs';
 import './chatWindow.css';
 import { useAuthStore } from '../../../store/useAuthStore.';
-import { io } from 'socket.io-client';
+import { useSocket } from '../../../providers/Socket';
 
 export default function ChatWindow() {
     const [message, setMessage] = useState('');
@@ -16,18 +16,14 @@ export default function ChatWindow() {
     const messagesEndRef = useRef(null);
     const currentUser = "John Doe"; // This should come from authentication
     const {conversationId} = useParams(); // get conversationId from the URL
-      const socket = useRef(null);
+    const {socket} = useSocket();
     
         useEffect(()=>{
-            socket.current = io("ws://localhost:8900");
-        },[])
-    
-        useEffect(()=>{
-           socket.current.emit("addUser", authUser._id);
-           socket.current.on("getUsers", users=>{
+           socket.emit("addUser", authUser._id);
+           socket.on("getUsers", users=>{
               console.log(users);
            })
-        },[])
+        },[authUser._id, socket])
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -38,21 +34,43 @@ export default function ChatWindow() {
     }, [messages]);
 
     useEffect(()=>{
-      
-    },[conversationId])
-
-    const handleSendMessage = () => {
-        if (message.trim()) {
+      socket.on("getMessage", data=>{
             const newMessage = {
                 id: messages.length + 1,
-                text: message,
-                sender: currentUser,
+                text: data.text,
+                sender: data.senderId,
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             };
             setMessages([...messages, newMessage]);
-            setMessage('');
+      })
+    },[messages, socket])
+
+    const handleSendMessage = () => {
+        try {
+            //send message to socket server
+            socket.emit("sendMessage", {
+                senderId: authUser._id,
+                receiverId: "67cef718b9b99b1485e1d3bc",
+                text: message,
+            });
+
+            //dummy code to send message
+            if (message.trim()) {
+                const newMessage = {
+                    id: messages.length + 1,
+                    text: message,
+                    sender: currentUser,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+                setMessages([...messages, newMessage]);
+                setMessage('');
+            }
+        } catch (error) {
+            
+            console.log(error);
         }
     };
+
 
     return (
         <div className='chat-window'>
