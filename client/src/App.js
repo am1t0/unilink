@@ -11,6 +11,7 @@ import ProfileEdit from "./pages/profileEdit/ProfileEdit";
 import PostCreate from "./pages/postCreate/PostCreate";
 import FilterPost from "./components/filterPost/FilterPost";
 import Chats from "./pages/chats/Chats";
+import { SocketProvider } from "./providers/Socket";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
 
   return (
     <>
+   <SocketProvider>
     <Routes>
       < Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
         <Route path="/" element={<FilterPost />} />
@@ -35,6 +37,7 @@ function App() {
       <Route path="/profileedit" element={authUser? <ProfileEdit /> : <Navigate to={"/login"}/> }/>
       <Route path="/post-create" element={authUser? <PostCreate /> : <Navigate to={"/login"}/> }/>
     </Routes>
+    </SocketProvider>
     <Toaster/>
     </>
   );
