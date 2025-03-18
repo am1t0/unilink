@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {Toaster} from "react-hot-toast"
 import "./App.css";
 import Login from "./pages/login/Login";
-import { useAuthStore } from "./store/useAuthStore.";
+import { useAuthStore } from "./store/useAuthStore";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Register from "./pages/register/Register";
 import Home from "./pages/home/Home";

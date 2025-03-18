@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { UserPlus, Send, Pencil, GraduationCap, BookOpen, Phone, Share2 } from "lucide-react";
 import "./profilepage.css";
-import { useAuthStore } from "../../store/useAuthStore.";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const ProfilePage = () => {
   const { authUser, checkingAuth } = useAuthStore();

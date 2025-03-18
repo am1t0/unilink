@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router';
 import { BsCameraVideo, BsTelephone, BsThreeDotsVertical, BsSend, BsPaperclip, BsEmojiSmile } from 'react-icons/bs';
 import './chatWindow.css';
-import { useAuthStore } from '../../../store/useAuthStore.';
+import { useAuthStore } from '../../../store/useAuthStore';
 import { useSocket } from '../../../providers/Socket';
 
 export default function ChatWindow() {

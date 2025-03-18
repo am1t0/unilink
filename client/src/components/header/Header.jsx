@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import "./header.css";
-import { useAuthStore } from "../../store/useAuthStore.";
+import { useAuthStore } from "../../store/useAuthStore";
 import { Link } from "react-router-dom"
 
 const Header = () => {

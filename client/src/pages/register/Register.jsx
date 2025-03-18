@@ -3,7 +3,7 @@ import "./register.css";
 import { Loader, RefreshCcw } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useAuthStore } from "../../store/useAuthStore.";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const Register = () => {
   const { registerUser, loading } = useAuthStore();
