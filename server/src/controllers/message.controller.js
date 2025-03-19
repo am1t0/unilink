@@ -54,7 +54,7 @@ export const createMessage = asyncHandler(async (req, res) => {
 
         res.status(201).json({
             success: true,
-            data: newMessage
+            newMessage, 
         });
 
     } catch (error) {

@@ -21,15 +21,18 @@ export const useMessageStore = create((set) => ({
     }
   },
 
+  //set current conversation
+  setCurrentConversation: (conversation) => {
+    set({ currentConversation: conversation });
+  },
+
   // Get messages for a specific conversation
   getMessages: async (conversationId) => {
     set({ loading: true });
     try {
-      const response = await axiosInstance.get(`/messages/${conversationId}`);
-      set({ 
-        messages: response.data.messages,
-        currentConversation: response.data.conversation 
-      });
+      const response = await axiosInstance.get(`/message/all/${conversationId}`);
+      set({messages: response.data.messages});
+
     } catch (error) {
       toast.error(error.response?.data?.message || "Cannot fetch messages");
     } finally {
@@ -38,17 +41,22 @@ export const useMessageStore = create((set) => ({
   },
 
   // Send a new message
-  sendMessage: async (conversationId, text) => {
+  sendMessage: async (messageData) => {
     try {
-      const response = await axiosInstance.post(`/messages/${conversationId}`, { text });
+      const response = await axiosInstance.post(`/message/new`, messageData );
       set((state) => ({ 
-        messages: [...state.messages, response.data.message]
+        messages: [...state.messages, response.data.newMessage]
       }));
       return response.data.message;
     } catch (error) {
       toast.error(error.response?.data?.message || "Cannot send message");
       return null;
     }
+  },
+
+  //update the messages on recieving for current conversation
+  updateMessage: async (messageData) => {
+    set((state) => ({ messages: [...state.messages, messageData] }));
   },
 
   // Clear messages when leaving a conversation
