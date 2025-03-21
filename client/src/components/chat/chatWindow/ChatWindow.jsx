@@ -45,7 +45,7 @@ export default function ChatWindow() {
     if (conversationId) getMessages(conversationId);
   }, [conversationId, getMessages]);
 
-  
+
   //add user to socket server
   useEffect(() => {
     socket.emit("addUser", authUser._id);
@@ -183,6 +183,9 @@ export default function ChatWindow() {
                 placeholder="Type a message..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleMessageSend();
+                }}
               />
             </div>
             <button className="send-button" onClick={handleMessageSend}>
