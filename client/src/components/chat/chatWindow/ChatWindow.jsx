@@ -6,7 +6,6 @@ import {
   BsThreeDotsVertical,
   BsSend,
   BsPaperclip,
-  BsEmojiSmile,
 } from "react-icons/bs";
 import "./chatWindow.css";
 import { useAuthStore } from "../../../store/useAuthStore";
@@ -23,45 +22,59 @@ export default function ChatWindow() {
     updateMessage,
   } = useMessageStore();
 
-  //current user
-  const { authUser } = useAuthStore();
-
-  // get conversationId from the URL (router)
-  const { conversationId } = useParams();
-
-  //user socket
-  const { socket } = useSocket();
+  const { authUser } = useAuthStore(); //current user
+  const { conversationId } = useParams(); // get conversationId from the URL (router)
+  const { socket } = useSocket(); //user socket
 
   const [message, setMessage] = useState("");
   const messagesEndRef = useRef(null);
 
-  const otherMember =
+  const otherMember = // get the other member of the conversation
     currentConversation?.members.find(
       (member) => member._id !== authUser?._id
     ) || currentConversation?.members[0];
+
+  //add user to socket server
+  useEffect(() => {
+    socket.emit("addUser", authUser._id);
+  }, [authUser._id, socket]);
 
   //fetch the current conversation messages
   useEffect(() => {
     if (conversationId) getMessages(conversationId);
   }, [conversationId, getMessages]);
 
-
-  //add user to socket server
-  useEffect(() => {
-    socket.emit("addUser", authUser._id);
-    socket.on("getUsers", (users) => {
-      //   console.log(users);
-    });
-  }, [authUser._id, socket]);
-
-  //scroll to bottom of the chat window
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Use useCallback to memoize the handleGetMessage function
+  const handleGetMessage = useCallback(
+    (data) => {
+      if (data.conversationId === currentConversation?._id) {
+        updateMessage(data);
+      }
+    },
+    [currentConversation?._id, updateMessage]
+  );
+
+  //
+  const handleGetUsers = useCallback((users) => {
+    //get users live in the chat
+  }, []);
+
+  useEffect(() => {
+    // Add event listener
+    socket.on("getMessage", handleGetMessage);
+    socket.on("getUsers", handleGetUsers);
+
+    // Cleanup function to remove listener when component unmounts or conversation changes
+    return () => {
+      socket.off("getMessage", handleGetMessage);
+      socket.off("getUsers", handleGetUsers);
+
+    };
+  }, [handleGetMessage, handleGetUsers, socket]);
 
   const handleMessageSend = async () => {
     try {
@@ -82,26 +95,10 @@ export default function ChatWindow() {
     }
   };
 
-   // Use useCallback to memoize the handleGetMessage function
-   const handleGetMessage = useCallback(
-    (data) => {
-      if (data.conversationId === currentConversation?._id) {
-        updateMessage(data);
-      }
-    },
-    [currentConversation?._id, updateMessage]
-  );
-
-  useEffect(() => {
-    // Add event listener
-    socket.on("getMessage", handleGetMessage);
-
-    // Cleanup function to remove listener when component unmounts or conversation changes
-    return () => {
-      socket.off("getMessage", handleGetMessage);
-    };
-  }, [handleGetMessage, socket]);
-
+  //scroll to bottom of the chat window
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div className="chat-window">

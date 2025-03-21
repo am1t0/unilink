@@ -26,18 +26,18 @@ const Header = () => {
         <div className="headder-logo">Uni Link</div>
 
         <nav className="headder-nav-links">
-          <a href="#" className="headder-nav-item">
+          <Link to="/" className="headder-nav-item">
             <Home size={20} className="headder-icon" />
             <span className="headder-nav-text">Home</span>
-          </a>
-          <a href="#" className="headder-nav-item">
+          </Link>
+          <Link to="/chats" className="headder-nav-item">
             <MessageCircle size={20} className="headder-icon" />
-            <Link to="/chats" className="headder-nav-text">Message</Link>
-          </a>
-          <a href="#" className="headder-nav-item">
+            <p className="headder-nav-text">Message</p>
+          </Link>
+          <Link to="/" className="headder-nav-item">
             <Bell size={20} className="headder-icon" />
             <span className="headder-nav-text">Notification</span>
-          </a>
+          </Link>
         </nav>
       </div>
 
