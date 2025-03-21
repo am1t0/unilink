@@ -45,6 +45,7 @@ export default function ChatWindow() {
     if (conversationId) getMessages(conversationId);
   }, [conversationId, getMessages]);
 
+  
   //add user to socket server
   useEffect(() => {
     socket.emit("addUser", authUser._id);
@@ -69,6 +70,7 @@ export default function ChatWindow() {
         receiverId: otherMember._id,
         text: message,
         conversationId: conversationId,
+        createdAt: new Date().toISOString(), // Add createdAt timestamp
       };
 
       await socket.emit("sendMessage", messageData);

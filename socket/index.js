@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
 
     //send and get message
     socket.on("sendMessage", (messageData) => {
-        const {senderId, receiverId, text, conversationId} = messageData;
+        const {senderId, receiverId, text, conversationId, createdAt} = messageData;
          
         //get socketId for user
         const user = getUser(receiverId);
@@ -42,6 +42,7 @@ io.on("connection", (socket) => {
             conversationId,
             sender: senderId,
             text,
+            createdAt
         })
 
     })
