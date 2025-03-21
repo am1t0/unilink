@@ -6,11 +6,13 @@ import {
   BsThreeDotsVertical,
   BsSend,
   BsPaperclip,
+  BsEmojiSmile,
 } from "react-icons/bs";
 import "./chatWindow.css";
 import { useAuthStore } from "../../../store/useAuthStore";
 import { useSocket } from "../../../providers/Socket";
 import { useMessageStore } from "../../../store/useMessageStore";
+import EmojiPicker from "../../emojiPicker/EmojiPicker";
 
 export default function ChatWindow() {
   //current convo , convo messages and state
@@ -27,6 +29,7 @@ export default function ChatWindow() {
   const { socket } = useSocket(); //user socket
 
   const [message, setMessage] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const messagesEndRef = useRef(null);
 
   const otherMember = // get the other member of the conversation
@@ -37,6 +40,9 @@ export default function ChatWindow() {
   //add user to socket server
   useEffect(() => {
     socket.emit("addUser", authUser._id);
+    socket.on("getUsers", (users) => {
+      //get users live in the chat
+    });
   }, [authUser._id, socket]);
 
   //fetch the current conversation messages
@@ -58,23 +64,15 @@ export default function ChatWindow() {
     [currentConversation?._id, updateMessage]
   );
 
-  //
-  const handleGetUsers = useCallback((users) => {
-    //get users live in the chat
-  }, []);
-
   useEffect(() => {
     // Add event listener
     socket.on("getMessage", handleGetMessage);
-    socket.on("getUsers", handleGetUsers);
 
     // Cleanup function to remove listener when component unmounts or conversation changes
     return () => {
       socket.off("getMessage", handleGetMessage);
-      socket.off("getUsers", handleGetUsers);
-
     };
-  }, [handleGetMessage, handleGetUsers, socket]);
+  }, [handleGetMessage, socket]);
 
   const handleMessageSend = async () => {
     try {
@@ -94,12 +92,11 @@ export default function ChatWindow() {
       console.log(error);
     }
   };
-
+  
   //scroll to bottom of the chat window
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
   return (
     <div className="chat-window">
       {!conversationId ? ( // no conversation selected
@@ -169,10 +166,19 @@ export default function ChatWindow() {
             <div ref={messagesEndRef} />
           </div>
 
+              {
+              showEmojiPicker && <EmojiPicker message={message} setMessage={setMessage} />
+              } 
+              
           <div className="message-input-container">
             <button className="message-option-button">
               <BsPaperclip />
             </button>
+            <button className="message-option-button" onClick={()=> setShowEmojiPicker(!showEmojiPicker)}>
+              <BsEmojiSmile/>
+            </button>
+            
+           
 
             <div className="message-input-wrapper">
               <input
