@@ -45,7 +45,7 @@ export const useMessageStore = create((set) => ({
     try {
       const response = await axiosInstance.post(`/message/new`, messageData );
       set((state) => ({ 
-        messages: [...state.messages, { ...response.data.newMessage, status: 'sent' }]
+        messages: [...state.messages, response.data.newMessage]
       }));
       return response.data.message;
     } catch (error) {
@@ -57,15 +57,6 @@ export const useMessageStore = create((set) => ({
   //update the messages on recieving for current conversation
   updateMessage: async (messageData) => {
     set((state) => ({ messages: [...state.messages, messageData] }));
-  },
-
-  // Update message status
-  updateMessageStatus: (messageId, status) => {
-    set((state) => ({
-      messages: state.messages.map(msg => 
-        msg._id === messageId ? { ...msg, status } : msg
-      )
-    }));
   },
 
   // Clear messages when leaving a conversation

@@ -28,6 +28,9 @@ export default function ChatWindow() {
   const { conversationId } = useParams(); // get conversationId from the URL (router)
   const { socket } = useSocket(); //user socket
 
+  const [isTyping, setIsTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
+
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const messagesEndRef = useRef(null);
@@ -54,30 +57,48 @@ export default function ChatWindow() {
     scrollToBottom();
   }, [messages]);
 
+  // Use useCallback to memoize the handleUpdateMessageStatus function
+  const handleUpdateMessageStatus = useCallback(
+    (data) => {
+      if (data.conversationId === currentConversation?._id) {
+        // console.log('sender ko update mil gya')
+      }
+    },
+    [currentConversation]
+  );
+
   // Use useCallback to memoize the handleGetMessage function
   const handleGetMessage = useCallback(
     (data) => {
       if (data.conversationId === currentConversation?._id) {
         updateMessage(data);
+
+        // socket.emit("updateMessageStatus", {
+        //   conversationId: data.conversationId,
+        //   senderId: data.sender,
+        //   status: "received",
+        // });
       }
     },
-    [currentConversation?._id, updateMessage]
+    [currentConversation?._id, socket, updateMessage]
   );
 
   useEffect(() => {
     // Add event listener
     socket.on("getMessage", handleGetMessage);
+    socket.on("updateMessageStatusOnSender", handleUpdateMessageStatus);
 
     // Cleanup function to remove listener when component unmounts or conversation changes
     return () => {
       socket.off("getMessage", handleGetMessage);
+      socket.off("updateMessageStatusOnSender", handleUpdateMessageStatus);
     };
-  }, [handleGetMessage, socket]);
+  }, [handleGetMessage, handleUpdateMessageStatus, socket]);
 
   const handleMessageSend = async () => {
     try {
       const messageData = {
-        sender: authUser._id,
+        senderId: authUser._id,
         receiverId: otherMember._id,
         text: message,
         conversationId: conversationId,
@@ -92,11 +113,59 @@ export default function ChatWindow() {
       console.log(error);
     }
   };
-  
+
   //scroll to bottom of the chat window
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  //show typing status to other user in conversation
+  const handleTyping = () => {
+    socket.emit("typing", {
+      senderId: authUser?._id,
+      receiverId: otherMember?._id,
+      conversationId: currentConversation?._id,
+    });
+  };
+
+  const handleTypingShow = useCallback(
+    (data) => {
+      if (
+        data.senderId === otherMember?._id &&
+        data.receiverId === authUser?._id &&
+        data.conversationId === conversationId
+      ) {
+        setIsTyping(true);
+  
+        // Clear any previous timeout
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
+  
+        // Set timeout to stop typing after 2 seconds
+        typingTimeoutRef.current = setTimeout(() => {
+          setIsTyping(false);
+        }, 2000);
+      }
+    },
+    [authUser?._id, conversationId, otherMember?._id]
+  );
+  
+
+  useEffect(() => {
+  socket.on("senderTyping", handleTypingShow);
+
+  return () => {
+    socket.off("senderTyping", handleTypingShow);
+
+    // Clear timeout on unmount
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+  };
+}, [handleTypingShow, socket]);
+
+
   return (
     <div className="chat-window">
       {!conversationId ? ( // no conversation selected
@@ -136,13 +205,12 @@ export default function ChatWindow() {
 
           <div className="messages-container">
             {messages?.map((msg) => {
-              // Format the createdAt timestamp
               const messageTime = new Date(msg?.createdAt).toLocaleTimeString(
                 [],
                 {
                   hour: "2-digit",
                   minute: "2-digit",
-                  hour12: true, // For AM/PM format
+                  hour12: true,
                 }
               );
 
@@ -163,29 +231,42 @@ export default function ChatWindow() {
               );
             })}
 
+             {/* {isTyping && <h1>Hello</h1>} */}
+            {isTyping && (
+              <div className="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 
-              {
-              showEmojiPicker && <EmojiPicker message={message} setMessage={setMessage} />
-              } 
-              
+          {showEmojiPicker && (
+            <EmojiPicker message={message} setMessage={setMessage} />
+          )}
+
           <div className="message-input-container">
             <button className="message-option-button">
               <BsPaperclip />
             </button>
-            <button className="message-option-button" onClick={()=> setShowEmojiPicker(!showEmojiPicker)}>
-              <BsEmojiSmile/>
+            <button
+              className="message-option-button"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            >
+              <BsEmojiSmile />
             </button>
-            
-           
 
             <div className="message-input-wrapper">
               <input
                 type="text"
                 placeholder="Type a message..."
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {
+                  setMessage(e.target.value);
+                  handleTyping();
+                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleMessageSend();
                 }}

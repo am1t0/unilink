@@ -42,9 +42,42 @@ io.on("connection", (socket) => {
             conversationId,
             sender: senderId,
             text,
-            createdAt
+            createdAt,
+            status: 'sent'
+        })
+    })
+
+    socket.on("typing", ( data ) =>{
+
+        const { senderId, receiverId , conversationId} = data;
+
+        const sender = getUser(senderId);
+        const receiver = getUser(receiverId);
+
+        io.to(receiver?.socketId).emit("senderTyping", {
+          senderId,
+          receiverId,
+          conversationId,
         })
 
+        io.to(data?.receiverId)
+    })
+
+    socket.on("updateMessageStatus", (messageData) => {
+      
+        const {conversationId, senderId, status} = messageData;
+        
+        console.log(senderId)
+        
+        //get socketId for user
+        const user = getUser(senderId);
+
+
+        //send the status to the sender
+        io.to(user?.socketId).emit("updateMessageStatusOnSender",{
+            conversationId,
+            status
+        })
     })
 
     //a user lefts the chat section
