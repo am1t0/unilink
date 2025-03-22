@@ -115,6 +115,24 @@
     right: 10px;
 }
 
+.message-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+}
+
+.message-status {
+    font-size: 14px;
+    color: #a8a8a8;
+}
+
+.message-status.read {
+    color: #34b7f1;
+}
+
 /* Add custom scrollbar for messages container */
 .messages-container::-webkit-scrollbar {
     width: 6px;

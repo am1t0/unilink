@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import Picker from "emoji-picker-react";
 import "./EmojiPicker.css";
 
-const EmojiPicker = ({ message, setMessage }) => {
+const EmojiPicker = ({ setMessage }) => {
   
   // Handle emoji selection
   const onEmojiClick = (emojiData) => {
