@@ -158,14 +158,17 @@ const handleMessageSend = async () => {
               );
             })}
 
-            {isTyping && (
-              <div className="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
+{isTyping && (
+                                        <p className="typing">
+                                            typing
+                                            <span className="list-typing-dots">
+                                                <span className="list-typing-dot"></span>
+                                                <span className="list-typing-dot"></span>
+                                                <span className="list-typing-dot"></span>
+                                            </span>
+                                        </p>
+                                     )
+                                    }
           </div>
 
           {showEmojiPicker && <EmojiPicker message={message} setMessage={setMessage} />}

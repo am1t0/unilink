@@ -69,9 +69,9 @@ export default function ChatList({ typingUsers }) {
                                                 <span className="list-typing-dot"></span>
                                             </span>
                                         </p>
-                                    ) : (
+                                     ) : (
                                         <p>{conversation?.lastMessage?.text || 'No messages yet'}</p>
-                                    )}
+                                    )} 
                                 </div>
                             </li>
                         );

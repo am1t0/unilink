@@ -115,13 +115,15 @@
 }
 
 .conversation-info p.typing {
-    color: #34b7f1;
+    color: #15b40f;
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
 .list-typing-dots {
+    position: relative;
+    top: 8px;
     display: inline-flex;
     gap: 2px;
 }

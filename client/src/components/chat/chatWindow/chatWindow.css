@@ -147,15 +147,6 @@
     right: 10px;
 }
 
-.message-info {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    position: absolute;
-    bottom: 5px;
-    right: 10px;
-}
-
 .message-status {
     font-size: 14px;
     color: #a8a8a8;
