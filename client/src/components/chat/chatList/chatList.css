@@ -50,9 +50,13 @@
     padding: 0px 30px;
     margin: 0;
 }
-.conversation-list a {
-    text-decoration: none;
+
+
+#active-conversation {
+    background-color: #5e0094;
 }
+
+
 
 /* Scrollbar Styling */
 .conversation-list::-webkit-scrollbar {

@@ -21,7 +21,6 @@ export default function ChatWindow({ isTyping }) {
     useMessageStore();
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
-  const { conversationId } = useParams();
 
   const [message, setMessage] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -33,6 +32,8 @@ export default function ChatWindow({ isTyping }) {
 const otherMember =
   currentConversation?.members.find((member) => member._id !== authUser?._id) ||
   currentConversation?.members[0];
+
+const conversationId = currentConversation?._id;
 
   // Message Handlers
   const handleMessageChange = (e) => {
