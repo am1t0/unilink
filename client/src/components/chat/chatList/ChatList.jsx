@@ -1,20 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './chatList.css';
 import { Link } from 'react-router';
 import { useAuthStore } from '../../../store/useAuthStore'
 import { useMessageStore } from '../../../store/useMessageStore';
 import Loader from '../../loader/Loader';
 
-export default function ChatList() {
+export default function ChatList({ typingUsers }) {
    
     const { authUser } = useAuthStore();
     
     // All convos function and state
     const {getConversations, conversations, setCurrentConversation} = useMessageStore();
 
+
     useEffect(() => {
         getConversations();
     }, [getConversations]);
+
 
     // User with which chat is going on in each conversation
     const getOtherMember = (members) => {
@@ -37,6 +39,8 @@ export default function ChatList() {
                 <ul className="conversation-list">
                     {conversations?.map((conversation) => {
                         const otherMember = getOtherMember(conversation.members);
+                        const isTyping = typingUsers[conversation._id] === otherMember._id;
+
                         return (
                             <Link to={`/chats/${conversation._id}`} key={conversation._id}>
 
@@ -51,7 +55,18 @@ export default function ChatList() {
                                     </div>
                                     <div className="conversation-info">
                                         <h3>{otherMember.name}</h3>
-                                        <p>{conversation?.lastMessage?.text || 'No messages yet'}</p>
+                                        {isTyping ? (
+                                            <p className="typing">
+                                                typing
+                                                <span className="list-typing-dots">
+                                                    <span className="list-typing-dot"></span>
+                                                    <span className="list-typing-dot"></span>
+                                                    <span className="list-typing-dot"></span>
+                                                </span>
+                                            </p>
+                                        ) : (
+                                            <p>{conversation?.lastMessage?.text || 'No messages yet'}</p>
+                                        )}
                                     </div>
                                 </li>
                             </Link>

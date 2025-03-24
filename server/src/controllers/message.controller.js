@@ -10,7 +10,7 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
  */
 export const createMessage = asyncHandler(async (req, res) => {
     try {
-        const { conversationId, text } = req.body;
+        const { conversationId, text, receiverId } = req.body;
         const userId = req.user.id;
 
         // Validate conversationId and text
@@ -44,17 +44,27 @@ export const createMessage = asyncHandler(async (req, res) => {
             conversationId,
             sender: userId,
             text,
+            status: 'sent'
         });
 
-        await newMessage.save();
+        const savedMessage = await newMessage.save();
 
-        // Update the lastMessage field in the conversation
-        conversationExist.lastMessage = newMessage._id;
-        await conversationExist.save();
+        // Update conversation's lastMessage
+        await Conversation.findByIdAndUpdate(conversationId, {
+            lastMessage: savedMessage._id
+        });
 
+        // Return complete message object with _id
         res.status(201).json({
             success: true,
-            newMessage, 
+            newMessage: {
+                _id: savedMessage._id,
+                conversationId: savedMessage.conversationId,
+                sender: savedMessage.sender,
+                text: savedMessage.text,
+                status: savedMessage.status,
+                createdAt: savedMessage.createdAt
+            }
         });
 
     } catch (error) {
@@ -109,4 +119,41 @@ export const getAllMessage = asyncHandler( async ( req, res) =>{
             message: "Internal server error",
         });
     }
-})
+});
+
+
+/**
+ * @desc Update message status
+ * @route PATCH /api/v1/message/status/:messageId
+ * @access Private
+ */
+export const updateMessageStatus = asyncHandler(async (req, res) => {
+    try {
+        const { messageId } = req.params;
+        const { status } = req.body;
+
+        const message = await Message.findByIdAndUpdate(
+            messageId,
+            { status },
+            { new: true }
+        );
+
+        if (!message) {
+            return res.status(404).json({
+                success: false,
+                message: "Message not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+});

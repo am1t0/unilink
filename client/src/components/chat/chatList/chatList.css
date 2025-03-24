@@ -1,6 +1,6 @@
 .conversation {
     width: 32%;
-    height: 90vh;
+    height: 89vh;
     border-radius: 10px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -108,4 +108,33 @@
 .conversation-info p {
     margin: 0;
     color: rgba(255, 255, 255, 0.7);
+}
+
+.conversation-info p.typing {
+    color: #34b7f1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.list-typing-dots {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.list-typing-dot {
+    width: 3px;
+    height: 3px;
+    background-color: #34b7f1;
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: listDotFade 1s linear infinite;
+}
+
+.list-typing-dot:nth-child(2) { animation-delay: 0.33s; }
+.list-typing-dot:nth-child(3) { animation-delay: 0.66s; }
+
+@keyframes listDotFade {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
 }

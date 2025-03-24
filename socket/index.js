@@ -33,27 +33,54 @@ io.on("connection", (socket) => {
 
     //send and get message
     socket.on("sendMessage", (messageData) => {
-        const {senderId, receiverId, text, conversationId, createdAt} = messageData;
+        const user = getUser(messageData.receiverId);
+        if (user) {
+            io.to(user.socketId).emit("getMessage", {
+                _id: messageData._id, // Ensure _id is passed
+                conversationId: messageData.conversationId,
+                senderId: messageData.senderId,
+                text: messageData.text,
+                status: 'sent',
+                createdAt: messageData.createdAt
+            });
+        }
+    });
+
+    // Handle message received status
+    socket.on("messageReceived", ({ messageId, senderId, conversationId }) => {
+        if (!messageId) return; // Skip if no messageId
         
-        //get socketId for user
-        const user = getUser(receiverId);
-        
-        io.to(user?.socketId).emit("getMessage",{
-            conversationId,
-            sender: senderId,
-            text,
-            createdAt,
-            status: 'sent'
-        })
-    })
+        const user = getUser(senderId);
+
+        if (user) {
+            io.to(user.socketId).emit("messageStatusUpdate", {
+                messageId,
+                conversationId,
+                status: 'delivered'
+            });
+        }
+    });
+
+    // Handle message read status
+    socket.on("messageRead", ({ messageId ,conversationId, senderId }) => {
+        const user = getUser(senderId);
+        if (user) {
+            io.to(user.socketId).emit("messageStatusUpdate", {
+                messageId,
+                conversationId,
+                status: 'read'
+            });
+        }
+    });
 
     socket.on("typing", ( data ) =>{
 
+        
         const { senderId, receiverId , conversationId} = data;
-
+        
         const sender = getUser(senderId);
         const receiver = getUser(receiverId);
-
+        
         io.to(receiver?.socketId).emit("senderTyping", {
           senderId,
           receiverId,

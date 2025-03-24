@@ -43,11 +43,13 @@ export const useMessageStore = create((set) => ({
   // Send a new message
   sendMessage: async (messageData) => {
     try {
-      const response = await axiosInstance.post(`/message/new`, messageData );
-      set((state) => ({ 
-        messages: [...state.messages, response.data.newMessage]
+      const response = await axiosInstance.post(`/message/new`, messageData);
+      const newMessage = response.data.newMessage;
+      
+      set((state) => ({
+        messages: [...(state.messages || []), newMessage]
       }));
-      return response.data.message;
+      return newMessage;
     } catch (error) {
       toast.error(error.response?.data?.message || "Cannot send message");
       return null;
@@ -55,12 +57,38 @@ export const useMessageStore = create((set) => ({
   },
 
   //update the messages on recieving for current conversation
-  updateMessage: async (messageData) => {
-    set((state) => ({ messages: [...state.messages, messageData] }));
+  updateMessage: (messageData) => {
+
+    if (!messageData._id) return; // Ensure message has ID
+    
+    set((state) => ({
+      messages: [...(state.messages || []), {
+        _id: messageData._id,
+        conversationId: messageData.conversationId,
+        senderId: messageData.senderId,
+        text: messageData.text,
+        status: messageData.status,
+        createdAt: messageData.createdAt
+      }]
+    }));
   },
 
   // Clear messages when leaving a conversation
   clearMessages: () => {
     set({ messages: null, currentConversation: null });
-  }
+  },
+
+  // Update message status
+  updateMessageStatus: async (messageId, status) => {
+    try {
+      await axiosInstance.patch(`/message/status/${messageId}`, { status });
+      set((state) => ({
+        messages: state.messages?.map(msg =>
+          msg._id === messageId ? { ...msg, status } : msg
+        )
+      }));
+    } catch (error) {
+      console.error("Error updating message status:", error);
+    }
+  },
 }));
