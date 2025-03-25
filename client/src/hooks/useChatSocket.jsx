@@ -39,7 +39,6 @@ const useChatSocket = ({ setIsTyping, setTypingUsers }) => {
         }, 2000);
       }
 
-      console.log("typing users are ", data);
       // Set typing status for chat list conversation
       setTypingUsers((prev) => ({
         ...prev,

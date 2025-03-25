@@ -1,0 +1,199 @@
+/* ProfileCard Styles */
+.profile-card {
+    width: 72vw;
+    min-height: 64vh;
+    position: relative;
+    background-color: hsl(216, 33%, 97%);
+    border-radius: 5px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    margin-top: 20px;
+  }
+  
+  /* Header with profile image */
+  .profile-header {
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0a84ff;
+    padding: 16px;
+  }
+  
+  .profile-image {
+    background-color: red;
+    position: absolute;
+    top: 15%;
+    left: 20%;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 2px solid #f2f2f2;
+    object-fit: cover;
+  }
+  
+  .profile-info-container {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* Profile Information */
+  .profile-info {
+    width: 60%;
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .profile-name {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  /* Year Tag Styling */
+  .year-tag {
+    border: 1px solid;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    color: #1a22bf;
+  }
+  
+  .year-I {
+    background-color: #4caf50; /* Green */
+  }
+  
+  .year-II {
+    background-color: #ff9800; /* Orange */
+  }
+  
+  .year-III {
+    background-color: #f44336; /* Red */
+  }
+  
+  /* Profile Bio */
+  .profile-bio {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 12px;
+  }
+  
+  /* Institute & Course Info */
+ /* Profile Details with Icons */
+  
+  /* Icon Style */
+  .profile-institute .icon,
+  .profile-course .icon {
+    color: #5f12fa; /* Icon color */
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 30px;
+    background-color: #cfcfcf;
+  }
+  
+  /* Consistent alignment for text */
+  .profile-institute,
+  .profile-course {
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-institute p,
+  .profile-course p {
+    font-weight: 700;
+    font-size: 16px;
+    margin-left: 10px;
+    text-align: start;
+    color: rgb(20, 20, 20);
+    /* border: 1px solid red; */
+  }
+  
+  /* connection info and other buttons section  */
+  .connection-info {
+    background: rgb(255, 238, 194);
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 16%;
+    padding-left: 16px;
+    padding-top: 20px;
+  }
+
+  .first-row {
+    display: flex;
+    gap: 24px;
+  }
+
+  .first-row button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    background-color: rgb(233, 116, 6);
+    color: white;
+    height: 40px;
+  }
+
+    .first-row button:hover {
+        background: rgb(0, 0, 0, 0.2);
+    }
+
+    .icon {
+        font-size: 18px;
+    }
+
+    #profile-setting {
+        padding: 10px;
+        background: rgba(97, 97, 97, 0.1);
+        border-radius: 50%;
+        font-weight: 500;
+        color: #000000;
+        background: rgb(221, 220, 220);
+        cursor: pointer;
+    }
+
+    .connections-imgs {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .connections-imgs  img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        background-color: black;
+    }
+
+    .second-row span ,
+    .third-row span {
+        margin-left: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        color: rgb(96, 96, 96);
+    }
+    
+    .posts-imgs {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .posts-imgs img {
+        width: 50px;
+        height: 50px;
+        
+        object-fit: cover;
+        background-color: black;
+    }
+

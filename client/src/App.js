@@ -30,10 +30,10 @@ function App() {
       < Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
         <Route path="/" element={<FilterPost />} />
         <Route path="/chats" element= { <Chats/> }/>
+        <Route path="/profilePage" element={<ProfilePage /> }/>
       </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
-      <Route path="/profilePage" element={authUser? <ProfilePage /> : <Navigate to={"/login"}/> }/>
       <Route path="/profileedit" element={authUser? <ProfileEdit /> : <Navigate to={"/login"}/> }/>
       <Route path="/post-create" element={authUser? <PostCreate /> : <Navigate to={"/login"}/> }/>
     </Routes>
