@@ -1,0 +1,16 @@
+.profile-page {
+    /* border: 1px solid red; */
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 20px;
+}
+
+.profile-sections {
+    background-color: wheat;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+}
