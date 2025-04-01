@@ -1,7 +1,9 @@
-import React from "react";
-import './profilePosts.css'
+import React, { useState } from "react";
+import { BsHeart, BsShare, BsThreeDots } from "react-icons/bs";
+import './profilePosts.css';
 
 export default function ProfilePosts() {
+  const [showAll, setShowAll] = useState(false);
   const posts = [
     {
       _id: 1,
@@ -66,11 +68,12 @@ export default function ProfilePosts() {
     },
   ];
 
-  return (
-    <div>
-      <div className="posts-grid">
-        {posts.map((post) => (
+  const displayPosts = showAll ? posts : posts.slice(0, 3);
 
+  return (
+    <div className="posts-container">
+      <div className="posts-grid">
+        {displayPosts.map((post) => (
           <div key={post._id} className="post-card">
             <div className="post-user">
               <img
@@ -82,25 +85,45 @@ export default function ProfilePosts() {
                 <h4>{post.user.name}</h4>
                 <span className="post-tag">{post.tag}</span>
               </div>
+              <button className="post-options">
+                <BsThreeDots />
+              </button>
             </div>
 
             {post.media.length > 0 && (
-              <img
-                src={post.media[0]}
-                alt="Post media"
-                className="post-media"
-              />
+              <div className="post-media-container">
+                <img
+                  src={post.media[0]}
+                  alt="Post content"
+                  className="post-media"
+                />
+              </div>
             )}
 
-            <p className="post-description">{post.description?.slice(0,50)+"..."}</p>
+            <p className="post-description">{post.description}</p>
 
             <div className="post-stats">
-              <span>👍 {post.likeCount}</span>
-              <span>🔄 {post.share}</span>
+              <div className="stat-item">
+                <BsHeart />
+                <span>{post.likeCount}</span>
+              </div>
+              <div className="stat-item">
+                <BsShare />
+                <span>{post.share}</span>
+              </div>
             </div>
           </div>
         ))}
       </div>
+      
+      {posts.length > 3 && (
+        <button 
+          className="see-more-btn"
+          onClick={() => setShowAll(!showAll)}
+        >
+          {showAll ? 'Show Less' : 'See More Posts'}
+        </button>
+      )}
     </div>
   );
 }
