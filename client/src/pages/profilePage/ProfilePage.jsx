@@ -7,9 +7,6 @@ import ProfilePosts from "../../components/profilePosts/ProfilePosts";
 import ProfileCarrer from "../../components/profileCarrer/ProfileCarrer";
 
 const ProfilePage = () => {
-  const { authUser, checkingAuth } = useAuthStore();
-
-  if (checkingAuth) return null;
 
   return (
     <div className="profile-page">
@@ -25,13 +22,6 @@ const ProfilePage = () => {
             </div>
             <ProfilePosts />
           </div>
-
-          
-          <div id="education">
-
-          <ProfileCarrer showEducation />
-          </div>
-
          
         </div>
     </div>
