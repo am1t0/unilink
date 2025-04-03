@@ -319,6 +319,11 @@
     transform: rotate(90deg);
 }
 
+#profile-edit:hover {
+    background: #454545;
+    transform: rotate(90deg);
+}
+
 .second-row, .third-row {
     display: flex;
     flex-direction: column;

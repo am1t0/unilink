@@ -6,7 +6,8 @@ import {
     sendMe,
     updateProfile,
     uploadProfileImage,
-    uploadBannerImage
+    uploadBannerImage,
+    getProfile
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -34,5 +35,7 @@ router.post(
     upload.single("bannerImage"),
     uploadBannerImage
 );
+
+router.get("/profile/:profileId", protectRoute, getProfile)
 
 export default router;

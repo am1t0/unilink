@@ -1,30 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import "./editProfileForm.css";
-import { useAuthStore } from '../../store/useAuthStore';
-import { BsX } from 'react-icons/bs';
+import { useAuthStore } from "../../store/useAuthStore";
+import { BsX } from "react-icons/bs";
 
 const EditProfileForm = ({ isOpen, onClose }) => {
   const { authUser, updateProfile } = useAuthStore();
   const [formData, setFormData] = useState({
-    name: authUser?.name || '',
-    bio: authUser?.bio || '',
-    collage: authUser?.collage || '',
-    branch: authUser?.branch || '',
-    degree: authUser?.degree || '',
-    year: authUser?.year || 'I',
-    phone: authUser?.phone || ''
+    name: authUser?.name || "",
+    bio: authUser?.bio || "",
+    collage: authUser?.collage || "",
+    branch: authUser?.branch || "",
+    degree: authUser?.degree || "",
+    position: authUser?.position || "I",
+    phone: authUser?.phone || "",
   });
+
+  const [loading , setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     await updateProfile(formData);
+    setLoading(false);
     onClose();
   };
 
@@ -33,12 +37,14 @@ const EditProfileForm = ({ isOpen, onClose }) => {
   return (
     <div className="edit-profile-overlay">
       <div className="edit-profile-modal">
-        <button className="close-button" onClick={onClose}>
-          <BsX size={24} />
-        </button>
-        
-        <h2>Edit Profile</h2>
-        
+        <div className="edit-profile-header">
+          <h2>Edit Profile</h2>
+
+          <button className="close-button" onClick={onClose}>
+            <BsX size={24} />
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Name</label>
@@ -65,13 +71,15 @@ const EditProfileForm = ({ isOpen, onClose }) => {
           <div className="form-row">
             <div className="form-group">
               <label>College</label>
-              <input
-                type="text"
+              <select
                 name="collage"
                 value={formData.collage}
                 onChange={handleChange}
-                placeholder="Your college"
-              />
+              >
+                <option value="">Select College</option>
+                <option value="Institute of Engineering and Technology, DAVV">Institute of Engineering and Technology, DAVV</option>
+                <option value="Shri Govindaram Seksariya Institute of Technology">Shri Govindaram Seksariya Institute of Technology</option>
+              </select>
             </div>
 
             <div className="form-group">
@@ -89,24 +97,33 @@ const EditProfileForm = ({ isOpen, onClose }) => {
           <div className="form-row">
             <div className="form-group">
               <label>Branch</label>
-              <input
-                type="text"
+              <select
                 name="branch"
                 value={formData.branch}
                 onChange={handleChange}
-                placeholder="Your branch"
-              />
+              >
+                <option value="">Select Branch</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Information and Technology">Information and Technology</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+              </select>
             </div>
 
             <div className="form-group">
               <label>Degree</label>
-              <input
-                type="text"
+              <select
                 name="degree"
                 value={formData.degree}
                 onChange={handleChange}
-                placeholder="Your degree"
-              />
+              >
+                <option value="">Select Degree</option>
+                <option value="B.Tech">B.Tech</option>
+                <option value="M.Tech">M.Tech</option>
+                <option value="B.Sc">B.Sc</option>
+                <option value="M.Sc">M.Sc</option>
+                <option value="PhD">PhD</option>
+              </select>
             </div>
           </div>
 
@@ -126,7 +143,7 @@ const EditProfileForm = ({ isOpen, onClose }) => {
               Cancel
             </button>
             <button type="submit" className="save-btn">
-              Save Changes
+            {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

@@ -9,16 +9,16 @@ import {
   BsPerson,
   BsCamera,
   BsMortarboardFill,
-  BsPencil
+  BsPencil,
 } from "react-icons/bs";
 import { useParams } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import { toast } from "react-hot-toast";
 import EditProfileForm from "../editProfileForm/EditProfileForm";
 
-export default function ProfileCard() {
-  const { authUser, uploadProfileImage, uploadBannerImage } = useAuthStore();
-  const { userId } = useParams();
+export default function ProfileCard({ user }) {
+  const { uploadProfileImage, uploadBannerImage, authUser } = useAuthStore();
+  const { profileId } = useParams();
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
 
   const handleBannerUpload = async (e) => {
@@ -59,8 +59,8 @@ export default function ProfileCard() {
     }
   };
 
-  const checkUser = () => {
-    return !userId || authUser._id === userId;
+  const isOwnProfile = () => {
+    return !profileId || authUser._id === profileId;
   };
 
   const handleEditClick = () => {
@@ -76,15 +76,17 @@ export default function ProfileCard() {
         <div
           className="profile-header"
           style={{
-            backgroundImage: authUser?.banner
-              ? `url(${authUser.banner})`
-              : "none",
-            backgroundColor: !authUser?.banner ? "#01112a" : "transparent",
+            backgroundImage: user?.banner ? `url(${user.banner})` : "none",
+            backgroundColor: !user?.banner ? "#01112a" : "transparent",
           }}
         >
-          {checkUser() && (
+          {isOwnProfile() && (
             <label className="banner-upload">
-              <input type="file" accept="image/*" onChange={handleBannerUpload} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleBannerUpload}
+              />
               <div className="upload-overlay">
                 <BsCamera className="camera-icon" />
                 <span>Upload Banner</span>
@@ -94,11 +96,11 @@ export default function ProfileCard() {
 
           <div className="profile-image-container">
             <img
-              src={authUser?.avatar || defaultAvatar}
+              src={user?.avatar || defaultAvatar}
               alt="Profile"
               className="profile-image"
             />
-            {checkUser() && (
+            {isOwnProfile() && (
               <label className="profile-image-upload">
                 <input
                   type="file"
@@ -115,47 +117,49 @@ export default function ProfileCard() {
 
         <div className="profile-info-container">
           <div className="profile-info">
-            <h3 className="profile-name">{authUser?.name || "Add Name"}</h3>
-            <p className="profile-bio">{authUser?.bio || "Add bio..."}</p>
+            <h3 className="profile-name">{user?.name || "Add Name"}</h3>
+            <p className="profile-bio">{user?.bio || "Add bio..."}</p>
 
             <div className="profile-details">
               <div className="profile-institute">
                 <BsBuilding className="icon" />
-                <p>{authUser?.collage || "Add College"}</p>
+                <p>{user?.collage || "Add College"}</p>
               </div>
               <div className="profile-course">
                 <BsBook className="icon" />
-                <p>{authUser?.branch || "Add Course"}</p>
+                <p>{user?.branch || "Add Course"}</p>
               </div>
               <div className="profile-degree">
                 <BsMortarboardFill className="icon" />
-                <p>{authUser?.degree || "Add Degree"}</p>
+                <p>{user?.degree || "Add Degree"}</p>
               </div>
             </div>
           </div>
 
           <div className="connection-info">
             <div className="first-row">
-              {!checkUser() && (
-                <button>
-                  <BsPerson className="icon" />
-                  <p>Connect</p>
-                </button>
+              {!isOwnProfile() && (
+                <>
+                  <button>
+                    <BsPerson className="icon" />
+                    <p>Connect</p>
+                  </button>
+                  <button>
+                    <BsMessenger className="icon" />
+                    <p>Message</p>
+                  </button>
+                </>
               )}
 
-              {!checkUser() && (
-                <button>
-                  <BsMessenger className="icon" />
-                  <p>Message</p>
-                </button>
-              )}
-              <BsNut id="profile-setting" className="icon" />
-              {checkUser() && (
-                <BsPencil 
-                  id="profile-edit" 
-                  className="icon" 
-                  onClick={handleEditClick}
-                />
+              {isOwnProfile() && (
+                <>
+                  <BsPencil
+                    id="profile-edit"
+                    className="icon"
+                    onClick={handleEditClick}
+                  />
+                  <BsNut id="profile-setting" className="icon" />
+                </>
               )}
             </div>
 
@@ -207,10 +211,11 @@ export default function ProfileCard() {
           </div>
         </div>
       </div>
-      
-      <EditProfileForm 
-        isOpen={isEditFormOpen} 
-        onClose={() => setIsEditFormOpen(false)} 
+
+      <EditProfileForm
+        isOpen={isEditFormOpen}
+        onClose={() => setIsEditFormOpen(false)}
+        user={user}
       />
     </>
   );

@@ -20,15 +20,6 @@ export default function ProfileSections() {
         <BsFilePost className="icon" />
         <h3>Posts</h3>
       </li>
-      <li onClick={() => scrollToSection('experience')}>
-        <BsBriefcase className="icon" />
-        <h3>Experience</h3>
-      </li>
-      <li onClick={() => scrollToSection('education')}>
-        <BsBook className="icon" />
-        <h3>Education</h3>
-      </li>
-     
     </ul>
   );
 }

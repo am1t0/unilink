@@ -32,11 +32,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    year: {
-      type: String,
-      enum: ["I", "II", "III", "IV", "V"],
-      default: "I",
-    },
     phone: {
       type: String,
       default: "",

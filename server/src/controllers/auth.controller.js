@@ -159,7 +159,6 @@ export const updateProfile = async (req, res) => {
 			user: updatedUser,
 		});
 	} catch (error) {
-		console.log("Error in updateProfile: ", error);
 		return res.status(500).json({
 			success: false,
 			message: "Internal server error",
@@ -243,5 +242,30 @@ export const uploadBannerImage = asyncHandler(async (req, res) => {
     });
   }
 });
+
+export const getProfile = asyncHandler( async ( req, res) => {
+  try {
+    const { profileId } = req.params; // Get the user ID from the request parameters
+    const user = await User.findById(profileId).select("-password -phone"); // Find the user by ID
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+})
 
 export { registerUser, loginUser };
