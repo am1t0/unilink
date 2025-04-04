@@ -116,7 +116,6 @@ export const useAuthStore = create((set) => ({
   },
 
   updateProfile: async (data) => {
-    console.log("data is ",data);
     try {
 
       set({ loading: true });
@@ -172,10 +171,10 @@ export const useAuthStore = create((set) => ({
 
   uploadBannerImage: async (file) => {
     try {
-      set({ loading: true });
+      set({ loading: true }); 
       const formData = new FormData();
-
-      const res = await axiosInstance.post("/auth/upload-banner-image", formData, {
+      formData.append("bannerImage", file);
+      const res = await axiosInstance.post("/auth/upload-banner-image", formData , {
         headers: {
           "Content-Type": "multipart/form-data",
         },

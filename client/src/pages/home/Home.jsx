@@ -4,6 +4,7 @@ import Header from '../../components/header/Header';
 import { Outlet } from 'react-router-dom';
 import Post from '../../components/post/Post';
 import { usePostStore } from '../../store/usePostStore';
+import Recommendations from '../../components/recommendations/Recommendations';
 
 const Home = () => {
   const { getAllPosts, posts } = usePostStore();
@@ -19,6 +20,7 @@ const Home = () => {
     <div style={{ backgroundColor: '#131C35' }}>
       <Header />
       <Outlet />
+      <Recommendations/>
       {/* {posts?.map((post) => (
         <Post
           key={post._id} 

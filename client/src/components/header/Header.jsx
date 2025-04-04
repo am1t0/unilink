@@ -92,7 +92,7 @@ const Header = () => {
             </button></Link>
           </>
         ) : (<>
-          <Link to={'/profilepage'}><button className="headder-menu-item" style={{border:'none'}}>
+          <Link to={`/profilepage/${authUser?._id}`}><button className="headder-menu-item" style={{border:'none'}}>
             <UserRound size={20} />
           </button></Link>
           <button className="headder-menu-item"onClick={logout}>
