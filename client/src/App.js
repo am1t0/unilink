@@ -9,9 +9,9 @@ import Home from "./pages/home/Home";
 import ProfilePage from "./pages/profilePage/ProfilePage";
 import ProfileEdit from "./pages/profileEdit/ProfileEdit";
 import PostCreate from "./pages/postCreate/PostCreate";
-import FilterPost from "./components/filterPost/FilterPost";
 import Chats from "./pages/chats/Chats";
 import { SocketProvider } from "./providers/Socket";
+import Entry from "./pages/entry/Entry";
 
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
    <SocketProvider>
     <Routes>
       < Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
-        <Route path="/" element={<FilterPost />} />
+        <Route path="/" element={<Entry />} />
         <Route path="/chats" element= { <Chats/> }/>
         <Route path="/profilePage/:profileId" element={<ProfilePage />} /> 
       </Route>

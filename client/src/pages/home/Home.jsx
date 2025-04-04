@@ -20,16 +20,6 @@ const Home = () => {
     <div style={{ backgroundColor: '#131C35' }}>
       <Header />
       <Outlet />
-      <Recommendations/>
-      {/* {posts?.map((post) => (
-        <Post
-          key={post._id} 
-          mediaArray={post.media} 
-          description={post.description} 
-          createdAt={post.createdAt}
-          user={post.user}
-        />
-      ))} */}
     </div>
   );
 };

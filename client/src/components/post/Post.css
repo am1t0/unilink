@@ -1,29 +1,29 @@
 .post-container {
-    background-color: #0a0f1e;
     color: white;
     border-radius: 8px;
-    width: 90%;
-    max-width: 700px;
+    width: 100%;
+    max-width: 800px;
     margin: auto;
     padding-bottom: 20px;
     margin-bottom: 40px;
-  }
-  
-  .post-header {
+    background-color: #0a0f1e;
+}
+
+.post-header {
     display: flex;
     flex-direction: row-reverse;
     justify-content: space-between;
     padding: 20px;
     padding-bottom: 10px;
-  }
-  
-  .post-user-info {
+}
+
+.post-user-info {
     display: flex;
     align-items: center;
     gap: 10px;
-  }
-  
-  .post-avatar {
+}
+
+.post-avatar {
     width: 40px;
     height: 40px;
     background-color: #fff;
@@ -33,32 +33,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  
-  .post-details {
+}
+
+.post-details {
     display: flex;
     flex-direction: column;
-  }
-  
-  .post-username-and-link {
+}
+
+.post-username-and-link {
     display: flex;
     align-items: center;
     gap: 10px;
-  }
-  
-  .post-username {
+}
+
+.post-username {
     font-size: 16px;
     font-weight: bold;
     margin: 0;
-  }
-  
-  .post-year {
+}
+
+.post-year {
     font-size: 14px;
     color: gray;
     margin: 0;
-  }
-  
-  .post-link-btn {
+}
+
+.post-link-btn {
     background: none;
     border: 1px solid white;
     color: white;
@@ -71,62 +71,62 @@
     justify-content: center;
     align-items: center;
     margin-top: 5px;
-  }
-  
-  .post-date {
+}
+
+.post-date {
     font-size: 14px;
     color: white;
     margin-bottom: 5px;
     margin-top: 5px;
-  }
-  
-  .post-description {
+}
+
+.post-description {
     background: #c1bebe;
     text-align: center;
     margin-top: 10px;
     color: black;
     padding: 10px;
-  }
-  
-  .post-description h3 {
+}
+
+.post-description h3 {
     margin-top: 0;
-  }
-  
-  .post-description p {
+}
+
+.post-description p {
     margin: 0;
-  }
-  
-  .post-media-container {
+}
+
+.post-media-container {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 400px; 
-    overflow: hidden; 
+    height: 500px; /* Increased height */
+    overflow: hidden;
     margin-bottom: 10px;
-  }
-  
-  .post-media-wrapper {
+}
+
+.post-media-wrapper {
     width: 100%;
     height: 100%; /* Take full height of the container */
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-  
-  .post-media {
+}
+
+.post-media {
     width: 100%;
     height: 100%; /* Take full height of the container */
     object-fit: cover; /* Ensures media fills the container without distortion */
     border-radius: 0; /* Remove border radius */
-  }
-  
-  /* Ensure videos fill the container properly */
-  video.post-media {
+}
+
+/* Ensure videos fill the container properly */
+video.post-media {
     object-fit: cover; /* Ensures videos fill the container without distortion */
-  }
-  
-  .nav-button {
+}
+
+.nav-button {
     background: rgba(0, 0, 0, 0.5);
     border: none;
     color: white;
@@ -140,63 +140,63 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 1;
-  }
-  
-  .nav-button.prev-button {
+}
+
+.nav-button.prev-button {
     left: 10px;
-  }
-  
-  .nav-button.next-button {
+}
+
+.nav-button.next-button {
     right: 10px;
-  }
-  
-  .post-actions {
+}
+
+.post-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 15px;
     border-radius: 8px;
     padding: 10px 20px;
-  }
-  
-  .post-left-actions {
+}
+
+.post-left-actions {
     display: flex;
     align-items: center;
     gap: 15px;
-  }
-  
-  .post-right-action {
+}
+
+.post-right-action {
     display: flex;
     align-items: center;
     gap: 5px;
     cursor: pointer;
-  }
-  
-  .post-action {
+}
+
+.post-action {
     display: flex;
     align-items: center;
     gap: 5px;
     cursor: pointer;
-  }
-  
-  .post-action span,
-  .post-right-action span {
+}
+
+.post-action span,
+.post-right-action span {
     font-size: 14px;
-  }
-  
-  @media (max-width: 400px) {
+}
+
+@media (max-width: 400px) {
     .post-username {
-      font-size: 12px;
+        font-size: 12px;
     }
     .post-link-btn {
-      width: 59px;
-      margin-top: 5px;
-      font-size: 10px;
+        width: 59px;
+        margin-top: 5px;
+        font-size: 10px;
     }
     .post-date {
-      font-size: 10px;
+        font-size: 10px;
     }
     .nav-button {
-      padding: 8px; /* Smaller buttons for mobile */
+        padding: 8px; /* Smaller buttons for mobile */
     }
-  }
+}

@@ -11,39 +11,35 @@
     color: #ffffff;
     margin-bottom: 0;
 }
+
 .user-card {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #1a2542;
-    padding: 12px 16px;
+    flex-direction: column;
+    background: #1E2A45; /* Lighter background */
+    padding: 12px;
     border-radius: 12px;
-    width: 100%;
-    max-width: 350px;
-    transition: all 0.3s ease;
+    gap: 12px;
     border: 1px solid #2a3754;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .user-card:hover {
-    background: #1f2c4f;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    background: #243251;
+    transition: all 0.2s ease;
 }
 
-.user-main {
+.user-info-section {
     display: flex;
-    align-items: center;
     gap: 12px;
+    align-items: center;
     text-decoration: none;
 }
 
-.user-card img {
+.user-info-section img {
     width: 45px;
     height: 45px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #2a3754;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .user-info {
@@ -52,8 +48,7 @@
 
 .user-info h4 {
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 15px;
     color: #ffffff;
 }
 
@@ -65,57 +60,36 @@
 
 .action-buttons {
     display: flex;
-    gap: 16px;
-    align-items: center;
+    gap: 8px;
 }
 
-.connect-user,
-.message-user {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    color: #8b95a9;
-    transition: all 0.2s ease;
-}
-
-.icon-wrapper {
-    background: rgba(13, 110, 253, 0.1);
-    padding: 8px;
-    border-radius: 8px;
+.action-btn {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
 }
 
-.connect-user .icon-wrapper {
-    background: rgba(13, 110, 253, 0.1);
-    color: #0d6efd;
+.action-btn:nth-child(1) {
+    background: #0d6efd;
 }
 
-.message-user .icon-wrapper {
-    background: rgba(25, 135, 84, 0.1);
-    color: #198754;
+.action-btn:nth-child(2) {
+    background: #2a3754;
 }
 
-.button-text {
-    font-size: 12px;
-    font-weight: 500;
+.action-btn:nth-child(1):hover {
+    background: #0b5ed7;
 }
 
-.connect-user:hover .icon-wrapper {
-    background: rgba(13, 110, 253, 0.2);
-}
-
-.message-user:hover .icon-wrapper {
-    background: rgba(25, 135, 84, 0.2);
-}
-
-.connect-user:hover .button-text,
-.message-user:hover .button-text {
-    color: #ffffff;
+.action-btn:nth-child(2):hover {
+    background: #3a4764;
 }

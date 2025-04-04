@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./recommendations.css";
 import { useLinkStore } from "../../store/useLinkStore.js";
 import { BsPersonPlusFill, BsChatDots } from "react-icons/bs";
-import { Link } from "react-router";
+import { Link} from "react-router";
 
 const Recommendations = () => {
 
@@ -25,7 +25,7 @@ const Recommendations = () => {
           <h3 className="recommendations-title">Recommendations</h3>
           {recommendations?.map((user) => (
             <div key={user._id} className="user-card">
-              <Link to={`/profilePage/${user._id}`} className="user-main">
+              <Link  to={`/profilePage/${user._id}`} className="user-info-section">
                 <img src={user.avatar || defaultAvatar} alt={user.name} />
                 <div className="user-info">
                   <h4>{user.name}</h4>
@@ -33,17 +33,11 @@ const Recommendations = () => {
                 </div>
               </Link>
               <div className="action-buttons">
-                <button className="connect-user">
-                  <span className="icon-wrapper">
-                    <BsPersonPlusFill />
-                  </span>
-                  <span className="button-text">Link</span>
+                <button className="action-btn">
+                  <BsPersonPlusFill /> Link
                 </button>
-                <button className="message-user">
-                  <span className="icon-wrapper">
-                    <BsChatDots />
-                  </span>
-                  <span className="button-text">Message</span>
+                <button className="action-btn">
+                  <BsChatDots /> Message
                 </button>
               </div>
             </div>
