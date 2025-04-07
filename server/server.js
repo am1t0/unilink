@@ -30,7 +30,7 @@ import postsRouter from "./src/routes/post.route.js";
 import conversationRouter from "./src/routes/conversation.route.js";
 import messageRouter from "./src/routes/message.route.js";
 import commentRouter from "./src/routes/message.route.js";
-import postInteractionRouter from "./src/routes/post-interaction.router.js";
+import postInteractionRouter from "./src/routes/post-interaction.route.js";
 import userRouter from "./src/routes/user.route.js";
 import linkRouter from "./src/routes/links.route.js";
 

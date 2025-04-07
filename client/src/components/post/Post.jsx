@@ -10,7 +10,7 @@ import {
 import "./Post.css";
 import Comments from "../comments/Comments";
 import { usePostStore } from "../../store/usePostStore";
-import { useAuthStore } from "../../store/useAuthStore.";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const Post = ({
   postId,
@@ -32,10 +32,10 @@ const Post = ({
   const { authUser } = useAuthStore();
 
   useEffect(() => {
-    if (likedBy.includes(authUser._id)) {
+    if (likedBy?.includes(authUser._id)) {
       setLiked(true);
     }
-  }, [likedBy, user._id]);
+  }, [authUser._id, likedBy, user._id]);
 
   const handleNext = () => {
     setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % mediaArray.length);
@@ -90,7 +90,6 @@ const Post = ({
         </div>
       )}
 
-<<<<<<< HEAD
       {mediaArray.length > 0 && (
         <div className="post-media-container">
           {mediaArray.length > 1 && (
@@ -117,27 +116,6 @@ const Post = ({
             <button className="nav-button next-button" onClick={handleNext}>
               <ChevronRight size={24} />
             </button>
-=======
-      <div className="post-media-container">
-        {mediaArray.length > 1 && (
-          <button className="nav-button prev-button" onClick={handlePrev}>
-            <ChevronLeft size={24} />
-          </button>
-        )}
-        <div className="post-media-wrapper">
-          {mediaArray[currentMediaIndex]?.type === 'photo' ? (
-            <img
-              src={mediaArray[currentMediaIndex]?.url}
-              alt={`Post Media ${currentMediaIndex}`}
-              className="post-media"
-            />
-          ) : (
-            <video
-              src={mediaArray[currentMediaIndex]?.url}
-              controls
-              className="post-media"
-            />
->>>>>>> 0f64d3811142c9813acbf2e2e4a4a22c811589b7
           )}
         </div>
       )}

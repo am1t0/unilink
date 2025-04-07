@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Send, Heart, Trash } from "lucide-react";
 import "./comments.css";
 import { useCommentStore } from "../../store/useCommentStore";
-import { useAuthStore } from "../../store/useAuthStore.";
+import { useAuthStore } from "../../store/useAuthStore.js";
 
 const Comments = ({setCommentCounts, postId }) => {
   const {
@@ -55,7 +55,8 @@ const Comments = ({setCommentCounts, postId }) => {
 
   const handleDeleteComment = async (commentId) => {
     setCommentCounts((prev) => prev - 1);
-    if (!confirm("Are you sure you want to delete this comment?")) return;
+    const userConfirmed = window.confirm("Are you sure you want to delete this comment?");
+    if (!userConfirmed) return;
     try {
       await removeComment(commentId);
       fetchComments(postId);

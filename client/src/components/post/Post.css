@@ -33,7 +33,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-<<<<<<< HEAD
   }.post-avatar {
     width: 40px;
     height: 40px;
@@ -55,11 +54,6 @@
 }
   
   .post-details {
-=======
-}
-
-.post-details {
->>>>>>> 0f64d3811142c9813acbf2e2e4a4a22c811589b7
     display: flex;
     flex-direction: column;
 }
@@ -74,16 +68,10 @@
     font-size: 16px;
     font-weight: bold;
     margin: 0;
-<<<<<<< HEAD
     cursor: pointer;
   }
   
   .post-year {
-=======
-}
-
-.post-year {
->>>>>>> 0f64d3811142c9813acbf2e2e4a4a22c811589b7
     font-size: 14px;
     color: gray;
     margin: 0;
@@ -230,61 +218,4 @@ video.post-media {
     .nav-button {
         padding: 8px; /* Smaller buttons for mobile */
     }
-<<<<<<< HEAD
-  }
-
-  /* Pop-up Overlay */
-.comments-popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Ensure it's above other content */
-}
-
-/* Pop-up Container */
-.comments-popup {
-  background-color: #0a0f1e;
-  color: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 650px;
-  max-height: 80vh; /* Limit height to 80% of the viewport */
-  overflow-y: auto; /* Enable scrolling for overflow content */
-  padding: 20px;
-  position: relative;
-}
-
-/* Pop-up Header */
-.comments-popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.comments-popup-header h3 {
-  margin: 0;
-}
-
-/* Close Button */
-.close-button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-/* Pop-up Content */
-.comments-popup-content {
-  max-height: calc(80vh - 100px); /* Adjust height to account for header and padding */
-  overflow-y: auto; /* Enable scrolling for comments */
-=======
->>>>>>> 0f64d3811142c9813acbf2e2e4a4a22c811589b7
 }

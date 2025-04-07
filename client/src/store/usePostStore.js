@@ -14,12 +14,8 @@ export const usePostStore = create((set, get) => ({
           "Content-Type": "multipart/form-data",
         },
       });
-<<<<<<< HEAD
       const currentPosts = get().posts || [];
       set({ posts: [response.data.post, ...currentPosts] });
-=======
-      set((state) => ({ posts: [...state.posts || [], response.data.post] }));
->>>>>>> 0f64d3811142c9813acbf2e2e4a4a22c811589b7
       toast.success("Post created successfully");
     } catch (error) {
       console.log(error);
@@ -32,10 +28,6 @@ export const usePostStore = create((set, get) => ({
   getAllPosts : async () => {
     try {
       const response = await axiosInstance.get("/posts/getAll-posts");
-<<<<<<< HEAD
-=======
-
->>>>>>> 0f64d3811142c9813acbf2e2e4a4a22c811589b7
       set({ posts: response.data.posts });
     } catch (error) {
       
