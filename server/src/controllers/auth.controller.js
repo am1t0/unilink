@@ -159,7 +159,6 @@ export const updateProfile = async (req, res) => {
 			user: updatedUser,
 		});
 	} catch (error) {
-		console.log("Error in updateProfile: ", error);
 		return res.status(500).json({
 			success: false,
 			message: "Internal server error",
@@ -172,5 +171,101 @@ export const logout = async (req, res) => {
 	res.status(200).json({ success: true, message: "Logged out successfully" });
 }
 
+export const uploadProfileImage = asyncHandler(async (req, res) => {
+  try {
+    const localFilePath = req.file?.path;
+
+    if (!localFilePath) {
+      return res.status(400).json({
+        success: false,
+        message: "Profile image is required"
+      });
+    }
+
+    // Upload to cloudinary
+    const result = await cloudinary.uploader.upload(localFilePath);
+
+    // Update user profile
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { avatar: result.secure_url },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      avatar: result.secure_url,
+      message: "Profile image updated successfully"
+    });
+
+  } catch (error) {
+    console.log("Error in uploadProfileImage: ", error);
+    res.status(500).json({
+      success: false,
+      message: "Error uploading profile image"
+    });
+  }
+});
+
+export const uploadBannerImage = asyncHandler(async (req, res) => {
+  try {
+    const localFilePath = req.file?.path;
+
+    if (!localFilePath) {
+      return res.status(400).json({
+        success: false,
+        message: "Banner image is required"
+      });
+    }
+
+    // Upload to cloudinary
+    const result = await cloudinary.uploader.upload(localFilePath);
+
+    // Update user profile
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { banner: result.secure_url },
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      banner: result.secure_url,
+      message: "Banner image updated successfully"
+    });
+
+  } catch (error) {
+    console.log("Error in uploadBannerImage: ", error);
+    res.status(500).json({
+      success: false,
+      message: "Error uploading banner image"
+    });
+  }
+});
+
+export const getProfile = asyncHandler( async ( req, res) => {
+  try {
+    const { profileId } = req.params; // Get the user ID from the request parameters
+    const user = await User.findById(profileId).select("-password -phone"); // Find the user by ID
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+})
 
 export { registerUser, loginUser };

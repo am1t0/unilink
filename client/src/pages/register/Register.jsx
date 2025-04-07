@@ -3,7 +3,7 @@ import "./register.css";
 import { Loader, RefreshCcw } from 'lucide-react';
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useAuthStore } from "../../store/useAuthStore.";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const Register = () => {
   const { registerUser, loading } = useAuthStore();
@@ -57,7 +57,7 @@ const Register = () => {
           <label className="register-label">Your College</label>
           <select className="register-select" onChange={(e) => setCollageName(e.target.value)} value={collageName}>
             <option value="">Select Your College</option>
-            <option>IET-Davv</option>
+            <option>Institute of Engineering and Technology, DAVV</option>
             <option>LNCT Bhopal</option>
             <option>SGSITS Indore</option>
             <option>MIT Pune</option>

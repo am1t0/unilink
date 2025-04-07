@@ -1,0 +1,95 @@
+.recommendations {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+}
+
+.recommendations-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 0;
+}
+
+.user-card {
+    display: flex;
+    flex-direction: column;
+    background: #1E2A45; /* Lighter background */
+    padding: 12px;
+    border-radius: 12px;
+    gap: 12px;
+    border: 1px solid #2a3754;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.user-card:hover {
+    background: #243251;
+    transition: all 0.2s ease;
+}
+
+.user-info-section {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    text-decoration: none;
+}
+
+.user-info-section img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info h4 {
+    margin: 0;
+    font-size: 15px;
+    color: #ffffff;
+}
+
+.user-info p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #8b95a9;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+}
+
+.action-btn:nth-child(1) {
+    background: #0d6efd;
+}
+
+.action-btn:nth-child(2) {
+    background: #2a3754;
+}
+
+.action-btn:nth-child(1):hover {
+    background: #0b5ed7;
+}
+
+.action-btn:nth-child(2):hover {
+    background: #3a4764;
+}

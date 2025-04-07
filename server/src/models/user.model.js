@@ -49,6 +49,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    banner: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true } // Fixed typo
 );

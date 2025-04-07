@@ -4,6 +4,7 @@ import Header from '../../components/header/Header';
 import { Outlet } from 'react-router-dom';
 import Post from '../../components/post/Post';
 import { usePostStore } from '../../store/usePostStore';
+import Recommendations from '../../components/recommendations/Recommendations';
 
 const Home = () => {
   const { getAllPosts, posts } = usePostStore();
@@ -13,6 +14,9 @@ const Home = () => {
   }, [getAllPosts]);
   console.log(posts);
   
+  
+
+
 
   return (
     <div style={{ backgroundColor: '#131C35' }}>

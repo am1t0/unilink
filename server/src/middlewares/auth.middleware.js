@@ -7,6 +7,7 @@ export const protectRoute = asyncHandler(async (req, res, next) => {
     
     let token = req.cookies.jwt;
 
+
      // Check for token in headers if not found in cookies
      if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];

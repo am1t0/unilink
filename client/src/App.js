@@ -2,18 +2,20 @@ import { useEffect } from "react";
 import {Toaster} from "react-hot-toast"
 import "./App.css";
 import Login from "./pages/login/Login";
-import { useAuthStore } from "./store/useAuthStore.";
+import { useAuthStore } from "./store/useAuthStore";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Register from "./pages/register/Register";
 import Home from "./pages/home/Home";
 import ProfilePage from "./pages/profilePage/ProfilePage";
 import ProfileEdit from "./pages/profileEdit/ProfileEdit";
-import HomeScene  from "./scenes/home";
 import PostCreate from "./pages/postCreate/PostCreate";
 import Header from "./components/header/Header";
 import FilterPost from "./components/filterPost/FilterPost";
 import Post from "./components/post/Post";
 import Comments from "./components/comments/Comments";
+import Chats from "./pages/chats/Chats";
+import { SocketProvider } from "./providers/Socket";
+import Entry from "./pages/entry/Entry";
 
 
 function App() {
@@ -27,9 +29,12 @@ function App() {
 
   return (
     <>
+   <SocketProvider>
     <Routes>
-      <Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
-        <Route path="/" element={<FilterPost />} />
+      < Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
+        <Route path="/" element={<Entry />} />
+        <Route path="/chats" element= { <Chats/> }/>
+        <Route path="/profilePage/:profileId" element={<ProfilePage />} /> 
       </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
@@ -38,6 +43,7 @@ function App() {
       <Route path="/post-create" element={authUser? <PostCreate /> : <Navigate to={"/login"}/> }/>
       <Route path="/comments" element={authUser? <Comments /> : <Navigate to={"/login"}/> }/>
     </Routes>
+    </SocketProvider>
     <Toaster/>
     </>
   );

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast"
-import { useAuthStore } from "../../store/useAuthStore.";
+import { useAuthStore } from "../../store/useAuthStore";
 import { Loader } from "lucide-react";
 const Login = () => {
   const [email, setEmail] = useState("");

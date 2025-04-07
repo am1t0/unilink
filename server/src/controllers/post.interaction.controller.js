@@ -207,6 +207,59 @@ export const getComments = asyncHandler(async (req, res) => {
     }
   });
 
+/**
+ * @desc Update a comment
+ * @route PATCH /api/v1/post-interaction/update/:commentId
+ * @access Private
+ */
+export const updateComment = asyncHandler(async (req, res) => {
+    const { commentId } = req.params;
+    const { text } = req.body; // New comment content
+    const userId = req.user.id;
+
+    try {
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Comment not found" 
+            });
+        }
+
+        // Ensure only the owner can update their comment
+        if (comment.userId.toString() !== userId) {
+            return res.status(403).json({ 
+                success: false, 
+                message: "Unauthorized" 
+            });
+        }
+       
+        if (!text) {        
+            return res.status(400).json({ 
+                success: false, 
+                message: "Comment text is required" 
+            });
+        }
+        // Update the comment content
+        comment.text = text;
+        await comment.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Comment updated successfully",
+            updatedComment: comment,
+        });
+
+    } catch (error) {
+
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+        });
+    }
+});
+
+
 
 /**
  * @desc Delete a comment
@@ -329,6 +382,8 @@ export const toggleSave = asyncHandler(async (req, res) => {
  * @route POST /api/v1/post-interaction/:postId/share
  * @access Private
  */
+
+// WHEN LINKS CONTROLLER OR STRUCUTRE FORMED THEN IMPLEMENT
 export const sharePost = asyncHandler(async (req, res) => {
     const { postId } = req.params;
 

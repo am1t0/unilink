@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./profileedit.css";
 import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
-import { useAuthStore } from "../../store/useAuthStore.";
+import { useAuthStore } from "../../store/useAuthStore";
 
 const ProfileEdit = () => {
   const [loading, setLoading] = useState(false);

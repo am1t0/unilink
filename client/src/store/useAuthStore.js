@@ -116,7 +116,6 @@ export const useAuthStore = create((set) => ({
   },
 
   updateProfile: async (data) => {
-    console.log("data is ",data);
     try {
 
       set({ loading: true });
@@ -139,6 +138,75 @@ export const useAuthStore = create((set) => ({
       } else {
         toast.error(error.response?.data?.message || "Something went wrong");
       }
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  uploadProfileImage: async (file) => {
+    try {
+      set({ loading: true });
+      const formData = new FormData();
+      formData.append("profileImage", file);
+
+      const res = await axiosInstance.post("/auth/upload-profile-image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      set((state) => ({
+        authUser: { ...state.authUser, avatar: res.data.avatar }
+      }));
+
+      toast.success(res.data.message);
+      return { success: true };
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error uploading profile image");
+      return { success: false };
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  uploadBannerImage: async (file) => {
+    try {
+      set({ loading: true }); 
+      const formData = new FormData();
+      formData.append("bannerImage", file);
+      const res = await axiosInstance.post("/auth/upload-banner-image", formData , {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      set((state) => ({
+        authUser: { ...state.authUser, banner: res.data.banner }
+      }));
+
+      toast.success(res.data.message);
+      return { success: true };
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error uploading banner image");
+      return { success: false };
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  getProfile: async (profileId) =>{
+    try {
+      set({ loading: true });
+
+      const res = await axiosInstance.get(`/auth/profile/${profileId}`);
+
+      toast.success(res.data.message);
+
+      return res.data.user;
+
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error uploading banner image");
+      return { success: false };
     } finally {
       set({ loading: false });
     }

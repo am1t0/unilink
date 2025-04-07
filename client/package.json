@@ -13,6 +13,7 @@
     "@tinymce/tinymce-react": "^5.1.1",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
+    "emoji-picker-react": "^4.12.2",
     "lucide-react": "^0.475.0",
     "react": "^18.3.1",
     "react-copy-to-clipboard": "^5.1.0",
@@ -29,7 +30,7 @@
     "react-top-loading-bar": "^2.3.1",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
-    "socket.io-client": "^4.8.0",
+    "socket.io-client": "^4.8.1",
     "web-vitals": "^2.1.4",
     "yup": "^1.6.1",
     "zustand": "^5.0.3"

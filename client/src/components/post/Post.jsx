@@ -90,6 +90,7 @@ const Post = ({
         </div>
       )}
 
+<<<<<<< HEAD
       {mediaArray.length > 0 && (
         <div className="post-media-container">
           {mediaArray.length > 1 && (
@@ -116,6 +117,27 @@ const Post = ({
             <button className="nav-button next-button" onClick={handleNext}>
               <ChevronRight size={24} />
             </button>
+=======
+      <div className="post-media-container">
+        {mediaArray.length > 1 && (
+          <button className="nav-button prev-button" onClick={handlePrev}>
+            <ChevronLeft size={24} />
+          </button>
+        )}
+        <div className="post-media-wrapper">
+          {mediaArray[currentMediaIndex]?.type === 'photo' ? (
+            <img
+              src={mediaArray[currentMediaIndex]?.url}
+              alt={`Post Media ${currentMediaIndex}`}
+              className="post-media"
+            />
+          ) : (
+            <video
+              src={mediaArray[currentMediaIndex]?.url}
+              controls
+              className="post-media"
+            />
+>>>>>>> 0f64d3811142c9813acbf2e2e4a4a22c811589b7
           )}
         </div>
       )}

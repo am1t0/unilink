@@ -5,19 +5,24 @@ import { createPost, getPost, getAllPosts, deletePost, updatePost ,getAllUserPos
 
 const router = Router();
 
+//route for 
+
+/* creating post */
 router.post('/create-post', protectRoute, upload.array('media', 8), createPost);
 
-//route for sepcific post
+/* fetch sepcific post */
 router.get('/get-post/:postId', protectRoute, getPost);
 
-//route for a user's all post
+/* fetch a user's all post */
 router.get('/getAll-posts/:userId', protectRoute, getAllUserPosts);
 
-//route for fetching all post
+/* fetching all post */
 router.get('/getAll-posts', protectRoute, getAllPosts);
 
+/* update posts */
 router.patch('/update-post/:postId', protectRoute ,updatePost);
 
+/* delete post */
 router.delete('/delete-post/:postId', protectRoute, deletePost);
 
 
