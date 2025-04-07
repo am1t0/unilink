@@ -161,18 +161,17 @@ export const getAllPosts = async (req, res) => {
         limit = parseInt(limit);
         const skip = (page - 1) * limit; // Skip posts from previous pages
 
-        // Fetch posts with pagination
+        // Fetch posts with required fields and user details
         const posts = await Post.find()
+            .select("_id user description media tag likedBy likeCount commentCount share createdAt updatedAt") // Only required fields
+            .populate('user', 'name email avatar position') // Fetch user details
             .sort({ createdAt: -1 })  // Newest first
             .skip(skip)
             .limit(limit);
 
-        // Check if more posts exist for future
-        const hasMore = (
-            await Post.find().
-                skip(skip + limit)
-                .limit(1))
-                .length > 0;
+        // Check if more posts exist
+        const totalPosts = await Post.countDocuments();
+        const hasMore = totalPosts > skip + limit;
 
         return res.status(200).json({
             success: true,
@@ -186,6 +185,7 @@ export const getAllPosts = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+
 
 export const updatePost = asyncHandler(async (req, res) => {
     try {

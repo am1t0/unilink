@@ -11,20 +11,25 @@ const Home = () => {
   useEffect(() => {
     getAllPosts();
   }, [getAllPosts]);
-
   console.log(posts);
+  
 
   return (
     <div style={{ backgroundColor: '#131C35' }}>
       <Header />
       <Outlet />
-      {posts.map((post) => (
+      {posts?.map((post) => (
         <Post
-          key={post._id} 
+          key={post._id}
+          postId={post._id}
           mediaArray={post.media} 
           description={post.description} 
           createdAt={post.createdAt}
           user={post.user}
+          likeCount = {post.likeCount}
+          commentCount = {post.commentCount}
+          share = {post.share}
+          likedBy = {post.likedBy}
         />
       ))}
     </div>

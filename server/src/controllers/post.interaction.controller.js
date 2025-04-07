@@ -125,94 +125,87 @@ export const addComment = asyncHandler(async (req, res) => {
 
 /**
  * @desc Comment fetch of a post
- * @route GET /api/v1/post-interaction/get-parent-comments/:postId
+ * @route GET /api/v1/post-interaction/parent-comments/:postId
  * @access Private
  */
-export const getParentComments = asyncHandler(async (req, res) => {
+export const getComments = asyncHandler(async (req, res) => {
     const { postId } = req.params;
     const { page = 1, limit = 5 } = req.query; // Default pagination
-
+  
     try {
-        // Check if the post exists
-        const post = await Post.findById(postId);
-        if (!post) {
-            return res.status(404).json({
-                success: false,
-                message: "Post not found",
-            });
+      // Check if the post exists
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(404).json({
+          success: false,
+          message: "Post not found",
+        });
+      }
+  
+      // Convert page and limit to numbers
+      const pageNumber = Number(page);
+      const limitNumber = Number(limit);
+  
+      // Fetch parent comments (excluding replies) and populate user details
+      const parentComments = await Comment.find({ postId, parentId: null })
+        .populate("userId", "name avatar") // Populate username and avatar
+        .sort({ createdAt: -1 }) // Latest first
+        .skip((pageNumber - 1) * limitNumber)
+        .limit(limitNumber);
+  
+      // Fetch all replies for the fetched parent comments in a single query
+      const parentCommentIds = parentComments.map((comment) => comment._id);
+  
+      const replies = await Comment.find({ parentId: { $in: parentCommentIds } })
+        .populate("userId", "name avatar") // Populate username and avatar
+        .sort({ createdAt: -1 }); // Latest first
+  
+      // Group replies by parent comment ID
+      const repliesByParentId = replies.reduce((acc, reply) => {
+        const parentId = reply.parentId.toString(); // Convert to string
+        if (!acc[parentId]) {
+          acc[parentId] = [];
         }
-
-        // Convert page and limit to numbers
-        const pageNumber = Number(page);
-        const limitNumber = Number(limit);
-
-        // Fetch parent comments (excluding replies)
-        const parentComments = await Comment.find({ postId, parentId: null })
-            .populate("userId", "name avatar") // Fetch user details (optional)
-            .sort({ createdAt: -1 }) // Latest first
-            .skip((pageNumber - 1) * limitNumber)
-            .limit(limitNumber);
-
-        // Check if there are more comments after the current page
-        const totalComments = await Comment.countDocuments({ postId, parentId: null });
-        const hasMore = pageNumber * limitNumber < totalComments; // True if more pages exist
-
-        return res.status(200).json({
-            success: true,
-            comments: parentComments,
-            hasMore, // Indicates whether more comments are available
-        });
-
+        acc[parentId].push(reply);
+        return acc;
+      }, {});
+  
+      // Structure the response
+      const commentsWithReplies = parentComments.map((comment) => ({
+        _id: comment._id, // Include comment ID
+        username: comment.userId?.name || "", // Use 'name' instead of 'username'
+        userId: comment.userId._id, // Include user ID for future use
+        avatar: comment.userId?.avatar || "", // Fallback to empty string if avatar is missing
+        content: comment.text,
+        likedBy : comment.likes,
+        likes: comment.likes.length || 0, // Include like count (length of likes array)
+        repliesCount: comment.repliesCount || 0, // Include replies count
+        replies: (repliesByParentId[comment._id.toString()] || []).map((reply) => ({
+          _id: reply._id, // Include reply ID
+          username: reply.userId?.name || "", // Use 'name' instead of 'username'
+          avatar: reply.userId?.avatar || "", // Fallback to empty string if avatar is missing
+          userId : reply.userId._id, // Include user ID for future use
+          content: reply.text,
+          likes: reply.likes.length || 0, // Include like count for replies
+        })),
+      }));
+  
+      // Check if there are more comments after the current page
+      const totalComments = await Comment.countDocuments({ postId, parentId: null });
+      const hasMore = pageNumber * limitNumber < totalComments; // True if more pages exist
+  
+      return res.status(200).json({
+        success: true,
+        comments: commentsWithReplies,
+        hasMore, // Indicates whether more comments are available
+      });
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-        });
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+      });
     }
-});
-
-
-/**
- * @desc Comment fetch of a post
- * @route GET /api/v1/post-interaction/child-comments/:parentId
- * @access Private
- */
-export const getChildComments = asyncHandler(async (req, res) => {
-    const { parentId } = req.params;
-
-    const { page = 1, limit = 5 } = req.query; // Default pagination
-
-    try {
-        // Convert page and limit to numbers
-        const pageNumber = Number(page);
-        const limitNumber = Number(limit);
-
-        // Fetch parent comments (excluding replies)
-        const childComments = await Comment.find({parentId})
-            .populate("userId", "name avatar") // Fetch user details (optional)
-            .sort({ createdAt: -1 }) // Latest first
-            .skip((pageNumber - 1) * limitNumber)
-            .limit(limitNumber);
-
-        // Check if there are more comments after the current page
-        const totalComments = await Comment.countDocuments({ parentId});
-        const hasMore = pageNumber * limitNumber < totalComments; // True if more pages exist
-
-        return res.status(200).json({
-            success: true,
-            comments: childComments,
-            hasMore, // Indicates whether more comments are available
-        });
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error",
-        });
-    }
-});
-
+  });
 
 
 /**
@@ -353,5 +346,51 @@ export const sharePost = asyncHandler(async (req, res) => {
     } catch (error) {
         console.error("Error in sharePost:", error);
         return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+});
+
+/**
+ * @desc Like or unlike a comment
+ * @route PUT /api/v1/post-interaction/like-comment/:commentId
+ * @access Private
+ */
+export const toggleCommentLike = asyncHandler(async (req, res) => {
+    const { commentId } = req.params;
+    const userId = req.user.id;
+
+    try {
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return res.status(404).json({ 
+                success: false, 
+                message: "Comment not found" 
+            });
+        }
+
+        // Check if user already liked the comment
+        const likeIndex = comment.likes.indexOf(userId);
+
+        if (likeIndex === -1) {
+            // Like the comment
+            comment.likes.push(userId);
+        } else {
+            // Unlike the comment
+            comment.likes.splice(likeIndex, 1);
+        }
+
+        await comment.save();
+
+        return res.status(200).json({
+            success: true,
+            message: likeIndex === -1 ? "Comment liked" : "Comment unliked",
+            likeCount: comment.likes.length
+        });
+
+    } catch (error) {
+        console.error("Error in toggleCommentLike:", error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "Internal server error" 
+        });
     }
 });

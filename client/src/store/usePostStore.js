@@ -2,7 +2,7 @@ import toast from 'react-hot-toast';
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios';
 
-export const usePostStore = create((set) => ({
+export const usePostStore = create((set, get) => ({
   posts: null,
   loading: false,
 
@@ -14,9 +14,11 @@ export const usePostStore = create((set) => ({
           "Content-Type": "multipart/form-data",
         },
       });
-      set({ posts: [...posts , response.data.post] });
+      const currentPosts = get().posts || [];
+      set({ posts: [response.data.post, ...currentPosts] });
       toast.success("Post created successfully");
     } catch (error) {
+      console.log(error);
       toast.error(error.response?.data?.message || "Post could not be created");
     } finally {
       set({ loading: false });
@@ -26,12 +28,22 @@ export const usePostStore = create((set) => ({
   getAllPosts : async () => {
     try {
       const response = await axiosInstance.get("/posts/getAll-posts");
-      console.log(response.data.posts);
       set({ posts: response.data.posts });
     } catch (error) {
       console.log(error);
       
       toast.error(error.response?.data?.message || "Cant Fetch Posts");
+    }
+  },
+
+  likePost: async (postId) => {
+    try {
+      const response = await axiosInstance.put(`/post-interaction/like/${postId}`);
+      const currentPosts = get().posts || [];
+      set({ posts: currentPosts.map((post) => (post.id === postId ? response.data.post : post)) });
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Post could not be liked");
     }
   }
 }));

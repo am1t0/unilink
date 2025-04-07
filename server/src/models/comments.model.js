@@ -28,14 +28,14 @@ const commentSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
-    likeCount:{
+    likeCount: {
       type: Number,
-      default: 0
+      default: 0,
     },
     repliesCount: {
       type: Number,
-      default: 0
-    }
+      default: 0,
+    },
   },
   { timestamps: true }
 );

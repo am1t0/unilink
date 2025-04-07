@@ -13,6 +13,7 @@ import PostCreate from "./pages/postCreate/PostCreate";
 import Header from "./components/header/Header";
 import FilterPost from "./components/filterPost/FilterPost";
 import Post from "./components/post/Post";
+import Comments from "./components/comments/Comments";
 
 
 function App() {
@@ -32,9 +33,10 @@ function App() {
       </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
       <Route path="/register" element={!authUser? <Register /> : <Navigate to={"/"}/> }/>
-      <Route path="/profilePage" element={authUser? <ProfilePage /> : <Navigate to={"/login"}/> }/>
+      <Route path="/profilePage" element={authUser? <ProfilePage authUser={authUser} checkingAuth={checkingAuth}/> : <Navigate to={"/login"}/> }/>
       <Route path="/profileedit" element={authUser? <ProfileEdit /> : <Navigate to={"/login"}/> }/>
       <Route path="/post-create" element={authUser? <PostCreate /> : <Navigate to={"/login"}/> }/>
+      <Route path="/comments" element={authUser? <Comments /> : <Navigate to={"/login"}/> }/>
     </Routes>
     <Toaster/>
     </>

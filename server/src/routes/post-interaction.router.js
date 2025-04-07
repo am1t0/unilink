@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { protectRoute } from "../middlewares/auth.middleware.js";
-import { addComment, deleteComment, getChildComments, getParentComments, toggleLike, toggleSave } from "../controllers/post.interaction.controller.js";
+import { addComment, deleteComment, getComments, toggleCommentLike, toggleLike, toggleSave } from "../controllers/post.interaction.controller.js";
 
 const router = Router();
 
@@ -16,13 +16,13 @@ router.put("/like/:postId", protectRoute, toggleLike);
 router.post("/add-comment/:postId", protectRoute, addComment);
 
 /* getting parent comments */
-router.get("/parent-comments/:postId", protectRoute, getParentComments);
-
-/* getting child comments */
-router.get("/child-comments/:parentId", protectRoute, getChildComments);
+router.get("/comments/:postId", protectRoute, getComments);
 
 /* remove comment */
 router.delete("/remove/:commentId", protectRoute, deleteComment);
+
+/*like a comment*/
+router.put("/like-comment/:commentId", protectRoute, toggleCommentLike);
 
 
 export default router;

@@ -1,0 +1,149 @@
+.comments-container {
+  background-color: #0a0f1e;
+  color: white;
+  padding: 16px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+}
+
+/* Comments List */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Individual Comment */
+.comment-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding: 10px;
+}
+
+/* Comment Header */
+.comment-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Profile Picture */
+.profile-pic,
+.input-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.input-profile-pic {
+  width: 30px;
+  height: 30px;
+}
+
+/* Comment Content */
+.comment-content {
+  flex-grow: 1;
+}
+
+.comment-top {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.comment-user {
+  font-weight: bold;
+  margin-right: 8px;
+  margin-bottom: 0px;
+  margin-top: 1px;
+}
+
+.comment-text {
+  margin: 4px 0;
+}
+
+/* Actions (Reply & View Replies) */
+.comment-actions {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.reply-button,
+.toggle-replies {
+  color: #a0a0a0;
+  cursor: pointer;
+}
+
+/* Replies List */
+.replies-list {
+  margin-left: 40px; /* Indent replies */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Input Container */
+.comment-input-container {
+  display: flex;
+  align-items: center;
+  background: #11162a;
+  padding: 10px;
+  border-radius: 50px;
+  margin-top: 10px;
+}
+
+.comment-input {
+  flex-grow: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 14px;
+}
+
+.comment-send-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+/* Like & Delete Sections */
+.action-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.like-section,
+.delete-section {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap:5px;
+}
+
+.like-icon,
+.delete-icon {
+  color: gray;
+  transition: color 0.2s;
+}
+
+.like-icon:hover,
+.delete-icon:hover {
+  color: red;
+}
+
+.like-icon.liked,
+.like-icon[fill="red"] {
+  color: red !important;
+  fill: red !important;
+}
