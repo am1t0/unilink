@@ -22,7 +22,7 @@ const Home = () => {
     
     socket.on("getNotification", (notificationData) => {
       const { notificationId } = notificationData;
-
+      
       // fetch the data of the notification sent and set state
       getNotification(notificationId);
     })
@@ -35,8 +35,8 @@ const Home = () => {
 
 
   return (
-    <div style={{ backgroundColor: '#131C35' }}>
-      {/* <NotificationCard/> */}
+    <div>
+      <NotificationCard/>
       <Header />
       <Outlet />
     </div>

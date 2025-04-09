@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./notificationCard.css";
 import { FaHeart, FaComment, FaLink, FaAt } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { useNotificationsStore } from "../../store/useNotifications";
+import notificationSound from "../../assets/sounds/notification.mp3";
 
 const iconMap = {
   Like: <FaHeart className="icon like" />,
@@ -16,22 +19,44 @@ const messageMap = {
   Mention: "mentioned you in a post",
 };
 
-const NotificationCard = () => {
-  const type = "Link"
-  const sender = {
-    name: "Amit Pandey"
-  }
+const NotificationCard = ({ type = "Link", sender = { name: "Amit Pandey" }, onClose }) => {
+  
+  const { show, hide } = useNotificationsStore();
+  const audio = React.useMemo(() => new Audio(notificationSound), []);
+
+  useEffect(() => {
+    if (!show) return;
+
+    // Play the notification sound when the component is shown
+    audio.play().catch((error) => {
+      console.error("Failed to play notification sound:", error);
+    });
+
+    const timer = setTimeout(() => {
+      hide();
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [hide, show, audio]);
+
+  if (!show) return null;
 
   return (
-    <div className="notification-card">
-      <div className="icon-container">{iconMap[type]}</div>
+    <Link
+      to={`/notifications?type=${type}`}
+      className="notification-toast"
+    >
+      <div className="icon-container">
+        {iconMap[type]}
+      </div>
       <div className="content">
         <p className="message">
           <strong>{sender?.name || "Someone"}</strong> {messageMap[type]}
         </p>
-        <p className="timestamp">{new Date().toLocaleString()}</p>
+        <p className="timestamp">{new Date().toLocaleTimeString()}</p>
       </div>
-    </div>
+      <span className="tag">{type}</span>
+    </Link>
   );
 };
 

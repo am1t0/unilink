@@ -4,6 +4,7 @@ import { axiosInstance } from '../lib/axios';
 
 export const useNotificationsStore = create((set) => ({
     notifications: null,
+    show: false,
     loading: false,
     
     
@@ -21,7 +22,6 @@ export const useNotificationsStore = create((set) => ({
 
     getNotification: async (notificationId) => {
         set({ loading: true });
-        console.log('yha pe khir rha ki nhi')
         try {
             const response = await axiosInstance.get(`/notification/${notificationId}`);
             set((state) => {
@@ -43,6 +43,11 @@ export const useNotificationsStore = create((set) => ({
                 return { notifications: updatedNotifications };
             });
 
+            // If the notification is new, show the notification card
+            set((state)=> ({
+                show: true,
+            }))
+
         } catch (error) {
             toast.error(error.response?.data?.message || "Cannot fetch notification");
         } finally {
@@ -62,4 +67,5 @@ export const useNotificationsStore = create((set) => ({
         }
     },
 
+    hide: () => set((state) => ({ show: false })),
 }));
