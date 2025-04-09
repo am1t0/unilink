@@ -14,11 +14,14 @@ import {
 } from "lucide-react";
 import "./header.css";
 import { useAuthStore } from "../../store/useAuthStore";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import { useNotificationsStore } from "../../store/useNotifications";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { authUser, logout } = useAuthStore();
+
+  const { notifications } = useNotificationsStore();
 
   return (
     <header className="headder">
@@ -34,8 +37,14 @@ const Header = () => {
             <MessageCircle size={20} className="headder-icon" />
             <p className="headder-nav-text">Message</p>
           </Link>
-          <Link to="/" className="headder-nav-item">
+          <Link
+            to="/notifications"
+            className="headder-nav-item notification-icon-wrapper"
+          >
             <Bell size={20} className="headder-icon" />
+            {notifications?.length > 0 && (
+              <span className="notification-badge">{notifications?.length}</span>
+            )}
             <span className="headder-nav-text">Notification</span>
           </Link>
         </nav>
@@ -55,21 +64,28 @@ const Header = () => {
         {!authUser ? (
           <>
             {" "}
-            <Link to={'/login'}><button className="headder-login-btn">
-              <LogIn size={16} /> Login
-            </button></Link>
-            <Link to={'/register'}><button className="headder-signup-btn">
-              <UserPlus size={16} /> Signup
-            </button></Link>
+            <Link to={"/login"}>
+              <button className="headder-login-btn">
+                <LogIn size={16} /> Login
+              </button>
+            </Link>
+            <Link to={"/register"}>
+              <button className="headder-signup-btn">
+                <UserPlus size={16} /> Signup
+              </button>
+            </Link>
           </>
-        ) : (<>
-          <Link to={`/profilepage/${authUser?._id}`}><button className="headder-menu-item" >
-            <UserRound size={20} />
-          </button></Link>
-          <button className="headder-menu-item"onClick={logout}>
-            <LogOut size={16} />
-          </button>
-        </>
+        ) : (
+          <>
+            <Link to={`/profilepage/${authUser?._id}`}>
+              <button className="headder-menu-item">
+                <UserRound size={20} />
+              </button>
+            </Link>
+            <button className="headder-menu-item" onClick={logout}>
+              <LogOut size={16} />
+            </button>
+          </>
         )}
       </div>
       <button
@@ -82,24 +98,34 @@ const Header = () => {
       {isMenuOpen && (
         <div className="headder-mobile-menu">
           {!authUser ? (
-          <>
-            {" "}
-            <Link to={'/login'}><button className="headder-login-btn">
-              <LogIn size={16} /> Login
-            </button></Link>
-            <Link to={'/register'}><button className="headder-signup-btn">
-              <UserPlus size={16} /> Signup
-            </button></Link>
-          </>
-        ) : (<>
-          <Link to={`/profilepage/${authUser?._id}`}><button className="headder-menu-item" style={{border:'none'}}>
-            <UserRound size={20} />
-          </button></Link>
-          <button className="headder-menu-item"onClick={logout}>
-            <LogOut size={16} />
-          </button>
-        </>
-        )}
+            <>
+              {" "}
+              <Link to={"/login"}>
+                <button className="headder-login-btn">
+                  <LogIn size={16} /> Login
+                </button>
+              </Link>
+              <Link to={"/register"}>
+                <button className="headder-signup-btn">
+                  <UserPlus size={16} /> Signup
+                </button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to={`/profilepage/${authUser?._id}`}>
+                <button
+                  className="headder-menu-item"
+                  style={{ border: "none" }}
+                >
+                  <UserRound size={20} />
+                </button>
+              </Link>
+              <button className="headder-menu-item" onClick={logout}>
+                <LogOut size={16} />
+              </button>
+            </>
+          )}
         </div>
       )}
     </header>

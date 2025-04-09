@@ -13,7 +13,7 @@ const notificationSchema = new mongoose.Schema(
          },
         type: {
              type: String,
-             enum: ["Like", "Comment", "Follow", "Mention"],
+             enum: ["Like", "Comment", "Link", "Mention"],
              required: true,
          },
         status: {
@@ -24,7 +24,7 @@ const notificationSchema = new mongoose.Schema(
         deliveryMethod: {
             type: String,
             enum: ["socket", "email"],
-            default: "websocket",
+            default: "socket",
         }
        },
        { timestamps: true } 

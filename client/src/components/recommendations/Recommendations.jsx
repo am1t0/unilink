@@ -3,10 +3,17 @@ import "./recommendations.css";
 import { useLinkStore } from "../../store/useLinkStore.js";
 import { BsPersonPlusFill, BsChatDots } from "react-icons/bs";
 import { Link} from "react-router";
+import { useSocket } from "../../providers/Socket.jsx";
+import { useNotificationsStore } from "../../store/useNotifications.js";
+import { useAuthStore } from "../../store/useAuthStore.js";
+import toast from "react-hot-toast";
 
 const Recommendations = () => {
 
  const {getUserRecommendations ,recommendations, loading} = useLinkStore();
+ const { sendNotification } = useNotificationsStore();
+ const { authUser } = useAuthStore();
+ const { socket } = useSocket();
 
   useEffect(() => {
     getUserRecommendations();
@@ -15,6 +22,32 @@ const Recommendations = () => {
 
   const defaultAvatar =
   "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+
+  const sendLinkRequest = async ( user )=>{
+      try {
+        const linkRequest = {
+          sender: authUser._id,
+          receiver: user._id,
+          type: "Link",
+        }
+        const response = await sendNotification(linkRequest);
+   
+        if( !response.success ) {
+          toast.error("Failed to send link request");
+          return;
+        }
+
+        // filling request with the notification id
+        linkRequest.notificationId = response.newNotification._id
+
+       await socket.emit("sendNotification", linkRequest);
+
+      toast.success("Link request sent successfully");
+
+      } catch (error) {
+        toast.error("Failed to send link request");
+      }
+  }
 
   return (
     <div className="recommendations">
@@ -33,7 +66,7 @@ const Recommendations = () => {
                 </div>
               </Link>
               <div className="action-buttons">
-                <button className="action-btn">
+                <button className="action-btn" onClick={()=> sendLinkRequest( user)}>
                   <BsPersonPlusFill /> Link
                 </button>
                 <button className="action-btn">

@@ -28,6 +28,8 @@ io.on("connection", (socket) => {
     socket.on("addUser", userId => { 
         addUser(userId, socket.id);
 
+        console.log('user added')
+
         io.emit("getUsers", users);
     })
 
@@ -106,6 +108,15 @@ io.on("connection", (socket) => {
             status
         })
     })
+
+    socket.on("sendNotification", (notificationData) => {
+        const { sender, receiver } = notificationData;
+        const user = getUser(receiver);
+  
+        if (user) {
+            io.to(user.socketId).emit("getNotification", notificationData);
+        }
+    });
 
     //a user lefts the chat section
     socket.on("disconnect", ()=>{

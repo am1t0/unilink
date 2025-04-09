@@ -6,10 +6,11 @@ export const useNotificationsStore = create((set) => ({
     notifications: null,
     loading: false,
     
+    
     getNotifications: async () => {
         set({ loading: true });
         try {
-        const response = await axiosInstance.get("/notifications/all-notifications");
+        const response = await axiosInstance.get("/notification/all-notifications");
         set({ notifications: response.data.notifications });
         } catch (error) {
         toast.error(error.response?.data?.message || "Cannot fetch notifications");
@@ -18,12 +19,42 @@ export const useNotificationsStore = create((set) => ({
         }
     },
 
-    addNotification: async (notification) => {
+    getNotification: async (notificationId) => {
+        set({ loading: true });
+        console.log('yha pe khir rha ki nhi')
+        try {
+            const response = await axiosInstance.get(`/notification/${notificationId}`);
+            set((state) => {
+                const existingNotifications = state.notifications || [];
+                const newNotification = response.data.newNotification;
+    
+                // Check if the notification already exists
+                const alreadyExists = existingNotifications.find(
+                    (n) => n._id === newNotification._id
+                );
+    
+                // If it exists, update it; otherwise, add it
+                const updatedNotifications = alreadyExists
+                    ? existingNotifications.map((n) =>
+                        n._id === newNotification._id ? newNotification : n
+                    )
+                    : [newNotification, ...existingNotifications];
+    
+                return { notifications: updatedNotifications };
+            });
+
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Cannot fetch notification");
+        } finally {
+            set({ loading: false });
+        }
+    },
+
+    sendNotification: async (notification) => {
         set({ loading: true });
         try {
-            const response = await axiosInstance.post("/notifications/add-notification", notification);
-            set((state) => ({ notifications: [...state.notifications, response.data.notification] }));
-            toast.success("Notification added successfully");
+            const response = await axiosInstance.post("/notification/new", notification);
+            return response.data;
         } catch (error) {
             toast.error(error.response?.data?.message || "Cannot add notification");
         } finally {
