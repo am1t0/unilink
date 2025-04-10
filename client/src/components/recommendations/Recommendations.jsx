@@ -15,6 +15,8 @@ const Recommendations = () => {
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
 
+  const [ requesting, setRequesting] = useState(false);
+
   useEffect(() => {
     getUserRecommendations();
   }, [getUserRecommendations]);
@@ -23,6 +25,7 @@ const Recommendations = () => {
     "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   const sendLinkRequest = async (user) => {
+    setRequesting(true)
     try {
       const linkRequest = {
         sender: authUser._id,
@@ -52,6 +55,8 @@ const Recommendations = () => {
       toast.success("Link request sent successfully");
     } catch (error) {
       toast.error("Failed to send link request");
+    } finally {
+      setRequesting(false)
     }
   };
 
@@ -80,10 +85,14 @@ const Recommendations = () => {
                     user.status === "Requested" ? "requested" : ""
                   }`}
                   onClick={() => sendLinkRequest(user)}
-                  disabled={user.status === "Requested"}
+                  disabled={user.status === "Requested" || requesting}
                 >
                   <BsPersonPlusFill />{" "}
-                  {user.status === "Requested" ? "Requested" : "Link"}
+                  {
+                  (requesting)?"Requesting..." :
+                  
+                   (user.status === "Requested" ?"Requested" : "Link")
+                  }
                 </button>
 
                 <button className="action-btn">

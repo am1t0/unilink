@@ -51,8 +51,6 @@ export const useLinkStore = create((set) => ({
           links: [...(state.links || []), newRequest],
         };
       });
-
-      toast.success(response.data.message);
       return newRequest._id; // Return the linkId
     } catch (error) {
       toast.error(error.response?.data?.message || "Cannot send link request");
