@@ -16,6 +16,7 @@ import Comments from "./components/comments/Comments";
 import Chats from "./pages/chats/Chats";
 import { SocketProvider } from "./providers/Socket";
 import Entry from "./pages/entry/Entry";
+import Notifications from "./pages/notifications/Notifications";
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
       < Route path="/" element={authUser? <Home /> : <Navigate to={"/login"}/> }> 
         <Route path="/" element={<Entry />} />
         <Route path="/chats" element= { <Chats/> }/>
+        <Route path="/notifications" element= { <Notifications/> }/>
         <Route path="/profilePage/:profileId" element={<ProfilePage />} /> 
       </Route>
       <Route path="/login" element={!authUser? <Login /> : <Navigate to={"/"}/> }/>
