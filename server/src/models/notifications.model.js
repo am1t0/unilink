@@ -13,7 +13,7 @@ const notificationSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Like", "Comment", "Link", "Mention"],
+      enum: ["Like", "Comment", "Link", "Mention", "Response"],
       required: true,
     },
     status: {
@@ -33,7 +33,20 @@ const notificationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Link',
     },
+    
+    postId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Post',
+    },
 
+    commentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment',
+    },
+
+    response: {
+      type: String,
+    }
   },
   { timestamps: true }
 )

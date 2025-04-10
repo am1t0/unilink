@@ -8,7 +8,8 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
  * @access Private
  */
 export const addNotification = asyncHandler(async (req, res) => {
-    const { sender, receiver, type, linkId, postId, commentId } = req.body;
+    const { receiver, type, linkId, postId, commentId, response } = req.body;
+    const sender = req.user.id; // Assuming the sender is the authenticated user
   
     try {
       const notificationData = { sender, receiver, type };
@@ -38,7 +39,15 @@ export const addNotification = asyncHandler(async (req, res) => {
           });
         }
         notificationData.commentId = commentId;
+      } else if( type== "Response") {
+         if(!response) {
+            return res.status(400).json({
+                success: false,
+                message: "response is required for Response notifications",
+            });
       }
+      notificationData.response = response;
+    }
   
       const newNotification = new Notification(notificationData);
       await newNotification.save();

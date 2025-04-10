@@ -9,6 +9,7 @@ import mongoose from "mongoose";
  * @access Private
  */
 export const requestLink = asyncHandler(async (req, res) => {
+    
     const { receiverId } = req.params;
     const userId = req.user.id;
 
@@ -80,14 +81,14 @@ export const requestLink = asyncHandler(async (req, res) => {
 
 /**
  * @desc Accept a link request
- * @route POST /api/v1/links/accept/:requestId
+ * @route POST /api/v1/links/:linkId
  * @access Private
  */
-export const acceptLink = asyncHandler(async (req, res) => {
+export const updateLinkStatus = asyncHandler(async (req, res) => {
     const { requestId } = req.params;
+    const { status } = req.body; // "Link" or "Blocked"
     const userId = req.user.id;
 
-    
     try {
         // Validate requestId format
         if (!mongoose.Types.ObjectId.isValid(requestId)) {
@@ -97,12 +98,20 @@ export const acceptLink = asyncHandler(async (req, res) => {
             });
         }
 
+        // Validate status
+        if (!["Accepted", "Blocked"].includes(status)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid status. Must be 'Link' or 'Blocked'"
+            });
+        }
+
         // Find the link request
         const linkRequest = await Link.findById(requestId);
         if (!linkRequest) {
             return res.status(404).json({
                 success: false,
-                message: "link request not found"
+                message: "Link request not found"
             });
         }
 
@@ -110,32 +119,32 @@ export const acceptLink = asyncHandler(async (req, res) => {
         if (linkRequest.user2.toString() !== userId) {
             return res.status(403).json({
                 success: false,
-                message: "Unauthorized to accept this request"
+                message: "Unauthorized to update this request"
             });
         }
 
-        // Check if the request is already accepted
-        if (linkRequest.status === "Link") {
+        // If the status is already the same, return a message
+        if (linkRequest.status === status) {
             return res.status(400).json({
                 success: false,
-                message: "link request already accepted"
+                message: `Link request already marked as '${status}'`
             });
         }
 
-        // Update the request status to 'accepted'
-        linkRequest.status = "Link";
+        // Update the request status
+        linkRequest.status = status === "Accepted"? "Link" : "Blocked";
         await linkRequest.save();
 
         return res.status(200).json({
             success: true,
-            message: "link request accepted"
+            message: `Link request successfully updated to '${status}'`
         });
 
     } catch (error) {
-        console.error("Error in acceptLink:", error);
-        return res.status(500).json({ 
-            success: false, 
-            message: "Internal server error" 
+        console.error("Error in updateLinkStatus:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
         });
     }
 });

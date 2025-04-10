@@ -93,3 +93,13 @@
 .action-btn:nth-child(2):hover {
     background: #3a4764;
 }
+
+.action-btn.requested {
+    background: #353a46 !important;
+    cursor: not-allowed;
+  }
+  
+  .action-btn.requested:hover {
+    background: #3a4764 !important;
+  }
+  

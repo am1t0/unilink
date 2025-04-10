@@ -2,61 +2,58 @@ import React, { useEffect, useState } from "react";
 import "./recommendations.css";
 import { useLinkStore } from "../../store/useLinkStore.js";
 import { BsPersonPlusFill, BsChatDots } from "react-icons/bs";
-import { Link} from "react-router";
+import { Link } from "react-router";
 import { useSocket } from "../../providers/Socket.jsx";
 import { useNotificationsStore } from "../../store/useNotifications.js";
 import { useAuthStore } from "../../store/useAuthStore.js";
 import toast from "react-hot-toast";
 
 const Recommendations = () => {
-
- const {getUserRecommendations ,recommendations, sendRequest, loading} = useLinkStore();
- const { sendNotification } = useNotificationsStore();
- const { authUser } = useAuthStore();
- const { socket } = useSocket();
+  const { getUserRecommendations, recommendations, sendRequest, loading } =
+    useLinkStore();
+  const { sendNotification } = useNotificationsStore();
+  const { authUser } = useAuthStore();
+  const { socket } = useSocket();
 
   useEffect(() => {
     getUserRecommendations();
   }, [getUserRecommendations]);
 
-
   const defaultAvatar =
-  "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
-  const sendLinkRequest = async ( user )=>{
-      try {
-        const linkRequest = {
-          sender: authUser._id,
-          receiver: user._id,
-          type: "Link",
-        }
-        
-        //intialiazing the link request
-       const linkId  =  await sendRequest(linkRequest.receiver);
+  const sendLinkRequest = async (user) => {
+    try {
+      const linkRequest = {
+        sender: authUser._id,
+        receiver: user._id,
+        type: "Link",
+      };
 
-       linkRequest.linkId = linkId
+      //intialiazing the link request
+      const linkId = await sendRequest(linkRequest.receiver);
 
-        //creating new notifications doc in db
-        const response = await sendNotification(linkRequest);
-  
-   
-        if( !response.success ) {
-          toast.error("Failed to send link request");
-          return;
-        }
+      linkRequest.linkId = linkId;
 
-        // filling request with the notification id
-        linkRequest.notificationId = response.newNotification._id
+      //creating new notifications doc in db
+      const response = await sendNotification(linkRequest);
 
-        // emitting the notification to the receiver
-       await socket.emit("sendNotification", linkRequest);
+      if (!response.success) {
+        toast.error("Failed to send link request");
+        return;
+      }
+
+      // filling request with the notification id
+      linkRequest.notificationId = response.newNotification._id;
+
+      // emitting the notification to the receiver
+      await socket.emit("sendNotification", linkRequest);
 
       toast.success("Link request sent successfully");
-
-      } catch (error) {
-        toast.error("Failed to send link request");
-      }
-  }
+    } catch (error) {
+      toast.error("Failed to send link request");
+    }
+  };
 
   return (
     <div className="recommendations">
@@ -67,7 +64,10 @@ const Recommendations = () => {
           <h3 className="recommendations-title">Recommendations</h3>
           {recommendations?.map((user) => (
             <div key={user._id} className="user-card">
-              <Link  to={`/profilePage/${user._id}`} className="user-info-section">
+              <Link
+                to={`/profilePage/${user._id}`}
+                className="user-info-section"
+              >
                 <img src={user.avatar || defaultAvatar} alt={user.name} />
                 <div className="user-info">
                   <h4>{user.name}</h4>
@@ -75,9 +75,17 @@ const Recommendations = () => {
                 </div>
               </Link>
               <div className="action-buttons">
-                <button className="action-btn" onClick={()=> sendLinkRequest( user)}>
-                  <BsPersonPlusFill /> Link
+                <button
+                  className={`action-btn ${
+                    user.status === "Requested" ? "requested" : ""
+                  }`}
+                  onClick={() => sendLinkRequest(user)}
+                  disabled={user.status === "Requested"}
+                >
+                  <BsPersonPlusFill />{" "}
+                  {user.status === "Requested" ? "Requested" : "Link"}
                 </button>
+
                 <button className="action-btn">
                   <BsChatDots /> Message
                 </button>
@@ -87,7 +95,6 @@ const Recommendations = () => {
         </>
       )}
     </div>
-
   );
 };
 

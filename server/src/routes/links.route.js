@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { protectRoute } from "../middlewares/auth.middleware.js";
-import { acceptLink, getLinks, getUserRecommendations, requestLink } from "../controllers/link.controller.js";
+import { updateLinkStatus, getLinks, getUserRecommendations, requestLink } from "../controllers/link.controller.js";
 
 const router = Router();
 
@@ -10,7 +10,7 @@ const router = Router();
 router.post("/request/:receiverId", protectRoute, requestLink);
 
 /* accepting link request */
-router.patch("/accept/:requestId", protectRoute, acceptLink);
+router.patch("/:requestId", protectRoute, updateLinkStatus);
 
 /* fetching all links */
 router.get("/all-links", protectRoute, getLinks);

@@ -7,6 +7,9 @@ import {
 } from "react-icons/fa";
 import "./notifications.css";
 import { useNotificationsStore } from "../../store/useNotifications";
+import { useLinkStore } from "../../store/useLinkStore";
+import { useSocket } from "../../providers/Socket";
+import toast from "react-hot-toast";
 
 
 const iconMap = {
@@ -19,7 +22,11 @@ const iconMap = {
 export default function Notifications() {
   const [filter, setFilter] = useState("All");
 
-  const { notifications } = useNotificationsStore();
+  const { notifications, sendNotification } = useNotificationsStore();
+  const { changeLinkStatus } = useLinkStore();
+  const { socket } = useSocket();
+
+  console.log(notifications)
 
   const handleAction = (id, action) => {
     alert(`${action} request from user with id ${id}`);
@@ -27,9 +34,32 @@ export default function Notifications() {
 
   const handleLinkAccept = async (notification)=>{
      try {
-        console.log(notification);
-     } catch (error) {
         
+        const linkRequestReply = {
+            sender: notification.receiver,
+            receiver: notification.sender._id,
+            type:"Response",
+            response: "Accepted",
+        }
+        // Accept the link request
+        await changeLinkStatus(notification.linkId, "Accepted");
+
+        // notification for the sender of request
+        const response = await sendNotification(linkRequestReply);
+
+        if(!response.success) {
+            toast.error("Failed to send notification");
+            return;
+        }
+
+        // Fill the request with the notification id
+        linkRequestReply.notificationId = response.newNotification._id;
+ 
+        // Emit the notification to the sender
+        await socket.emit("sendNotification", linkRequestReply)
+
+     } catch (error) {
+        toast.error("Failed to accept link request");
      }
   }
 
@@ -88,8 +118,16 @@ export default function Notifications() {
                 </button>
               </div>
             )}
+
+{
+            n.type === "Response" && (
+               <h1>{n.response}</h1>
+            )
+          }
           </div>
         ))}
+
+       
 
         {filteredNotifications?.length === 0 && (
           <p className="no-notifications">No notifications to show.</p>

@@ -111,9 +111,10 @@ io.on("connection", (socket) => {
 
     socket.on("sendNotification", (notificationData) => {
         const { sender, receiver } = notificationData;
-        const user = getUser(receiver);
+        const user = getUser(receiver)
   
         if (user) {
+            // Emit the notification to the receiver
             io.to(user.socketId).emit("getNotification", notificationData);
         }
     });
