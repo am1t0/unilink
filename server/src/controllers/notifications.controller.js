@@ -7,32 +7,56 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
  * @route POST /api/v1/notification/new
  * @access Private
  */
-export const addNotification = asyncHandler( async (req, res) => {
-
-    const { sender, receiver, type } = req.body;
-
+export const addNotification = asyncHandler(async (req, res) => {
+    const { sender, receiver, type, linkId, postId, commentId } = req.body;
+  
     try {
-        const newNotification = new Notification({
-            sender,
-            receiver,
-            type
-        });
-
-        await newNotification.save();
-
-        res.status(201).json({
-            success: true,
-            message: "Notification added successfully",
-            newNotification
-        });
-    } catch (error) {
-        res.status(500).json({
+      const notificationData = { sender, receiver, type };
+  
+      // Conditionally include relevant ID based on type
+      if (type === "Link") {
+        if (!linkId) {
+          return res.status(400).json({
             success: false,
-            message: "Failed to add notification",
-            error: error.message
-        });
+            message: "linkId is required for Link notifications",
+          });
+        }
+        notificationData.linkId = linkId;
+      } else if (type === "Like" || type === "Mention") {
+        if (!postId) {
+          return res.status(400).json({
+            success: false,
+            message: "postId is required for Like or Mention notifications",
+          });
+        }
+        notificationData.postId = postId;
+      } else if (type === "Comment") {
+        if (!commentId) {
+          return res.status(400).json({
+            success: false,
+            message: "commentId is required for Comment notifications",
+          });
+        }
+        notificationData.commentId = commentId;
+      }
+  
+      const newNotification = new Notification(notificationData);
+      await newNotification.save();
+  
+      res.status(201).json({
+        success: true,
+        message: "Notification added successfully",
+        newNotification,
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to add notification",
+        error: error.message,
+      });
     }
-})
+  });
+  
 
 /**
  * @desc get all notification
@@ -72,19 +96,28 @@ export const getNotification = asyncHandler( async (req, res) => {
     const notificationId = req.params.notificationId;
     const userId = req.user.id;
     try {
-        const notification = await Notification.findById(notificationId);   
+        const notification = await Notification.findById(notificationId).populate("sender", "name avatar");
+
+        // Check if the notification exists and belongs to the user   
         if (!notification) {
             return res.status(404).json({
                 success: false,
                 message: "Notification not found",
             });
         }
+        // Check if the notification belongs to the user
         if (notification.receiver.toString() !== userId) {
             return res.status(403).json({
                 success: false,
                 message: "You are not authorized to view this notification",
             });
         }
+
+        // Mark the notification as read
+        notification.status = "read";
+
+        await notification.save();
+
         res.status(200).json({
             success: true,
             message: "Notification fetched successfully",

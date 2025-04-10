@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 const Recommendations = () => {
 
- const {getUserRecommendations ,recommendations, loading} = useLinkStore();
+ const {getUserRecommendations ,recommendations, sendRequest, loading} = useLinkStore();
  const { sendNotification } = useNotificationsStore();
  const { authUser } = useAuthStore();
  const { socket } = useSocket();
@@ -30,7 +30,15 @@ const Recommendations = () => {
           receiver: user._id,
           type: "Link",
         }
+        
+        //intialiazing the link request
+       const linkId  =  await sendRequest(linkRequest.receiver);
+
+       linkRequest.linkId = linkId
+
+        //creating new notifications doc in db
         const response = await sendNotification(linkRequest);
+  
    
         if( !response.success ) {
           toast.error("Failed to send link request");
@@ -40,6 +48,7 @@ const Recommendations = () => {
         // filling request with the notification id
         linkRequest.notificationId = response.newNotification._id
 
+        // emitting the notification to the receiver
        await socket.emit("sendNotification", linkRequest);
 
       toast.success("Link request sent successfully");

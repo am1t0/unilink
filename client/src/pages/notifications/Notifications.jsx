@@ -21,11 +21,17 @@ export default function Notifications() {
 
   const { notifications } = useNotificationsStore();
 
-  console.log(notifications)
-
   const handleAction = (id, action) => {
     alert(`${action} request from user with id ${id}`);
   };
+
+  const handleLinkAccept = async (notification)=>{
+     try {
+        console.log(notification);
+     } catch (error) {
+        
+     }
+  }
 
   const filteredNotifications =
     filter === "All"
@@ -45,7 +51,7 @@ export default function Notifications() {
           <option value="Like">Likes</option>
           <option value="Comment">Comments</option>
           <option value="Mention">Mentions</option>
-          <option value="Follow">Follows</option>
+          <option value="Link">Links</option>
         </select>
       </div>
 
@@ -56,21 +62,21 @@ export default function Notifications() {
               {iconMap[n.type]}
               <div>
                 <p>
-                  <strong>{n.sender}</strong>{" "}
+                  <strong>{n.sender.name}</strong>{" "}
                   {n.type === "Like" && "liked your post"}
                   {n.type === "Comment" && "commented on your post"}
                   {n.type === "Mention" && "mentioned you"}
-                  {n.type === "Follow" && "wants to follow you"}
+                  {n.type === "Link" && "wants to follow you"}
                 </p>
-                <span className="notification-time">{n.time}</span>
+                <span className="notification-time">{n.createdAt}</span>
               </div>
             </div>
 
-            {n.type === "Follow" && (
+            {n.type === "Link" && (
               <div className="follow-actions">
                 <button
                   className="accept-btn"
-                  onClick={() => handleAction(n.id, "Accepted")}
+                  onClick={() => handleLinkAccept(n)}
                 >
                   Accept
                 </button>

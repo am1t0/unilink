@@ -65,7 +65,7 @@ export const requestLink = asyncHandler(async (req, res) => {
         return res.status(201).json({
             success: true,
             message: "Link request sent",
-            request: newRequest
+            newRequest
         });
 
     } catch (error) {
