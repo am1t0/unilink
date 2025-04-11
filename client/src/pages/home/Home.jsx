@@ -12,7 +12,11 @@ const Home = () => {
 
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
-  const { getNotification } = useNotificationsStore();
+  const { getNotification, getNotifications } = useNotificationsStore();
+
+  useEffect(()=>{
+    getNotifications()
+  },[getNotifications])
 
   useEffect(()=>{
        socket.emit("addUser", authUser._id )

@@ -75,9 +75,9 @@ export const addNotification = asyncHandler(async (req, res) => {
 export const allNotifications = asyncHandler( async (req, res) => {
 
     const userId = req.user.id;
-
+  
     try { 
-        const notifications = await Notification.find({ receiver: userId , status:"unread"})
+        const notifications = await Notification.find({ receiver: userId})
             .populate("sender", "name avatar")
             .sort({ createdAt: -1 });
 
