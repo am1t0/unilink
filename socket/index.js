@@ -111,11 +111,17 @@ io.on("connection", (socket) => {
 
     socket.on("sendNotification", (notificationData) => {
         const { sender, receiver } = notificationData;
-        const user = getUser(receiver)
-  
-        if (user) {
+        const receiverUser = getUser(receiver)
+        const senderUser = getUser(sender)
+
+        //user is online
+        if (receiverUser) {
             // Emit the notification to the receiver
-            io.to(user.socketId).emit("getNotification", notificationData);
+            io.to(receiverUser.socketId).emit("getNotification", notificationData);
+
+        } else {
+            
+            io.to(senderUser.socketId).emit("receiverOffline", notificationData);
         }
     });
 

@@ -28,7 +28,7 @@ export default function Notifications() {
 
   //as user visits notification section mark all of them as read
   useEffect(() => {
-    const hasUnread = notifications.some((n) => n.status === 'unread');
+    const hasUnread = notifications?.some((n) => n.status === 'unread');
   
     if (hasUnread) {
       markAllNotificationRead();

@@ -17,12 +17,12 @@ const Recommendations = () => {
 
   const [ requesting, setRequesting] = useState(false);
 
+  const defaultAvatar =
+    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+
   useEffect(() => {
     getUserRecommendations();
   }, [getUserRecommendations]);
-
-  const defaultAvatar =
-    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   const sendLinkRequest = async (user) => {
     setRequesting(true)
