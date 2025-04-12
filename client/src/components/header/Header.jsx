@@ -23,6 +23,10 @@ const Header = () => {
 
   const { notifications } = useNotificationsStore();
 
+  const unreadNotifications = notifications?.filter(
+    (notification) => notification?.status !== "read"
+  );
+
   return (
     <header className="headder">
       <div className="headder-left">
@@ -42,8 +46,8 @@ const Header = () => {
             className="headder-nav-item notification-icon-wrapper"
           >
             <Bell size={20} className="headder-icon" />
-            {notifications?.length > 0 && (
-              <span className="notification-badge">{notifications?.length}</span>
+            {unreadNotifications?.length > 0 && (
+              <span className="notification-badge">{unreadNotifications?.length}</span>
             )}
             <span className="headder-nav-text">Notification</span>
           </Link>

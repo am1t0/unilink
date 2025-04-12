@@ -77,7 +77,7 @@ export const allNotifications = asyncHandler( async (req, res) => {
     const userId = req.user.id;
   
     try { 
-        const notifications = await Notification.find({ receiver: userId})
+        const notifications = await Notification.find({ receiver: userId}, { status: 'unread'})
             .populate("sender", "name avatar")
             .sort({ createdAt: -1 });
 
@@ -175,6 +175,29 @@ export const markAsRead = asyncHandler( async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Failed to mark notification as read",
+            error: error.message
+        });
+    }
+})
+
+/**
+ * @desc mark all notifications as read
+ * @route PATCH /api/v1/notification/mark-all-read
+ * @access Private
+ */
+
+export const markAllRead = asyncHandler( async (req, res) => {
+    const userId = req.user.id;
+    try {
+        await Notification.updateMany({ receiver: userId }, { status: "read" });
+        res.status(200).json({
+            success: true,
+            message: "All notifications marked as read",
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to mark all notifications as read",
             error: error.message
         });
     }

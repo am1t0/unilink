@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaHeart,
   FaComment,
@@ -22,11 +22,19 @@ const iconMap = {
 export default function Notifications() {
   const [filter, setFilter] = useState("All");
 
-  const { notifications, sendNotification } = useNotificationsStore();
+  const { notifications, sendNotification, markAllNotificationRead } = useNotificationsStore();
   const { changeLinkStatus } = useLinkStore();
   const { socket } = useSocket();
 
-  console.log(notifications)
+  //as user visits notification section mark all of them as read
+  useEffect(() => {
+    const hasUnread = notifications.some((n) => n.status === 'unread');
+  
+    if (hasUnread) {
+      markAllNotificationRead();
+    }
+  }, [markAllNotificationRead, notifications]);
+  
 
   const handleAction = (id, action) => {
     alert(`${action} request from user with id ${id}`);

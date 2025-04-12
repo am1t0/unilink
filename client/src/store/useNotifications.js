@@ -69,5 +69,23 @@ export const useNotificationsStore = create((set) => ({
         }
     },
 
+    markAllNotificationRead: async()=>{
+        set({ loading: true });
+        try {
+            await axiosInstance.patch("/notification/mark-all-read");
+            set((state) => {
+                const updatedNotifications = state.notifications.map((notification) => ({
+                    ...notification,
+                    status: 'read',
+                }));
+                return { notifications: updatedNotifications };
+            });
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Cannot mark all notifications as read");
+        } finally {
+            set({ loading: false });
+        }
+    },
+
     hide: () => set((state) => ({ show: false })),
 }));
