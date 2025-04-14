@@ -34,6 +34,7 @@ const Home = () => {
 
   const handleReceiverIsOffline = useCallback((notificationData) => {
       console.log('user to offline hai jii ', notificationData);
+      alert("chc2 notification nahi milaa")
   }, [])
 
   useEffect(() => {

@@ -34,7 +34,7 @@ import postInteractionRouter from "./src/routes/post-interaction.route.js";
 import userRouter from "./src/routes/user.route.js";
 import linkRouter from "./src/routes/links.route.js";
 import notificationsRouter from "./src/routes/notifications.route.js";
-
+import mailRouter from "./src/routes/mail.route.js"
 
 // routes decalaration   here mounting the specific routers to the app , this each router's will use Router.use('path',(rq,res));
 app.use("/api/v1/auth", authRouter);
@@ -54,6 +54,8 @@ app.use("/api/v1/post-interaction", postInteractionRouter);
 app.use("/api/v1/links", linkRouter);
 
 app.use("/api/v1/notification", notificationsRouter);
+
+app.use("/api/v1/mail", mailRouter);
 
 const port = process.env.PORT || 3001;
 
