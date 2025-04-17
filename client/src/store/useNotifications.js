@@ -86,5 +86,22 @@ export const useNotificationsStore = create((set) => ({
         }
     },
 
+    sendMail: async (mailData) => {
+        set({ loading: true });
+        try {
+            if( mailData.type === "Link" ){
+                mailData.type = "follow-req"
+            }
+            // similarly for other types ....
+            
+            const response = await axiosInstance.post("/mail/send", mailData);
+            return response.data;
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Cannot send email");
+        } finally {
+            set({ loading: false });
+        }
+    },
+
     hide: () => set((state) => ({ show: false })),
 }));

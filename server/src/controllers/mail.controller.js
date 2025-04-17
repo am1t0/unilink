@@ -1,7 +1,9 @@
 //importing libraries, database models and neccessary credentials from the environmental variables
 import nodemailer from 'nodemailer'
+import User from '../models/user.model.js';
 const SenderEmail = process.env.SENDER_EMAIL;
 const SenderEmailPass = process.env.SENDER_PASSWORD;
+const Client_url = process.env.CLIENT_URL;
 // const ReceiverEmails = process.env.RECIEVER_LIST.split(',');
 
 //declaring the nodemailer createtransport in a variable and passing Sender email and sender email's password as object for auth that we will be using to send email
@@ -18,36 +20,42 @@ const transporter = nodemailer.createTransport({
 //the send emain function that will be sending the email and also saves the email in the database before sending it
 const SendEmail = async (emailDetails) => {
     try {
-        const { recipient, type, data } = emailDetails;
+        const { receiver ,sender , type } = emailDetails;
+        
+        const recipient = await User.findById(receiver).populate("email");
 
         let subject = "";
         let text = "";
 
         switch (type) {
-            case "follow":
-                subject = "👤 New Follower Alert!";
-                text = `🎉 ${data.followerName} has started following you. Check out their profile!`;
+            case "follow-req":
+                subject = "👤Link Alert!";
+                text = `🎉 ${sender.name} wants to follow you.\n Check out ${Client_url}/notifications`;
+                break;
+            case "follow-accept":
+                subject = "👤Link Alert!";
+                text = `🎉 ${sender.name} accepted your follow request.\n Check out ${Client_url}/notifications`;
                 break;
 
-            case "like_post":
-                subject = "❤️ Your Post Got a Like!";
-                text = `👍 ${data.likerName} liked your post: "${data.postSnippet}"`;
-                break;
+            // case "like_post":
+            //     subject = "❤️ Your Post Got a Like!";
+            //     text = `👍 ${data.likerName} liked your post: "${data.postSnippet}"`;
+            //     break;
 
-            case "like_comment":
-                subject = "💬 Your Comment Got a Like!";
-                text = `👍 ${data.likerName} liked your comment: "${data.commentSnippet}"`;
-                break;
+            // case "like_comment":
+            //     subject = "💬 Your Comment Got a Like!";
+            //     text = `👍 ${data.likerName} liked your comment: "${data.commentSnippet}"`;
+            //     break;
 
-            case "comment":
-                subject = "💬 New Comment on Your Post!";
-                text = `🗣️ ${data.commenterName} commented: "${data.commentText}"`;
-                break;
+            // case "comment":
+            //     subject = "💬 New Comment on Your Post!";
+            //     text = `🗣️ ${data.commenterName} commented: "${data.commentText}"`;
+            //     break;
 
-            case "mention":
-                subject = "📢 You Were Mentioned!";
-                text = `👀 ${data.mentionerName} mentioned you in a ${data.location}:\n"${data.mentionText}"`;
-                break;
+            // case "mention":
+            //     subject = "📢 You Were Mentioned!";
+            //     text = `👀 ${data.mentionerName} mentioned you in a ${data.location}:\n"${data.mentionText}"`;
+            //     break;
 
             default:
                 subject = "🔔 New Notification";
@@ -57,12 +65,11 @@ const SendEmail = async (emailDetails) => {
 
         const info = await transporter.sendMail({
             from: SenderEmail,
-            to: recipient,
+            to: '',
             subject,
             text,
         });
 
-        console.log("Message sent: %s", info.messageId);
     } catch (error) {
         console.error("Error sending email:", error);
         throw error;

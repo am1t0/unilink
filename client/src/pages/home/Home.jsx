@@ -12,7 +12,7 @@ const Home = () => {
 
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
-  const { getNotification, getNotifications } = useNotificationsStore();
+  const { getNotification, getNotifications, sendMail } = useNotificationsStore();
 
   //get all the notifications when user enters
   useEffect(()=>{
@@ -24,6 +24,7 @@ const Home = () => {
        socket.emit("addUser", authUser._id )
   },[authUser._id, socket])
   
+
   const handleNotificationGet = useCallback((notificationData) => {
     const { notificationId } = notificationData;
     
@@ -32,10 +33,15 @@ const Home = () => {
 
   }, [getNotification]);
 
+
   const handleReceiverIsOffline = useCallback((notificationData) => {
-      console.log('user to offline hai jii ', notificationData);
-      alert("chc2 notification nahi milaa")
-  }, [])
+
+    //if the receiver is offline, send a mail to the user
+    notificationData.sender = authUser;
+    sendMail(notificationData)
+
+
+  }, [authUser, sendMail])
 
   useEffect(() => {
     socket.on("getNotification", handleNotificationGet);

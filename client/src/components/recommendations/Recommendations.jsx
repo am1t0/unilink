@@ -15,7 +15,7 @@ const Recommendations = () => {
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
 
-  const [ requesting, setRequesting] = useState(false);
+  const [ requesting, setRequesting] = useState(null);
 
   const defaultAvatar =
     "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
@@ -25,7 +25,7 @@ const Recommendations = () => {
   }, [getUserRecommendations]);
 
   const sendLinkRequest = async (user) => {
-    setRequesting(true)
+    setRequesting(user._id)
     try {
       const linkRequest = {
         sender: authUser._id,
@@ -56,7 +56,7 @@ const Recommendations = () => {
     } catch (error) {
       toast.error("Failed to send link request");
     } finally {
-      setRequesting(false)
+      setRequesting(null)
     }
   };
 
@@ -89,7 +89,7 @@ const Recommendations = () => {
                 >
                   <BsPersonPlusFill />{" "}
                   {
-                  (requesting)?"Requesting..." :
+                  (requesting === user._id)?"Requesting..." :
                   
                    (user.status === "Requested" ?"Requested" : "Link")
                   }
