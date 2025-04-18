@@ -1,21 +1,11 @@
 .entry-page {
-    display: flex;
-    flex-direction: column;
-    /* align-items: center; */
-    /* max-width: 1600px; Increased max-width */
-    /* margin: 0 auto; */
     padding: 20px;
-    min-height: 100vh;
+    display: flex;
+    justify-content: center;
 }
 
 .posts-recommendation-container {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 320px;
-    gap: 40px; /* Increased gap */
-    position: relative;
-    margin-top: 20px;
-    width: 100%;
-    height: calc(100vh - 120px);
+   
 }
 
 .posts-recommendation-container.expanded {

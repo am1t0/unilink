@@ -1,45 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import "./filterpost.css";
-import { Filter, User, Check, Calendar, Briefcase, Plus } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Filter, User, Calendar, Briefcase } from "lucide-react";
 
 const FilterPost = () => {
+  const [currentOption, setCurrentOption] = useState();
+
   return (
-    <div className="filter-post-container">
-      <div className="filter-left">
-        <div className="filter-group">
-          <Filter className="filter-icon" />
-          <span>Filter Your Posts:</span>
-        </div>
-
-        <div className="filter-group">
-          <div className="filter-user">
-            <User className="filter-icon" />
-            <div className="verified-icon">
-              <Check className="verified-check" />
-            </div>
-          </div>
-          <span>All</span>
-        </div>
-
-        <div className="filter-group">
-          <Calendar className="filter-icon" />
-          <span>Event</span>
-        </div>
-
-        <div className="filter-group">
-          <Briefcase className="filter-icon" />
-          <span>Job & Internship</span>
-        </div>
+    <aside className="post-filter">
+      <div className="filter-header">
+        <Filter />
+        <p>Filter Posts</p>
       </div>
 
-      <Link to={"/post-create"} style={{textDecoration: "none", color:"white"}}><div className="filter-right">
-        <div className="add-post">
-          <Plus className="filter-icon" />
-          <span>Add Your New Post</span>
-        </div>
-      </div></Link>
-    </div>
+      {/* <hr/> */}
+
+      <ul className="post-filter-options">
+        <li
+          className={`filter-option ${currentOption === "General" ? "selected" : ""}`}
+          id="general"
+          onClick={() => setCurrentOption("General")}
+        >
+          <User size={22} />
+          <p>General</p>
+        </li>
+        <li
+          className={`filter-option ${currentOption === "Event" ? "selected" : ""}`}
+          id="event"
+          onClick={() => setCurrentOption("Event")}
+        >
+          <Calendar size={22} />
+          <p>Event</p>
+        </li>
+        <li
+          className={`filter-option ${currentOption === "Opportunity" ? "selected" : ""}`}
+          id="opportunity"
+          onClick={() => setCurrentOption("Opportunity")}
+        >
+          <Briefcase size={22} />
+          <p>Opportunity</p>
+        </li>
+      </ul>
+    </aside>
   );
 };
 

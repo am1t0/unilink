@@ -3,7 +3,7 @@
 .headder {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: space-around;
   padding: 15px 25px;
   background-color: #0A0F1E;
   color: white;
