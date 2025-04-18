@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import "./header.css";
 import { useAuthStore } from "../../store/useAuthStore";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useNotificationsStore } from "../../store/useNotifications";
 
 const Header = () => {
@@ -33,24 +33,42 @@ const Header = () => {
         <div className="headder-logo">Uni Link</div>
 
         <nav className="headder-nav-links">
-          <Link to="/" className="headder-nav-item">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `headder-nav-item ${isActive ? "active-link" : ""}`
+            }
+          >
             <Home size={20} className="headder-icon" />
             <span className="headder-nav-text">Home</span>
-          </Link>
-          <Link to="/chats" className="headder-nav-item">
+          </NavLink>
+
+          <NavLink
+            to="/chats"
+            className={({ isActive }) =>
+              `headder-nav-item ${isActive ? "active-link" : ""}`
+            }
+          >
             <MessageCircle size={20} className="headder-icon" />
             <p className="headder-nav-text">Message</p>
-          </Link>
-          <Link
+          </NavLink>
+
+          <NavLink
             to="/notifications"
-            className="headder-nav-item notification-icon-wrapper"
+            className={({ isActive }) =>
+              `headder-nav-item notification-icon-wrapper ${
+                isActive ? "active-link" : ""
+              }`
+            }
           >
             <Bell size={20} className="headder-icon" />
             {unreadNotifications?.length > 0 && (
-              <span className="notification-badge">{unreadNotifications?.length}</span>
+              <span className="notification-badge">
+                {unreadNotifications?.length}
+              </span>
             )}
             <span className="headder-nav-text">Notification</span>
-          </Link>
+          </NavLink>
         </nav>
       </div>
 
