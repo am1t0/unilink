@@ -95,7 +95,7 @@ export default function Notifications() {
 
       <div className="notifications-list">
         {filteredNotifications?.map((n) => (
-          <div className="notification-item" key={n.id}>
+          <div className="notification-item" key={n._id}>
             <div className="notification-left">
               {iconMap[n.type]}
               <div>

@@ -14,7 +14,6 @@ export const useNotificationsStore = create((set) => ({
         const response = await axiosInstance.get("/notification/all");
         set({ notifications: response.data.notifications });
         } catch (error) {
-            console.log(error);
         toast.error(error.response?.data?.message || "Cannot fetch notifications");
         } finally {
         set({ loading: false });
