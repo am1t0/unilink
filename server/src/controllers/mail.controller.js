@@ -65,7 +65,7 @@ const SendEmail = async (emailDetails) => {
 
         const info = await transporter.sendMail({
             from: SenderEmail,
-            to: '',
+            to: recipient,
             subject,
             text,
         });
@@ -88,7 +88,6 @@ export const sendEmailController = async (req, res) => {
         await SendEmail(req.body); // Pass the req.body to the SendEmail function
         res.status(200).send("Email sent successfully");
     } catch (error) {
-        console.error("Error sending email:", error);
         res.status(500).send("Error sending email");
     }
 };

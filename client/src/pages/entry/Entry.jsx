@@ -10,7 +10,7 @@ export default function Entry() {
 
   return (
     <div className='entry-page'>
-      <FilterPost/>
+      {/* <FilterPost/> */}
       <div className={`posts-recommendation-container ${!showRecommendations ? 'expanded' : ''}`}>
         <div className="post-section">
           <PostList/>
