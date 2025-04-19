@@ -7,6 +7,7 @@ import { useSocket } from "../../providers/Socket.jsx";
 import { useNotificationsStore } from "../../store/useNotifications.js";
 import { useAuthStore } from "../../store/useAuthStore.js";
 import toast from "react-hot-toast";
+import DefaultAvatar from '../../assets/images/avatar.png'
 
 const Recommendations = () => {
   const { getUserRecommendations, recommendations, sendRequest, loading } =
@@ -16,9 +17,6 @@ const Recommendations = () => {
   const { socket } = useSocket();
 
   const [ requesting, setRequesting] = useState(null);
-
-  const defaultAvatar =
-    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
 
   useEffect(() => {
     getUserRecommendations();
@@ -73,7 +71,7 @@ const Recommendations = () => {
                 to={`/profilePage/${user._id}`}
                 className="user-info-section"
               >
-                <img src={user.avatar || defaultAvatar} alt={user.name} />
+                <img src={user.avatar || DefaultAvatar} alt={user.name} />
                 <div className="user-info">
                   <h4>{user.name}</h4>
                   <p>{user.collage}</p>

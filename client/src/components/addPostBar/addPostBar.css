@@ -1,0 +1,34 @@
+.add-post-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: #cbcbcb;
+    padding: 1rem;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #e0e0e0;
+  }
+  
+  .post-button {
+    flex: 1;
+    background: linear-gradient(to right, #007bff, #0056b3);
+    color: white;
+    font-weight: 500;
+    border-radius: 999px;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s;
+  }
+  .post-button:hover {
+    transform: scale(1.02);
+  }
+  

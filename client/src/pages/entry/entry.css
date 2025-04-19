@@ -1,7 +1,13 @@
 .entry-page {
+    margin-top: 1rem;
     padding: 20px;
     display: flex;
     justify-content: center;
+    gap: 4rem;
+}
+
+.middle-section {
+    /* border: 1px solid red; */
 }
 
 .posts-recommendation-container {
