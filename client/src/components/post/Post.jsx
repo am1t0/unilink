@@ -37,6 +37,15 @@ const Post = ({
     }
   }, [authUser._id, likedBy, user._id]);
 
+  useEffect(() => {
+    if (showComments) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [showComments]);
+  
+
   const handleNext = () => {
     setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % mediaArray.length);
   };
