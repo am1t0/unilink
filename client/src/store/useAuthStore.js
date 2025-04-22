@@ -200,8 +200,6 @@ export const useAuthStore = create((set) => ({
 
       const res = await axiosInstance.get(`/auth/profile/${profileId}`);
 
-      toast.success(res.data.message);
-
       return res.data.user;
 
     } catch (error) {
