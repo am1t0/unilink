@@ -144,3 +144,12 @@
     0%, 100% { opacity: 0.3; }
     50% { opacity: 1; }
 }
+
+.no-conversation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.2rem;
+}
