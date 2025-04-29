@@ -4,7 +4,8 @@ import { Link } from "react-router";
 import { useAuthStore } from "../../../store/useAuthStore";
 import { useMessageStore } from "../../../store/useMessageStore";
 import Loader from "../../loader/Loader";
-import { Bs0Circle } from "react-icons/bs";
+import { Bs0Circle, BsLamp, BsPencil, BsPencilSquare } from "react-icons/bs";
+import ProfilesSearch from "../../profilesSearch/ProfilesSearch";
 
 export default function ChatList({ typingUsers }) {
   const { authUser } = useAuthStore();
@@ -20,13 +21,14 @@ export default function ChatList({ typingUsers }) {
   const [filteredChats, setFilteredChats] = useState([]);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [showProfileSearch, setShowProfileSearch] = useState(true);
 
   // Debounce logic
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query);
     }, 400); // 400ms debounce
-    
+
     return () => clearTimeout(timer);
   }, [query]);
 
@@ -63,9 +65,21 @@ export default function ChatList({ typingUsers }) {
   return (
     <aside className="conversation">
       <div className="conversation-head">
-        <h1>
-          Chats <Bs0Circle />{" "}
-        </h1>
+        <div className="head-bar">
+          <h1>Chats</h1>
+          <div className="head-bar-right">
+            <button className="icon-button" onClick={()=> setShowProfileSearch(!showProfileSearch)}>
+              <BsPencil/>
+            </button>
+            <button className="icon-button">
+              <BsLamp/>
+            </button>
+          </div>
+        </div>
+        
+        {
+           showProfileSearch && <ProfilesSearch/>
+        }
         <div className="search-conversation">
           <input
             type="text"
