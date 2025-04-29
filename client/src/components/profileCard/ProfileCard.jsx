@@ -11,10 +11,11 @@ import {
   BsMortarboardFill,
   BsPencil,
 } from "react-icons/bs";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import { toast } from "react-hot-toast";
 import EditProfileForm from "../editProfileForm/EditProfileForm";
+import defaultAvatar from '../../assets/images/avatar.png'
 
 export default function ProfileCard({ user }) {
   const { uploadProfileImage, uploadBannerImage, authUser } = useAuthStore();
@@ -66,9 +67,7 @@ export default function ProfileCard({ user }) {
   const handleEditClick = () => {
     setIsEditFormOpen(true);
   };
-
-  const defaultAvatar =
-    "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y";
+ 
 
   return (
     <>

@@ -11,6 +11,7 @@ import "./Post.css";
 import Comments from "../comments/Comments";
 import { usePostStore } from "../../store/usePostStore";
 import { useAuthStore } from "../../store/useAuthStore";
+import { Link } from "react-router";
 
 const Post = ({
   postId,
@@ -70,10 +71,6 @@ const Post = ({
     likePost(postId);
   }
 
-  const fetchPostUser = () => {
-    
-  }
-
   return (
     <div className="post-container">
       <div className="post-header">
@@ -84,7 +81,7 @@ const Post = ({
           </div>
           <div className="post-details">
             <div className="post-username-and-link">
-              <h3 className="post-username" onClick={fetchPostUser}>{user.name}</h3>
+              <Link to={`/profilepage/${user._id}`} className="post-username" >{user.name}</Link>
               <button className="post-link-btn">Link</button>
             </div>
             <p className="post-year">{user.position}</p>
