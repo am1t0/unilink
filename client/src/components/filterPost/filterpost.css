@@ -69,3 +69,26 @@
 #opportunity svg {
   color: red;
 }
+
+.filter-option {
+  position: relative; /* Add this for proper icon positioning */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 1px 4px;
+  gap: 4px;
+  border-radius: 2px;
+  transition: all .1s ease-in-out;
+}
+
+.tick-icon {
+  position: absolute;
+  left: -18px; /* Position the tick to the left of the option */
+  color: #4CAF50; /* Green color for the tick */
+}
+
+/* Adjust padding to accommodate the tick */
+.post-filter-options {
+  padding-left: 18px;
+}

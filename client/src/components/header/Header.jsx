@@ -11,6 +11,7 @@ import {
   Menu,
   UserRound,
   X,
+  Bookmark,
 } from "lucide-react";
 import "./header.css";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -69,6 +70,16 @@ const Header = () => {
             )}
             <span className="headder-nav-text">Notification</span>
           </NavLink>
+
+          <NavLink
+            to="/savedPosts"
+            className={({ isActive }) =>
+              `headder-nav-item ${isActive ? "active-link" : ""}`
+            }
+          >
+            <Bookmark size={20} className="headder-icon" />
+            <span className="headder-nav-text">Saved</span>
+          </NavLink>
         </nav>
       </div>
 
@@ -85,7 +96,6 @@ const Header = () => {
       <div className="headder-auth-buttons">
         {!authUser ? (
           <>
-            {" "}
             <Link to={"/login"}>
               <button className="headder-login-btn">
                 <LogIn size={16} /> Login
@@ -110,6 +120,7 @@ const Header = () => {
           </>
         )}
       </div>
+
       <button
         className="headder-hamburger"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -121,7 +132,6 @@ const Header = () => {
         <div className="headder-mobile-menu">
           {!authUser ? (
             <>
-              {" "}
               <Link to={"/login"}>
                 <button className="headder-login-btn">
                   <LogIn size={16} /> Login

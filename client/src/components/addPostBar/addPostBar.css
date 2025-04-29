@@ -1,34 +1,70 @@
+/* addPostBar.css */
 .add-post-bar {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background-color: #cbcbcb;
-    padding: 1rem;
-    border-radius: 5px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: #1a2542; /* Dark blue background */
+  padding: 0.8rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #2a3754; /* Subtle border */
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.add-post-bar:hover {
+  background-color: #1e2c52; /* Slightly lighter on hover */
+  border-color: #3a4a6d;
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid #4d5c89; /* Matching your theme's accent color */
+}
+
+.post-button {
+  flex: 1;
+  background: transparent;
+  color: #8b95a9; /* Light gray text */
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-align: left;
+  border-radius: 20px;
+  padding: 0.7rem 1.2rem;
+  cursor: pointer;
+  border: 1px solid #2a3754;
+  transition: all 0.2s ease;
+}
+
+.post-button:hover {
+  background: rgba(74, 108, 187, 0.1); /* Subtle blue tint */
+  color: #c2c9d6; /* Brighter text on hover */
+  border-color: #4d5c89;
+}
+
+/* Active/focus state */
+.post-button:focus {
+  outline: none;
+  background: rgba(74, 108, 187, 0.2);
+  color: #ffffff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .add-post-bar {
+      padding: 0.7rem 1rem;
+      margin-bottom: 1rem;
   }
   
   .avatar {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid #e0e0e0;
+      width: 38px;
+      height: 38px;
   }
   
   .post-button {
-    flex: 1;
-    background: linear-gradient(to right, #007bff, #0056b3);
-    color: white;
-    font-weight: 500;
-    border-radius: 999px;
-    padding: 0.75rem 1.5rem;
-    cursor: pointer;
-    border: none;
-    transition: transform 0.2s;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
   }
-  .post-button:hover {
-    transform: scale(1.02);
-  }
-  
+}

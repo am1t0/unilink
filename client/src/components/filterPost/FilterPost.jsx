@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import "./filterpost.css";
-import { Filter, User, Calendar, Briefcase } from "lucide-react";
+import { Filter, User, Calendar, Briefcase, Check } from "lucide-react";
+import { usePostStore } from "../../store/usePostStore";
+
 
 const FilterPost = () => {
-  const [currentOption, setCurrentOption] = useState();
+  const { currentFilter, toggleFilter } = usePostStore();
 
   return (
     <aside className="post-filter">
@@ -12,32 +14,33 @@ const FilterPost = () => {
         <p>Filter Posts</p>
       </div>
 
-      {/* <hr/> */}
-
       <ul className="post-filter-options">
         <li
-          className={`filter-option ${currentOption === "General" ? "selected" : ""}`}
-          id="general"
-          onClick={() => setCurrentOption("General")}
+          className={`filter-option ${currentFilter === "Personal" ? "selected" : ""}`}
+          id="personal"
+          onClick={() => toggleFilter("Personal")}
         >
+          {currentFilter === "Personal" && <Check size={18} className="tick-icon" />}
           <User size={22} />
-          <p>General</p>
+          <p>Personal</p>
         </li>
         <li
-          className={`filter-option ${currentOption === "Event" ? "selected" : ""}`}
+          className={`filter-option ${currentFilter === "Event" ? "selected" : ""}`}
           id="event"
-          onClick={() => setCurrentOption("Event")}
+          onClick={() => toggleFilter("Event")}
         >
+          {currentFilter === "Event" && <Check size={18} className="tick-icon" />}
           <Calendar size={22} />
           <p>Event</p>
         </li>
         <li
-          className={`filter-option ${currentOption === "Opportunity" ? "selected" : ""}`}
+          className={`filter-option ${currentFilter === "Job & Internship" ? "selected" : ""}`}
           id="opportunity"
-          onClick={() => setCurrentOption("Opportunity")}
+          onClick={() => toggleFilter("Job & Internship")}
         >
+          {currentFilter === "Job & Internship" && <Check size={18} className="tick-icon" />}
           <Briefcase size={22} />
-          <p>Opportunity</p>
+          <p>Job & Internship</p>
         </li>
       </ul>
     </aside>

@@ -7,21 +7,29 @@ import PostList from "../../components/postList/PostList";
 import AddPostBar from "../../components/addPostBar/AddPostBar";
 
 export default function Entry() {
-  const [showRecommendations, setShowRecommendations] = useState(true);
+  const [showRecommendations, setShowRecommendations] = useState(false);
 
   return (
-    <div className="entry-page">
-      <FilterPost />
+    <div className={`entry-page ${showRecommendations ? 'show-recommendations' : ''}`}>
+      <div className="filter-section">
+        <FilterPost />
+      </div>
       
       <div className="middle-section">
-
-         <AddPostBar/>
-
-         <PostList />
-
+        <AddPostBar />
+        <PostList />
       </div>
 
-      {showRecommendations && <Recommendations />}
+      <div className="recommendations-section">
+        <Recommendations />
+      </div>
+
+      <button 
+        className="toggle-recommendations"
+        onClick={() => setShowRecommendations(!showRecommendations)}
+      >
+        {showRecommendations ? <BsArrowBarRight size={20} /> : <BsArrowBarLeft size={20} />}
+      </button>
     </div>
   );
 }

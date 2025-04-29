@@ -4,7 +4,7 @@ import Post from "../post/Post";
 import { usePostStore } from "../../store/usePostStore";
 
 export default function PostList() {
-  const { getAllPosts, posts } = usePostStore();
+  const { getAllPosts, filteredPosts } = usePostStore();
 
   useEffect(() => {
     getAllPosts();
@@ -12,7 +12,7 @@ export default function PostList() {
 
   return (
     <ul className="post-list">
-      {posts?.map((post) => (
+      {filteredPosts?.map((post) => (
         <Post
           key={post._id}
           postId={post._id}

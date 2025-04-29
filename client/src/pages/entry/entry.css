@@ -1,57 +1,52 @@
 .entry-page {
     margin-top: 1rem;
     padding: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 4rem;
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    gap: 2rem;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.filter-section {
+    position: sticky;
+    top: 20px;
+    height: fit-content;
 }
 
 .middle-section {
-    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0; /* Prevent overflow */
 }
 
 .posts-recommendation-container {
-   
-}
-
-.posts-recommendation-container.expanded {
-    grid-template-columns: minmax(0, 1fr);
-}
-
-.post-section {
-    display: flex;
-    justify-content: center;
-    /* overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #2a3754 #1a2542; */
+    display: contents; /* Use grid layout from parent */
 }
 
 .recommendations-section {
     position: sticky;
     top: 20px;
     height: fit-content;
-    padding-right: 20px; /* Added right padding */
+    padding-right: 20px;
 }
 
+/* Toggle button for recommendations */
 .toggle-recommendations {
-    position: absolute;
-    right: 360px;
-    top: 20px;
+    display: none; /* Hide by default, show only on mobile */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
     background: #1a2542;
     border: 1px solid #2a3754;
     color: #8b95a9;
-    padding: 8px;
-    border-radius: 8px;
+    padding: 10px;
+    border-radius: 50%;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    z-index: 10;
-}
-
-.expanded .toggle-recommendations {
-    right: 10px;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .toggle-recommendations:hover {
@@ -59,16 +54,59 @@
     color: #ffffff;
 }
 
-@media (max-width: 1024px) {
-    .posts-recommendation-container {
-        grid-template-columns: 1fr;
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .entry-page {
+        grid-template-columns: 240px 1fr;
     }
     
     .recommendations-section {
         display: none;
     }
     
+    .entry-page.show-recommendations {
+        grid-template-columns: 240px 1fr;
+    }
+    
+    .entry-page.show-recommendations .recommendations-section {
+        display: block;
+        position: fixed;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        width: 300px;
+        background: #0A0F1E;
+        padding: 20px;
+        z-index: 90;
+        overflow-y: auto;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+    }
+    
     .toggle-recommendations {
-        display: none;
+        display: flex;
+    }
+}
+
+@media (max-width: 768px) {
+    .entry-page {
+        grid-template-columns: 1fr;
+        padding: 10px;
+        gap: 1rem;
+    }
+    
+    .filter-section {
+        position: static;
+    }
+    
+    .entry-page.show-recommendations {
+        grid-template-columns: 1fr;
+    }
+    
+    .entry-page.show-recommendations .recommendations-section {
+        width: 100%;
+    }
+    
+    .toggle-recommendations {
+        bottom: 70px; /* Adjust if you have other fixed elements */
     }
 }

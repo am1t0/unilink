@@ -17,6 +17,7 @@ import Chats from "./pages/chats/Chats";
 import { SocketProvider } from "./providers/Socket";
 import Entry from "./pages/entry/Entry";
 import Notifications from "./pages/notifications/Notifications";
+import SavedPosts from "./pages/savedPostsByUser/SavedPosts";
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
       <Route path="/profileedit" element={authUser? <ProfileEdit /> : <Navigate to={"/login"}/> }/>
       <Route path="/post-create" element={authUser? <PostCreate /> : <Navigate to={"/login"}/> }/>
       <Route path="/comments" element={authUser? <Comments /> : <Navigate to={"/login"}/> }/>
+      <Route path="/savedPosts" element={authUser? <SavedPosts /> : <Navigate to={"/login"}/> }/>
     </Routes>
     </SocketProvider>
     <Toaster/>
