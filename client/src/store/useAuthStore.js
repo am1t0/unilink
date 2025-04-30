@@ -220,4 +220,15 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  searchUsers: async (query) => {
+    try {
+      query = query.trim();
+      const res = await axiosInstance.get(`/auth/search-users?searchTerm=${encodeURIComponent(query)}`);
+      return res.data.users;
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Error searching users");
+      return [];
+    }
+  }
+
 }));

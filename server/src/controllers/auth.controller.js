@@ -260,7 +260,7 @@ export const getProfile = asyncHandler( async ( req, res) => {
       user,
     });
   } catch (error) {
-    console.error("Error fetching user profile:", error);
+
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -268,4 +268,67 @@ export const getProfile = asyncHandler( async ( req, res) => {
   }
 })
 
-export { registerUser, loginUser };
+export const searchRelevantUsers = asyncHandler(async (req, res) => {
+  const { searchTerm, maxResults = 10 } = req.query;
+  const userId = req.user.id;
+
+  try {
+    const currentUser = await User.findById(userId).select("-password -phone");
+    if (!currentUser) {
+      return res.status(404).json({ message: "Current user not found" });
+    }
+
+    console.log(searchTerm, currentUser.collage);
+  
+    const query = {
+      _id: { $ne: currentUser._id },
+      collage: currentUser.collage,
+      $or: [
+        { name: new RegExp(searchTerm, "i") },
+        { email: new RegExp(searchTerm, "i") }
+      ]
+    };
+  
+    const users = await User.aggregate([
+      { $match: query },
+      {
+        $addFields: {
+          relevance: {
+            $add: [
+              { $cond: [{ $eq: ["$degree", currentUser.degree] }, 1, 0] },
+              { $cond: [{ $eq: ["$branch", currentUser.branch] }, 1, 0] },
+              { $cond: [{ $eq: ["$position", currentUser.position] }, 1, 0] }
+            ]
+          }
+        }
+      },
+      { $sort: { relevance: -1, name: 1 } },
+      { $limit: parseInt(maxResults) },
+      {
+        $project: {
+          name: 1,
+          email: 1,
+          degree: 1,
+          branch: 1,
+          year: 1,
+          relevance: 1
+        }
+      }
+    ]);
+  
+    res.status(200).json({
+      success: true,
+      users,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+
+
+export { registerUser, loginUser};

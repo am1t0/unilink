@@ -7,7 +7,8 @@ import {
     updateProfile,
     uploadProfileImage,
     uploadBannerImage,
-    getProfile
+    getProfile,
+    searchRelevantUsers
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -37,5 +38,7 @@ router.post(
 );
 
 router.get("/profile/:profileId", protectRoute, getProfile)
+
+router.get("/search-users", protectRoute, searchRelevantUsers);
 
 export default router;
