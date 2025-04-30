@@ -7,7 +7,35 @@ export const useMessageStore = create((set) => ({
   currentConversation: null,
   messages: null,
   loading: false,
+  process: null,
+  
+  createConversation: async (members) => {
+    set({ process: "new conversation" });
+  
+    try {
+      const response = await axiosInstance.post("/conversation/new", { members });
+      const { existingConversation, newConversation } = response.data;
+  
+      if (existingConversation) {
+        // Just select the existing one without adding
+        set({ currentConversation: existingConversation });
+        return ;
+      }
+  
+      // Add new one and set it as current
+      set((state) => ({
+        conversations: [newConversation, ...(state.conversations || [])],
+        currentConversation: newConversation,
+      }));
+      
+      toast.success("Conversation created successfully!");
 
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Cannot create conversation");
+    } finally {
+      set({ process: null });
+    }
+  },  
   // Get all conversations for current user
   getConversations: async () => {
     set({ loading: true });

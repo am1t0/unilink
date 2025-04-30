@@ -9,6 +9,7 @@
     position: absolute;
     left: 370px;
     top: -2px;
+    z-index: 11;
   }
   
   .user-search input {
@@ -69,3 +70,8 @@
     font-size: 12px;
   }
   
+  .no-users-found p {
+     color: rgb(60, 60, 60);
+     font-size: 16px;
+     margin: 0;
+  }

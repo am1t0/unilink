@@ -21,7 +21,7 @@ export default function ChatList({ typingUsers }) {
   const [filteredChats, setFilteredChats] = useState([]);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [showProfileSearch, setShowProfileSearch] = useState(true);
+  const [showProfileSearch, setShowProfileSearch] = useState(false);
 
   // Debounce logic
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function ChatList({ typingUsers }) {
         </div>
         
         {
-           showProfileSearch && <ProfilesSearch/>
+           showProfileSearch && <ProfilesSearch setShow = {setShowProfileSearch} />
         }
         <div className="search-conversation">
           <input
