@@ -1,17 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./profilesSearch.css";
 import { resolveAvatar } from "../../utilities/defaultImages";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useMessageStore } from "../../store/useMessageStore";
 
-export default function ProfilesSearch({setShow}) {
+export default function ProfilesSearch({setShow, show}) {
 
+  // Importing the authUser and searchUsers from the auth store
+  // and createConversation from the message store
   const { authUser, searchUsers } = useAuthStore();
   const { createConversation } = useMessageStore();
 
+  // user search state variables
   const [users, setUsers] = useState(null);
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+
+  //component reference
+  const boxRef = useRef();
+
+  // Close the search box when clicked outside
+  useEffect(()=> {
+      
+    // eslint-disable-next-line no-unused-vars
+      const handleClickOutside = ( event )=>{
+       if( boxRef.current && !boxRef.current.contains(event.target) ){
+          setShow(!show)
+       }
+      }
+
+       if(show) document.addEventListener("mousedown", handleClickOutside);
+
+       return ()=> {
+        document.removeEventListener("mousedown", handleClickOutside);
+       }
+
+  },[setShow, show]);
 
   // Debounce logic
   useEffect(() => {
@@ -37,16 +61,13 @@ export default function ProfilesSearch({setShow}) {
     // hide the search input box
     setShow(false);
 
-    //set loader state
-
-
     //create the conversation for the members
     const members = [userId, authUser._id];
     await createConversation(members);
   }
   
   return (
-    <div className="user-search">
+    <div className="user-search" ref={boxRef}>
       <div className="search-input">
         <input
           type="text"

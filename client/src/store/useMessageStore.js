@@ -19,7 +19,7 @@ export const useMessageStore = create((set) => ({
       if (existingConversation) {
         // Just select the existing one without adding
         set({ currentConversation: existingConversation });
-        return ;
+        return true;
       }
   
       // Add new one and set it as current
@@ -29,6 +29,7 @@ export const useMessageStore = create((set) => ({
       }));
       
       toast.success("Conversation created successfully!");
+      return true;
 
     } catch (error) {
       toast.error(error.response?.data?.message || "Cannot create conversation");

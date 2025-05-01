@@ -2,21 +2,31 @@ import React, { useEffect, useState } from "react";
 import "./recommendations.css";
 import { useLinkStore } from "../../store/useLinkStore.js";
 import { BsPersonPlusFill, BsChatDots } from "react-icons/bs";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useSocket } from "../../providers/Socket.jsx";
 import { useNotificationsStore } from "../../store/useNotifications.js";
 import { useAuthStore } from "../../store/useAuthStore.js";
 import toast from "react-hot-toast";
 import DefaultAvatar from '../../assets/images/avatar.png'
+import { useMessageStore } from "../../store/useMessageStore.js";
 
 const Recommendations = () => {
+  //links related state and functions
   const { getUserRecommendations, recommendations, sendRequest, loading } =
     useLinkStore();
+  const [ requesting, setRequesting] = useState(null);
+
+  //notifications sender function
   const { sendNotification } = useNotificationsStore();
+
+  // user and socket state
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
 
-  const [ requesting, setRequesting] = useState(null);
+  // create conversations function
+  const { createConversation} = useMessageStore();
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     getUserRecommendations();
@@ -58,6 +68,18 @@ const Recommendations = () => {
     }
   };
 
+  const handleMessageClick = async (userId)=>{
+      const members = [authUser._id, userId];
+
+      // form the conversation
+      const response = await createConversation(members);
+
+      if(!response) return;
+
+      // redirect to the messages page
+      navigate(`/chats`);
+  }
+
   return (
     <div className="recommendations">
       {loading ? (
@@ -93,7 +115,7 @@ const Recommendations = () => {
                   }
                 </button>
 
-                <button className="action-btn">
+                <button className="action-btn" onClick={()=> handleMessageClick(user._id)}>
                   <BsChatDots /> Message
                 </button>
               </div>

@@ -6,6 +6,8 @@ import { useSocket } from '../../providers/Socket';
 import { useAuthStore } from '../../store/useAuthStore';
 import NotificationCard from '../../components/notificationCard/NotificationCard';
 import { useNotificationsStore } from '../../store/useNotifications';
+import { useMessageStore } from '../../store/useMessageStore';
+import Overlay from '../../components/overlay/Overlay';
 
 
 const Home = () => {
@@ -13,6 +15,8 @@ const Home = () => {
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
   const { getNotification, getNotifications, sendMail } = useNotificationsStore();
+
+  const { process } = useMessageStore(); 
 
   //get all the notifications when user enters
   useEffect(()=>{
@@ -57,6 +61,9 @@ const Home = () => {
   return (
     <div>
       <NotificationCard/>
+      {
+              process && <Overlay message = {process} />
+      }
       <Header />
       <Outlet />
     </div>
