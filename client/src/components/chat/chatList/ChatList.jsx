@@ -90,7 +90,7 @@ export default function ChatList({ typingUsers }) {
       </div>
 
       {/* Show loader while loading */}
-      {!conversations ? (
+      { !conversations ? (
         <Loader />
       ) : (
         <ul className="conversation-list">
@@ -141,11 +141,15 @@ export default function ChatList({ typingUsers }) {
             );
           })}
           
-          {filteredChats.length === 0 && (
+         
           <div className="no-conversation">
-            <h3>No matched conversation</h3>
+             <h3>
+             { (conversations.length === 0) && "Start a conversation" }
+
+             { (filteredChats.length === 0 && query.length > 0 ) &&  "No match found"}
+             </h3>
           </div>
-          )}
+
         </ul>
       )}
     </aside>

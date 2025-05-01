@@ -50,7 +50,7 @@ export default function ProfilesSearch({setShow}) {
       <div className="search-input">
         <input
           type="text"
-          placeholder="new conversation"
+          placeholder="New conversation"
           onChange={(e) => setQuery(e.target.value)}
           value={query}
         />

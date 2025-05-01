@@ -1,77 +1,82 @@
 .user-search {
-    width: 500px;
-    background-color: rgb(240, 240, 240);
-    margin: 50px auto;
-    padding: 1rem;
-    border-radius: 8px;
-    box-sizing: border-box;
-    color: white;
-    position: absolute;
-    left: 370px;
-    top: -2px;
-    z-index: 11;
-  }
-  
-  .user-search input {
-    width: 100%;
-    padding: 0.8rem;
-    border: none;
-    outline: none;
-    border-radius: 60px;
-    box-sizing: border-box;
-    font-size: 14px;
-    background-color: rgb(223, 223, 223);
-  }
-  
-  .search-results {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    gap: 10px;
-  }
-  
-  .user-searched {
-    width: 90%;
-    background-color: rgb(243, 248, 255);
-    color: black;
-    padding: 8px;
-    border-radius: 6px;
-    display: flex;
-    gap: 10px;
-    cursor: pointer;
-    transition: all .3s ease-in-out;
-  }
+  width: 500px;
+  background-color: #1e1e2f; /* darker consistent background */
+  margin: 50px auto;
+  padding: 1rem;
+  border-radius: 10px;
+  box-sizing: border-box;
+  color: white;
+  position: absolute;
+  left: 370px;
+  top: -2px;
+  z-index: 11;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
 
-  .user-searched:hover {
-     background-color:rgb(221, 232, 255);
-  }
+.user-search input {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  outline: none;
+  border-radius: 60px;
+  font-size: 14px;
+  background-color: #2d2d3a;
+  color: white;
+  box-sizing: border-box;
+}
 
-  .user-searched img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
+.user-search input::placeholder {
+  color: #aaa;
+}
 
-  }
+.search-results {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  gap: 10px;
+}
 
-  .users-info h3 {
-    margin: 0;
-    color: rgb(22, 22, 22);
-    font-size: .9rem;
-    font-weight: 600;
-  }
+.user-searched {
+  width: 90%;
+  background-color: #29293d;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
 
-  .users-info p {
-    margin: 0;
-    color: rgb(102, 102, 102);
-    font-size: 12px;
-  }
-  
-  .no-users-found p {
-     color: rgb(60, 60, 60);
-     font-size: 16px;
-     margin: 0;
-  }
+.user-searched:hover {
+  background-color: #3b3b56;
+}
+
+.user-searched img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.users-info h3 {
+  margin: 0;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.users-info p {
+  margin: 0;
+  color: #ccc;
+  font-size: 12px;
+}
+
+.no-users-found p {
+  color: #ccc;
+  font-size: 16px;
+  margin: 0;
+}

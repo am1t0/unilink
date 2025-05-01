@@ -1,7 +1,7 @@
 import React from 'react';
 import './loader.css';
 
-export default function Loader({ size = 40, color = '#4CAF50' }) {
+export default function Loader({ size = 40, color = '#0167ff' }) {
     
     const loaderStyle = {
         width: `${size}px`,

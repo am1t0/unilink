@@ -10,7 +10,7 @@ export const useMessageStore = create((set) => ({
   process: null,
   
   createConversation: async (members) => {
-    set({ process: "new conversation" });
+    set({ process: "Creating conversation..." });
   
     try {
       const response = await axiosInstance.post("/conversation/new", { members });
