@@ -22,7 +22,7 @@ export default function ChatList({ typingUsers }) {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [showProfileSearch, setShowProfileSearch] = useState(false);
-
+ 
   // Debounce logic
   useEffect(() => {
     const timer = setTimeout(() => {

@@ -30,6 +30,7 @@ const Home = () => {
   
 
   const handleNotificationGet = useCallback((notificationData) => {
+
     const { notificationId } = notificationData;
     
     // fetch the data of the notification sent and set state
@@ -62,7 +63,7 @@ const Home = () => {
     <div>
       <NotificationCard/>
       {
-              process && <Overlay message = {process} />
+        process && <Overlay message = {process} />
       }
       <Header />
       <Outlet />

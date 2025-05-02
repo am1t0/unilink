@@ -41,7 +41,7 @@ const Recommendations = () => {
         type: "Link",
       };
 
-      //intialiazing the link request
+      //intialiazing the link request doc in db
       const linkId = await sendRequest(linkRequest.receiver);
 
       linkRequest.linkId = linkId;

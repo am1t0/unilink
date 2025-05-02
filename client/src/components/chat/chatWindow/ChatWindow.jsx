@@ -17,7 +17,7 @@ import EmojiPicker from "../../emojiPicker/EmojiPicker";
 export default function ChatWindow({ isTyping }) {
 
   // State Management
-  const { currentConversation, getMessages, messages, sendMessage } =
+  const { currentConversation, getMessages, messages, sendMessage, updateConversationLastMessageAndOrder } =
     useMessageStore();
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
@@ -59,11 +59,16 @@ const handleMessageSend = async () => {
         createdAt: new Date().toISOString(),
       };
 
+      // Send message to the server
       const { status, _id} = await sendMessage(messageData);
+
       
       //update the message data 
-        messageData.status = status;
-        messageData._id = _id;
+      messageData.status = status;
+      messageData._id = _id;
+      
+     //update conversation last message
+      updateConversationLastMessageAndOrder(messageData);
 
       //send the message to the socket
       await socket.emit("sendMessage", messageData);

@@ -90,7 +90,8 @@ export const getConversations = asyncHandler(async (req, res) => {
         const userId = req.user.id;
         const conversations = await Conversation.find({
             members: { $in: [userId] }
-        })
+        })  
+            .sort({ updatedAt: -1 })
             .populate("members", "name email avatar")
             .populate("lastMessage", "text createdAt")
 

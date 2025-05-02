@@ -7,17 +7,21 @@ import { useParams } from "react-router";
 const useChatSocket = ({ setIsTyping, setTypingUsers }) => {
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
-  const { currentConversation, updateMessage } = useMessageStore();
+  const { currentConversation, updateMessage,  updateConversationLastMessageAndOrder } = useMessageStore();
   const { conversationId } = useParams();
 
   // Receive messages
   const handleGetMessage = useCallback(
     (data) => {
+
+      //update the message list only if user in target conversation
       if (data.conversationId === currentConversation?._id) {
         updateMessage(data);
       }
+      // Update the last message in the conversation list
+       updateConversationLastMessageAndOrder(data);
     },
-    [currentConversation?._id, updateMessage]
+    [currentConversation?._id, updateConversationLastMessageAndOrder, updateMessage]
   );
 
   // Show typing status for both current chat window and chat list
