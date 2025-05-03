@@ -108,7 +108,7 @@
     gap: 10px;
     transition: background 0.3s;
     margin: 10px 0px;
-    border-radius: 1rem;
+    border-radius: .8rem;
 }
 .conversation-avatar {
     background-color: rgb(26, 22, 22);

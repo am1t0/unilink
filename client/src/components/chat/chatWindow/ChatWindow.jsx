@@ -15,10 +15,14 @@ import { useSocket } from "../../../providers/Socket";
 import EmojiPicker from "../../emojiPicker/EmojiPicker";
 
 export default function ChatWindow({ isTyping }) {
-
   // State Management
-  const { currentConversation, getMessages, messages, sendMessage, updateConversationLastMessageAndOrder } =
-    useMessageStore();
+  const {
+    currentConversation,
+    getMessages,
+    messages,
+    sendMessage,
+    updateConversationLastMessageAndOrder,
+  } = useMessageStore();
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
 
@@ -29,11 +33,12 @@ export default function ChatWindow({ isTyping }) {
   const messagesEndRef = useRef(null);
 
   // Computed Values
-const otherMember =
-  currentConversation?.members.find((member) => member._id !== authUser?._id) ||
-  currentConversation?.members[0];
+  const otherMember =
+    currentConversation?.members.find(
+      (member) => member._id !== authUser?._id
+    ) || currentConversation?.members[0];
 
-const conversationId = currentConversation?._id;
+  const conversationId = currentConversation?._id;
 
   // Message Handlers
   const handleMessageChange = (e) => {
@@ -47,7 +52,7 @@ const conversationId = currentConversation?._id;
     }
   };
 
-const handleMessageSend = async () => {
+  const handleMessageSend = async () => {
     if (!message.trim()) return;
 
     try {
@@ -60,14 +65,13 @@ const handleMessageSend = async () => {
       };
 
       // Send message to the server
-      const { status, _id} = await sendMessage(messageData);
+      const { status, _id } = await sendMessage(messageData);
 
-      
-      //update the message data 
+      //update the message data
       messageData.status = status;
       messageData._id = _id;
-      
-     //update conversation last message
+
+      //update conversation last message
       updateConversationLastMessageAndOrder(messageData);
 
       //send the message to the socket
@@ -138,11 +142,14 @@ const handleMessageSend = async () => {
 
           <div className="messages-container">
             {messages?.map((msg) => {
-              const messageTime = new Date(msg?.createdAt).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: true,
-              });
+              const messageTime = new Date(msg?.createdAt).toLocaleTimeString(
+                [],
+                {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                }
+              );
 
               return (
                 <div
@@ -163,20 +170,25 @@ const handleMessageSend = async () => {
               );
             })}
 
-{isTyping && (
-                                        <p className="typing">
-                                            typing
-                                            <span className="list-typing-dots">
-                                                <span className="list-typing-dot"></span>
-                                                <span className="list-typing-dot"></span>
-                                                <span className="list-typing-dot"></span>
-                                            </span>
-                                        </p>
-                                     )
-                                    }
+            {/* Scroll to the bottom of the messages */}
+          <div ref={messagesEndRef} />
+
+            {/* Typing indicator */}
+            {isTyping && (
+              <p className="typing">
+                typing
+                <span className="list-typing-dots">
+                  <span className="list-typing-dot"></span>
+                  <span className="list-typing-dot"></span>
+                  <span className="list-typing-dot"></span>
+                </span>
+              </p>
+            )}
           </div>
 
-          {showEmojiPicker && <EmojiPicker message={message} setMessage={setMessage} />}
+          {showEmojiPicker && (
+            <EmojiPicker message={message} setMessage={setMessage} />
+          )}
 
           <div className="message-input-container">
             <button className="message-option-button">

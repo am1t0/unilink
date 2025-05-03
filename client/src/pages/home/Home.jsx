@@ -60,7 +60,7 @@ const Home = () => {
 
 
   return (
-    <div>
+    <div id="home-page">
       <NotificationCard/>
       {
         process && <Overlay message = {process} />
