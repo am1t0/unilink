@@ -6,14 +6,96 @@ import { useSocket } from "../../../providers/Socket";
 import toast from "react-hot-toast";
 import { resolveAvatar } from "../../../utilities/defaultImages";
 import { getTimeAgo } from "../../../utilities/timeAndDate";
+import { getNotificationMessage } from "../../../utilities/notificationItems";
+import { getNotificationIcon } from "../../../utilities/notificationItems";
 
 export default function List() {
   // Filter state to manage the selected filter option
   const [filter, setFilter] = useState("All");
 
   // Fetching notifications and socket from the store
-  const { notifications, sendNotification, markAllNotificationRead } =
-    useNotificationsStore();
+  const { sendNotification } = useNotificationsStore();
+
+  const notifications = [
+    {
+      _id: "1",
+      sender: {
+        _id: "user123",
+        name: "Amit Sharma",
+        avatar: "",
+      },
+      receiver: "user456",
+      type: "Like",
+      status: "unread",
+      deliveryMethod: "socket",
+      postId: "post789",
+      createdAt: "2025-05-03T10:15:00.000Z",
+      updatedAt: "2025-05-03T10:15:00.000Z",
+    },
+    {
+      _id: "2",
+      sender: {
+        _id: "user234",
+        name: "Sneha Mehta",
+        avatar: "",
+      },
+      receiver: "user456",
+      type: "Comment",
+      status: "read",
+      deliveryMethod: "socket",
+      postId: "post790",
+      commentId: "comment101",
+      createdAt: "2025-05-03T11:20:00.000Z",
+      updatedAt: "2025-05-03T11:20:00.000Z",
+    },
+    {
+      _id: "3",
+      sender: {
+        _id: "user345",
+        name: "Nitish Rajput",
+        avatar: "",
+      },
+      receiver: "user456",
+      type: "Link",
+      status: "read",
+      deliveryMethod: "socket",
+      linkId: "link112",
+      createdAt: "2025-05-03T12:21:23.012Z",
+      updatedAt: "2025-05-03T12:24:02.483Z",
+    },
+    {
+      _id: "4",
+      sender: {
+        _id: "user456",
+        name: "Priya Yadav",
+        avatar: "",
+      },
+      receiver: "user789",
+      type: "Mention",
+      status: "unread",
+      deliveryMethod: "socket",
+      postId: "post999",
+      commentId: "comment202",
+      createdAt: "2025-05-02T14:30:00.000Z",
+      updatedAt: "2025-05-02T14:30:00.000Z",
+    },
+    {
+      _id: "5",
+      sender: {
+        _id: "user678",
+        name: "Rahul Verma",
+        avatar: "",
+      },
+      receiver: "user456",
+      type: "Response",
+      status: "unread",
+      deliveryMethod: "socket",
+      linkId: "link113",
+      response: "Accepted",
+      createdAt: "2025-05-01T09:00:00.000Z",
+      updatedAt: "2025-05-01T09:00:00.000Z",
+    },
+  ];
 
   // Fetching link store to manage link requests
   const { changeLinkStatus } = useLinkStore();
@@ -60,88 +142,68 @@ export default function List() {
       : notifications?.filter((n) => n.type === filter);
 
   //as user visits notification section mark all of them as read
-  useEffect(() => {
-    const hasUnread = notifications?.some((n) => n.status === "unread");
+  // useEffect(() => {
+  //   const hasUnread = notifications?.some((n) => n.status === "unread");
 
-    if (hasUnread) {
-      markAllNotificationRead();
-    }
-  }, [markAllNotificationRead, notifications]);
-
-  // SEPERATE KRNA HAI ISKO AS UNTITLITY FUNCTION
-  const getIcon = (type) => {
-    switch (type) {
-      case "Like":
-        return <i className="icon like"></i>;
-      case "Comment":
-        return <i className="icon comment"></i>;
-      case "Mention":
-        return <i className="icon mention"></i>;
-      case "Follow":
-        return <i className="icon follow"></i>;
-      default:
-        return null;
-    }
-  };
-  const getNotificationText = (type) => {
-    switch (type) {
-      case "Like":
-        return "liked your post";
-      case "Comment":
-        return "commented on your post";
-      case "Mention":
-        return "mentioned you in a comment";
-      case "Follow":
-        return "started following you";
-      default:
-        return "";
-    }
-  };
+  //   if (hasUnread) {
+  //     markAllNotificationRead();
+  //   }
+  // }, [markAllNotificationRead, notifications]);
 
   return (
-    <ul className="notification-list">
-      {notifications?.map((notification) => (
-        <div
-          key={notification._id}
-          className={`notification-item ${notification.status}`}
-        >
-          <div className="notification-header">
-            <div className="sender-info">
-              <img
-                src={resolveAvatar(notification.sender)}
-                alt="sender"
-                className="user-avatar"
-              />
-              <span className="sender-name">{notification.sender.name}</span>
+    <div className="notification-list-container">
+      <ul className="notification-list">
+        {notifications?.map((notification) => (
+          <div
+            key={notification._id}
+            className={`notification-item ${notification.status}`}
+          >
+            <div className="notification-header">
+              <div className="sender-info">
+                {getNotificationIcon(notification)}
+                <img
+                  src={resolveAvatar(notification.sender)}
+                  alt="sender"
+                  className="user-avatar"
+                />
+                <h4>{notification.sender.name}</h4>
+                <p>{getNotificationMessage(notification)}</p>
+              </div>
+              <p className="notification-time">
+                {getTimeAgo(notification.createdAt)}
+              </p>
             </div>
-            <div className="notification-time">
-              {getTimeAgo(notification.createdAt)}
+
+            <div className="notification-other-content">
+              {notification.type === "Comment" && (
+                <p className="comment-text">
+                  Good Job Anshul 🚀 Keep going forward and shine. All the best
+                  ✨
+                </p>
+              )}
+
+              {notification.type === "Link" && (
+                <div className="link-actions">
+                  <button
+                    className="accept-button"
+                    onClick={() => handleLinkAccept(notification)}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    className="reject-button"
+                    onClick={() =>
+                      handleAction(notification.sender._id, "Reject")
+                    }
+                  >
+                    Reject
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-
-          <div className="notification-message">
-            {getNotificationText(notification.type) ||
-              "wants to connect to you"}
-          </div>
-
-          {notification.type === "Link" && (
-            <div className="link-actions">
-              <button
-                className="accept-button"
-                onClick={() => handleLinkAccept(notification)}
-              >
-                Accept
-              </button>
-              <button
-                className="reject-button"
-                onClick={() => handleAction(notification.sender._id, "Reject")}
-              >
-                Reject
-              </button>
-            </div>
-          )}
-        </div>
-      ))}
-    </ul>
+        ))}
+      </ul>
+    </div>
   );
 }
