@@ -8,10 +8,10 @@ export const useNotificationsStore = create((set) => ({
     loading: false,
     
     
-    getNotifications: async () => {
+    getNotifications: async (cursor, pageSize, direction) => {
         set({ loading: true });
         try {
-        const response = await axiosInstance.get("/notification/all");
+        const response = await axiosInstance.get(`/notifications/get?pageSize=${pageSize}&cursor=${cursor}&direction=${direction}`);
         set({ notifications: response.data.notifications });
         } catch (error) {
         toast.error(error.response?.data?.message || "Cannot fetch notifications");

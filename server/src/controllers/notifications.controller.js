@@ -73,27 +73,49 @@ export const addNotification = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const allNotifications = asyncHandler( async (req, res) => {
-
+    const pageSize = parseInt(req.query.pageSize) || 4;
+    const cursor = req.query.cursor;
+    const direction = req.query.direction || "next";
     const userId = req.user.id;
   
-    try { 
-        const notifications = await Notification.find({ receiver: userId })
-            .populate("sender", "name avatar")
-            .sort({ createdAt: -1 });
-
-        res.status(201).json({
-            success: true,
-            message: "Notification added successfully",
-            notifications
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch notification",
-            error: error.message
-        });
+    const query = { receiver: userId };
+  
+    if (cursor) {
+      const cursorDate = new Date(cursor);
+      if (direction === "next") {
+        query.createdAt = { $lt: cursorDate };
+      } else if (direction === "prev") {
+        query.createdAt = { $gt: cursorDate };
+      }
     }
-})
+  
+    const sortOrder = direction === "next" ? -1 : 1;
+  
+    try {
+      const notifications = await Notification.find(query)
+        .populate("sender", "name avatar")
+        .sort({ createdAt: sortOrder })
+        .limit(pageSize)
+        .lean();
+  
+        console.log('hola')
+      // For "prev" direction, reverse the results so the UI always gets newest-to-oldest
+      const sortedNotifications = direction === "prev" ? notifications.reverse() : notifications;
+  
+      res.status(200).json({
+        success: true,
+        message: "Notifications fetched successfully",
+        notifications: sortedNotifications,
+      });
+    } catch (error) {
+        console.log(error)
+      res.status(500).json({
+        success: false,
+        message: "Failed to fetch notifications",
+        error: error.message,
+      });
+    }
+  })
 
 /**
  * @desc get a notification

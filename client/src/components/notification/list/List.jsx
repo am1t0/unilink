@@ -8,13 +8,18 @@ import { resolveAvatar } from "../../../utilities/defaultImages";
 import { getTimeAgo } from "../../../utilities/timeAndDate";
 import { getNotificationMessage } from "../../../utilities/notificationItems";
 import { getNotificationIcon } from "../../../utilities/notificationItems";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 export default function List() {
   // Filter state to manage the selected filter option
   const [filter, setFilter] = useState("All");
 
+  // Pagination state to manage the current page and cursor
+  const [currentPage, setCurrentPage] = useState(1);
+  const [cursor, setCursor] = useState(null);
+
   // Fetching notifications and socket from the store
-  const { sendNotification } = useNotificationsStore();
+  const { sendNotification, getNotifications } = useNotificationsStore();
 
   const notifications = [
     {
@@ -79,22 +84,6 @@ export default function List() {
       createdAt: "2025-05-02T14:30:00.000Z",
       updatedAt: "2025-05-02T14:30:00.000Z",
     },
-    {
-      _id: "5",
-      sender: {
-        _id: "user678",
-        name: "Rahul Verma",
-        avatar: "",
-      },
-      receiver: "user456",
-      type: "Response",
-      status: "unread",
-      deliveryMethod: "socket",
-      linkId: "link113",
-      response: "Accepted",
-      createdAt: "2025-05-01T09:00:00.000Z",
-      updatedAt: "2025-05-01T09:00:00.000Z",
-    },
   ];
 
   // Fetching link store to manage link requests
@@ -150,8 +139,18 @@ export default function List() {
   //   }
   // }, [markAllNotificationRead, notifications]);
 
+  useEffect(()=>{
+     getNotifications();
+  },[getNotifications])
+
   return (
     <div className="notification-list-container">
+      <div className="notification-list-header">
+         <div className="read-unread-notif">
+           <span>unread</span>
+           <span>read</span>
+         </div>
+      </div>
       <ul className="notification-list">
         {notifications?.map((notification) => (
           <div
@@ -204,6 +203,12 @@ export default function List() {
           </div>
         ))}
       </ul>
+
+      <div className="forward-backward">
+        <ArrowLeft />
+        <span>{currentPage}</span>
+        <ArrowRight />
+      </div>
     </div>
   );
 }

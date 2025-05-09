@@ -11,7 +11,7 @@ const router = Router();
 router.post("/new", protectRoute, addNotification);
 
 /* getting all notifications */
-router.get("/all", protectRoute, allNotifications)
+router.get("/get", protectRoute, allNotifications)
 
 /* getting a particular notification */
 router.get("/:notificationId", protectRoute, getNotification)

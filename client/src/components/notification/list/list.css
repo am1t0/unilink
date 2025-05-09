@@ -4,8 +4,28 @@
   flex-direction: column;
 }
 
-.notification-list-container h2 {
-  /* margin: 0; */
+.notification-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.read-unread-notif {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+
+.read-unread-notif span {
+  padding: 5px 10px;
+  width: 50px;
+  text-align: center;
+  border-radius: 8%;
+  font-size: 14px;
+  border: 1px solid #4d4d4d;
+  cursor: pointer;
 }
 
 .notification-list {
@@ -13,13 +33,14 @@
   flex-direction: column;
   align-items: center;
   margin: 0;
-  padding: 10px;
+  padding: 0px;
   background-color: #0A0F1E;
 }
 
 .notification-item {
-  width: 580px;
-  padding: 1.6rem;
+  width: 600px;
+  padding: 1.6rem 2rem;
+  max-height: 110px;
   position: relative;
   transition: all 0.3s ease-in-out;
 }
@@ -33,9 +54,9 @@
   } */
 
 .notification-item:hover {
-  background: #151d36;
+  background: #10172c;
   cursor: pointer;
-  border-bottom: 1px solid #3b82f6;
+  outline: 1px solid #0c3678;
 }
 
 .notification-header {
@@ -131,6 +152,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .comment-text {
   margin: 0;
   font-size: 0.95rem;
@@ -163,4 +185,36 @@
 .reject-button {
   background-color: #f44336;
   color: white;
+}
+
+.forward-backward {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.forward-backward svg {
+  color: rgb(219, 217, 217);
+  padding: 8px;
+  font-size: 0.70rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  background: #2d3757;
+}
+
+.forward-backward svg:hover {
+  background: #29314b;
+}
+
+.forward-backward svg:active {
+  background: #1e253d;
+}
+
+.forward-backward span {
+  color: rgb(219, 217, 217);
+  font-size: 1.1rem;
 }
