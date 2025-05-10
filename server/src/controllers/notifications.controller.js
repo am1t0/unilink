@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Notification from "../models/notifications.model.js";
 import User from "../models/user.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
@@ -8,114 +9,112 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
  * @access Private
  */
 export const addNotification = asyncHandler(async (req, res) => {
-    const { receiver, type, linkId, postId, commentId, response } = req.body;
-    const sender = req.user.id; // Assuming the sender is the authenticated user
-  
-    try {
-      const notificationData = { sender, receiver, type };
-  
-      // Conditionally include relevant ID based on type
-      if (type === "Link") {
-        if (!linkId) {
-          return res.status(400).json({
-            success: false,
-            message: "linkId is required for Link notifications",
-          });
-        }
-        notificationData.linkId = linkId;
-      } else if (type === "Like" || type === "Mention") {
-        if (!postId) {
-          return res.status(400).json({
-            success: false,
-            message: "postId is required for Like or Mention notifications",
-          });
-        }
-        notificationData.postId = postId;
-      } else if (type === "Comment") {
-        if (!commentId) {
-          return res.status(400).json({
-            success: false,
-            message: "commentId is required for Comment notifications",
-          });
-        }
-        notificationData.commentId = commentId;
-      } else if( type== "Response") {
-         if(!response) {
-            return res.status(400).json({
-                success: false,
-                message: "response is required for Response notifications",
-            });
+  const { receiver, type, linkId, postId, commentId, response } = req.body;
+  const sender = req.user.id; // Assuming the sender is the authenticated user
+
+  try {
+    const notificationData = { sender, receiver, type };
+
+    // Conditionally include relevant ID based on type
+    if (type === "Link") {
+      if (!linkId) {
+        return res.status(400).json({
+          success: false,
+          message: "linkId is required for Link notifications",
+        });
+      }
+      notificationData.linkId = linkId;
+    } else if (type === "Like" || type === "Mention") {
+      if (!postId) {
+        return res.status(400).json({
+          success: false,
+          message: "postId is required for Like or Mention notifications",
+        });
+      }
+      notificationData.postId = postId;
+    } else if (type === "Comment") {
+      if (!commentId) {
+        return res.status(400).json({
+          success: false,
+          message: "commentId is required for Comment notifications",
+        });
+      }
+      notificationData.commentId = commentId;
+    } else if (type == "Response") {
+      if (!response) {
+        return res.status(400).json({
+          success: false,
+          message: "response is required for Response notifications",
+        });
       }
       notificationData.response = response;
     }
-  
-      const newNotification = new Notification(notificationData);
-      await newNotification.save();
-  
-      res.status(201).json({
-        success: true,
-        message: "Notification added successfully",
-        newNotification,
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: "Failed to add notification",
-        error: error.message,
-      });
-    }
-  });
-  
+
+    const newNotification = new Notification(notificationData);
+    await newNotification.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Notification added successfully",
+      newNotification,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to add notification",
+      error: error.message,
+    });
+  }
+});
+
 
 /**
  * @desc get all notification
- * @route GET /api/v1/notification/all
+ * @route GET /api/v1/notification/get
  * @access Private
  */
-export const allNotifications = asyncHandler( async (req, res) => {
-    const pageSize = parseInt(req.query.pageSize) || 4;
-    const cursor = req.query.cursor;
-    const direction = req.query.direction || "next";
-    const userId = req.user.id;
-  
-    const query = { receiver: userId };
-  
-    if (cursor) {
-      const cursorDate = new Date(cursor);
-      if (direction === "next") {
-        query.createdAt = { $lt: cursorDate };
-      } else if (direction === "prev") {
-        query.createdAt = { $gt: cursorDate };
-      }
-    }
-  
-    const sortOrder = direction === "next" ? -1 : 1;
-  
-    try {
-      const notifications = await Notification.find(query)
-        .populate("sender", "name avatar")
-        .sort({ createdAt: sortOrder })
-        .limit(pageSize)
-        .lean();
-  
-        console.log('hola')
-      // For "prev" direction, reverse the results so the UI always gets newest-to-oldest
-      const sortedNotifications = direction === "prev" ? notifications.reverse() : notifications;
-  
-      res.status(200).json({
-        success: true,
-        message: "Notifications fetched successfully",
-        notifications: sortedNotifications,
-      });
-    } catch (error) {
-        console.log(error)
-      res.status(500).json({
-        success: false,
-        message: "Failed to fetch notifications",
-        error: error.message,
-      });
-    }
-  })
+export const allNotifications = asyncHandler(async (req, res) => {
+  const pageSize = parseInt(req.query.pageSize) || 6; // Number of notifications per page
+  const cursor = req.query.cursor; // Timestamp of the last notification
+  const cursorId = req.query._id; // ID of the last notification
+  const userId = req.user.id; // Authenticated user's ID
+
+  const query = { receiver: userId }; // Fetch notifications for the logged-in user
+
+  if (cursor && cursorId && mongoose.Types.ObjectId.isValid(cursorId)) {
+    const createdAt = new Date(cursor);
+
+    query.$or = [
+      { createdAt: { $lt: createdAt } }, // Notifications created before the cursor
+      { createdAt: createdAt, _id: { $lt: cursorId } }, // Handle same-timestamp case
+    ];
+  }
+
+  try {
+    const notifications = await Notification.find(query)
+      .populate("sender", "name avatar") // Populate sender details
+      .sort({ createdAt: -1, _id: -1 }) // Sort by newest first
+      .limit(pageSize + 1) // Fetch one extra document to check for `hasMore`
+      .lean();
+
+    const hasMore = notifications.length > pageSize; // Check if there are more notifications
+    if (hasMore) notifications.pop(); // Remove the extra document
+
+    res.status(200).json({
+      success: true,
+      message: "Notifications fetched successfully",
+      notifications,
+      hasMore,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch notifications",
+      error: error.message,
+    });
+  }
+});
+
 
 /**
  * @desc get a notification
@@ -123,44 +122,44 @@ export const allNotifications = asyncHandler( async (req, res) => {
  * @access Private
  */
 
-export const getNotification = asyncHandler( async (req, res) => {
-    const notificationId = req.params.notificationId;
-    const userId = req.user.id;
-    try {
-        const notification = await Notification.findById(notificationId).populate("sender", "name avatar");
+export const getNotification = asyncHandler(async (req, res) => {
+  const notificationId = req.params.notificationId;
+  const userId = req.user.id;
+  try {
+    const notification = await Notification.findById(notificationId).populate("sender", "name avatar");
 
-        // Check if the notification exists and belongs to the user   
-        if (!notification) {
-            return res.status(404).json({
-                success: false,
-                message: "Notification not found",
-            });
-        }
-        // Check if the notification belongs to the user
-        if (notification.receiver.toString() !== userId) {
-            return res.status(403).json({
-                success: false,
-                message: "You are not authorized to view this notification",
-            });
-        }
-
-        // Mark the notification as read
-        notification.status = "read";
-
-        await notification.save();
-
-        res.status(200).json({
-            success: true,
-            message: "Notification fetched successfully",
-            newNotification: notification
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Failed to fetch notification",
-            error: error.message
-        });
+    // Check if the notification exists and belongs to the user   
+    if (!notification) {
+      return res.status(404).json({
+        success: false,
+        message: "Notification not found",
+      });
     }
+    // Check if the notification belongs to the user
+    if (notification.receiver.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to view this notification",
+      });
+    }
+
+    // Mark the notification as read
+    notification.status = "read";
+
+    await notification.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Notification fetched successfully",
+      newNotification: notification
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch notification",
+      error: error.message
+    });
+  }
 })
 
 
@@ -170,36 +169,36 @@ export const getNotification = asyncHandler( async (req, res) => {
  * @access Private
  */
 
-export const markAsRead = asyncHandler( async (req, res) => {
-    const notificationId = req.params.notificationId;
-    const userId = req.user.id;
-    try {
-        const notification = await Notification.findById(notificationId);   
-        if (!notification) {
-            return res.status(404).json({
-                success: false,
-                message: "Notification not found",
-            });
-        }
-        if (notification.receiver.toString() !== userId) {
-            return res.status(403).json({
-                success: false,
-                message: "You are not authorized to mark this notification as read",
-            });
-        }
-        notification.status = "read";
-        await notification.save();
-        res.status(200).json({
-            success: true,
-            message: "Notification marked as read",
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Failed to mark notification as read",
-            error: error.message
-        });
+export const markAsRead = asyncHandler(async (req, res) => {
+  const notificationId = req.params.notificationId;
+  const userId = req.user.id;
+  try {
+    const notification = await Notification.findById(notificationId);
+    if (!notification) {
+      return res.status(404).json({
+        success: false,
+        message: "Notification not found",
+      });
     }
+    if (notification.receiver.toString() !== userId) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to mark this notification as read",
+      });
+    }
+    notification.status = "read";
+    await notification.save();
+    res.status(200).json({
+      success: true,
+      message: "Notification marked as read",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to mark notification as read",
+      error: error.message
+    });
+  }
 })
 
 /**
@@ -208,19 +207,19 @@ export const markAsRead = asyncHandler( async (req, res) => {
  * @access Private
  */
 
-export const markAllRead = asyncHandler( async (req, res) => {
-    const userId = req.user.id;
-    try {
-        await Notification.updateMany({ receiver: userId }, { status: "read" });
-        res.status(200).json({
-            success: true,
-            message: "All notifications marked as read",
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Failed to mark all notifications as read",
-            error: error.message
-        });
-    }
+export const markAllRead = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  try {
+    await Notification.updateMany({ receiver: userId }, { status: "read" });
+    res.status(200).json({
+      success: true,
+      message: "All notifications marked as read",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to mark all notifications as read",
+      error: error.message
+    });
+  }
 })

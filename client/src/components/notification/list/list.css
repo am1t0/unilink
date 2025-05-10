@@ -1,7 +1,11 @@
 .notification-list-container {
+  min-width: 54%;
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  position: relative;
+  gap: 10px;
 }
 
 .notification-list-header {
@@ -35,11 +39,12 @@
   margin: 0;
   padding: 0px;
   background-color: #0A0F1E;
+  list-style: none;
 }
 
 .notification-item {
   width: 600px;
-  padding: 1.6rem 2rem;
+  padding: 1.2rem 2rem;
   max-height: 110px;
   position: relative;
   transition: all 0.3s ease-in-out;
@@ -114,6 +119,8 @@
   margin: 0;
   font-size: 0.86rem;
   color: #888;
+  font-size: 12px;
+  color: #8b95a9;
 }
 
 
@@ -165,56 +172,47 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
+  gap: 10px;
 }
 
 .accept-button,
 .reject-button {
-  padding: 9px 12px;
+  padding: 6px 12px;
   font-size: 0.85rem;
   border: none;
   border-radius: 6px;
   width: 100%;
   cursor: pointer;
+  border-radius: 4px;
 }
 
 .accept-button {
   background-color: #4caf50;
   color: white;
+  background: #198754;
 }
 
 .reject-button {
   background-color: #f44336;
   color: white;
+  background: #dc3545;
 }
 
-.forward-backward {
+.infinite-scroll-loader {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
-  margin-top: 1rem;
-  width: 100%;
+  height: 50px; /* Fixed height to prevent UI shifting */
+  margin-top: 10px;
 }
 
-.forward-backward svg {
-  color: rgb(219, 217, 217);
-  padding: 8px;
-  font-size: 0.70rem;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  background: #2d3757;
+.no-more-notification {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  color: white;
 }
 
-.forward-backward svg:hover {
-  background: #29314b;
-}
 
-.forward-backward svg:active {
-  background: #1e253d;
-}
 
-.forward-backward span {
-  color: rgb(219, 217, 217);
-  font-size: 1.1rem;
-}

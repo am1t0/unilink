@@ -14,18 +14,11 @@ import List from "../../components/notification/list/List";
 import FilterBar from "../../components/notification/filterBar/FilterBar";
 
 
-const iconMap = {
-  Like: <FaHeart className="icon like" />,
-  Comment: <FaComment className="icon comment" />,
-  Mention: <FaAt className="icon mention" />,
-  Follow: <FaUserPlus className="icon follow" />,
-};
-
 export default function Notifications() {
   
   return (
       <div id="notification-page">
-         <FilterBar/>
+         {/* <FilterBar/> */}
          <List/>
       </div>
   );
