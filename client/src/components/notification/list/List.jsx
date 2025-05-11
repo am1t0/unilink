@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "./list.css";
 import { useNotificationsStore } from "../../../store/useNotifications";
@@ -10,44 +9,17 @@ import { getTimeAgo } from "../../../utilities/timeAndDate";
 import { getNotificationMessage } from "../../../utilities/notificationItems";
 import { getNotificationIcon } from "../../../utilities/notificationItems";
 import Loader from "../../loader/Loader";
+import useNotifications from "../../../hooks/useNotifications";
 
 export default function List() {
   const {
     notifications,
     getNotifications,
-    sendNotification,
     hasMore,
   } = useNotificationsStore();
-  const { changeLinkStatus } = useLinkStore();
-  const { socket } = useSocket();
 
-  const handleLinkAccept = async (notification) => {
-    try {
-      const linkRequestReply = {
-        sender: notification.receiver,
-        receiver: notification.sender._id,
-        type: "Response",
-        response: "Accepted",
-      };
-      await changeLinkStatus(notification.linkId, "Accepted");
-      const response = await sendNotification(linkRequestReply);
-
-      if (!response.success) {
-        toast.error("Failed to send notification");
-        return;
-      }
-
-      linkRequestReply.notificationId = response.newNotification._id;
-      await socket.emit("sendNotification", linkRequestReply);
-    } catch (error) {
-      toast.error("Failed to accept link request");
-    }
-  };
-
-  const handleAction = (id, action) => {
-    alert(`${action} request from user with id ${id}`);
-  };
-
+  const { handleLinkResponse } = useNotifications();
+  
   return (
     <div className="notification-list-container">
       <InfiniteScroll
@@ -95,15 +67,13 @@ export default function List() {
                   <div className="link-actions">
                     <button
                       className="accept-button"
-                      onClick={() => handleLinkAccept(notification)}
+                      onClick={() => handleLinkResponse(notification,true)}
                     >
                       Accept
                     </button>
                     <button
                       className="reject-button"
-                      onClick={() =>
-                        handleAction(notification.sender._id, "Reject")
-                      }
+                      onClick={() => handleLinkResponse(notification,false)}
                     >
                       Reject
                     </button>

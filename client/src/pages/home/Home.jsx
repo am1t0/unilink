@@ -25,7 +25,7 @@ const Home = () => {
 
   //add user to socket 
   useEffect(()=>{
-       socket.emit("addUser", authUser._id )
+    socket.emit("addUser", authUser._id )
   },[authUser._id, socket])
   
 
