@@ -1,3 +1,27 @@
+const mp = {
+    "1": "Jan",
+    "2": "Feb",
+    "3": "Mar",
+    "4": "Apr",
+    "5": "May",
+    "6": "Jun",
+    "7": "Jul",
+    "8": "Aug",
+    "9": "Sep",
+    "10": "Oct",
+    "11": "Nov",
+    "12": "Dec"
+  };
+
+export function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = mp[date.getMonth() + 1];
+    const year = date.getFullYear();
+  
+    return `${day} ${month} ${year}`;
+}
+
 export function getTimeAgo(dateString) {
     const now = new Date();
     const past = new Date(dateString);
@@ -23,7 +47,7 @@ export function getTimeAgo(dateString) {
     }
   
     // Beyond a week, show actual date
-    return past.toLocaleDateString(); // e.g., "4/20/2025"
+    return formatDate(dateString); // e.g., "4/20/2025"
   }
 
 
