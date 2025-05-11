@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Jaini+Purva&display=swap');
 
+.wrap {
+  height: 3rem;
+  width: 100%;
+}
 .headder {
   display: flex;
   align-items: center;
@@ -8,7 +12,18 @@
   background-color: #0A0F1E;
   color: white;
   height:40px;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1111;
+  transition: transform 0.2s ease-in-out;
+}
+.hidden-navbar {
+  transform: translateY(-100%);
+}
+.show-navbar {
+  transform: translateY(0);
 }
 
 /* Keep "Uni Link" inline on all screen sizes */
