@@ -10,13 +10,18 @@ const useNotifications = () => {
 
   const handleLinkResponse = async (notification, flag) => {
     try {
+      //change link status 
+      await changeLinkStatus(notification.linkId, flag ? "Link" : "Ignored");
+
+      // as user ignored the request, we don't need to send notification
+      if(!flag) return;
+
       const linkRequestReply = {
         sender: notification.receiver,
         receiver: notification.sender._id,
         type: "Response",
-        response: flag ? "Accepted" : "Rejected",
+        response: "Accepted",
       };
-      await changeLinkStatus(notification.linkId, flag ? "Accepted" : "Rejected");
       const response = await sendNotification(linkRequestReply);
 
       if (!response.success) {

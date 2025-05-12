@@ -86,7 +86,7 @@ export const requestLink = asyncHandler(async (req, res) => {
  */
 export const updateLinkStatus = asyncHandler(async (req, res) => {
     const { requestId } = req.params;
-    const { status } = req.body; // "Link" or "Blocked"
+    const { status } = req.body; // "Link" or "Ignored" or "Blocked"
     const userId = req.user.id;
 
     try {
@@ -99,10 +99,10 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
         }
 
         // Validate status
-        if (!["Accepted", "Blocked"].includes(status)) {
+        if (!["Link", "Blocked", "Ignored"].includes(status)) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid status. Must be 'Link' or 'Blocked'"
+                message: "Invalid status. Must be 'Link' or 'Ignored' or 'Blocked'"
             });
         }
 
@@ -132,7 +132,7 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
         }
 
         // Update the request status
-        linkRequest.status = status === "Accepted"? "Link" : "Blocked";
+        linkRequest.status = status;
         await linkRequest.save();
 
         return res.status(200).json({
