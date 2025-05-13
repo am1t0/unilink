@@ -68,7 +68,7 @@ export const useLinkStore = create((set) => ({
       //   );
       //   return { links: updatedLinks };
       // });
-      toast.success(response.data.message);
+      return response.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Cannot update link request");
     } finally {

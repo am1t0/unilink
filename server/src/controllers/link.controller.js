@@ -99,10 +99,10 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
         }
 
         // Validate status
-        if (!["Link", "Blocked", "Ignored"].includes(status)) {
+        if (!["Link", "Blocked", "Ignore"].includes(status)) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid status. Must be 'Link' or 'Ignored' or 'Blocked'"
+                message: "Invalid status. Must be 'Link' or 'Ignore' or 'Blocked'"
             });
         }
 

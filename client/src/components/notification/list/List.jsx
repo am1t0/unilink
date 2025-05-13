@@ -67,17 +67,23 @@ export default function List() {
                   <div className="link-actions">
                     <button
                       className="accept-button"
-                      onClick={() => handleLinkResponse(notification,true)}
+                      onClick={() => handleLinkResponse(notification,"Link")}
                     >
                       Accept
                     </button>
                     <button
                       className="reject-button"
-                      onClick={() => handleLinkResponse(notification,false)}
+                      onClick={() => handleLinkResponse(notification,"Ignore")}
                     >
                       Reject
                     </button>
                   </div>
+                )}
+
+                {notification.type === "Link-Accepted" && (
+                   <div className="link-accepted">
+                        and you are now connected 
+                   </div>
                 )}
               </div>
             </div>

@@ -9,7 +9,7 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
  * @access Private
  */
 export const addNotification = asyncHandler(async (req, res) => {
-  const { receiver, type, linkId, postId, commentId, response } = req.body;
+  const { receiver, type, linkId, postId, commentId, notificationId } = req.body;
   const sender = req.user.id; // Assuming the sender is the authenticated user
 
   try {
@@ -40,23 +40,23 @@ export const addNotification = asyncHandler(async (req, res) => {
         });
       }
       notificationData.commentId = commentId;
-    } else if (type == "Response") {
-      if (!response) {
-        return res.status(400).json({
-          success: false,
-          message: "response is required for Response notifications",
-        });
-      }
-      notificationData.response = response;
+
+    } else if (type === "Link-Accepted") {
+      //in-case of link accepted update the requester's notification doc 
+      const requestNotification = await Notification.findById(notificationId);
+      requestNotification.type = "Link-Accepted";
+      await requestNotification.save();
     }
 
+    //new notification doc 
     const newNotification = new Notification(notificationData);
     await newNotification.save();
+    const newNotificationId = newNotification._id;
 
     res.status(201).json({
       success: true,
       message: "Notification added successfully",
-      newNotification,
+      notificationId: newNotificationId,
     });
   } catch (error) {
     res.status(500).json({

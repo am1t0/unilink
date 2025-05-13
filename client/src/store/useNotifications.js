@@ -86,10 +86,22 @@ export const useNotificationsStore = create((set, get) => ({
         }
     },
 
-    sendNotification: async (notification) => {
+    prepareNotification: async (notification) => {
         set({ loading: true });
         try {
             const response = await axiosInstance.post("/notification/new", notification);
+            const { notificationId } = response.data;
+           
+           if( notification.type === "Link-Accepted") {
+            //update type of the notification
+            set((state) => ({
+                notifications: state.notifications?.map((notif)=> 
+                 notif._id === notificationId 
+                 ? { ...notif, type:"Link-Accepted"}
+                 : notif
+                )
+            }))
+        }
             return response.data;
         } catch (error) {
             toast.error(error.response?.data?.message || "Cannot add notification");

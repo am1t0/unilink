@@ -17,7 +17,7 @@ const Recommendations = () => {
   const [ requesting, setRequesting] = useState(null);
 
   //notifications sender function
-  const { sendNotification } = useNotificationsStore();
+  const { prepareNotification } = useNotificationsStore();
 
   // user and socket state
   const { authUser } = useAuthStore();
@@ -45,20 +45,22 @@ const Recommendations = () => {
       const linkId = await sendRequest(linkRequest.receiver);
 
       linkRequest.linkId = linkId;
-
+      console.log(linkId);
       //creating new notifications doc in db
-      const response = await sendNotification(linkRequest);
+      const response = await prepareNotification(linkRequest);
 
+      console.log(response);
       if (!response.success) {
+
         toast.error("Failed to send link request");
         return;
       }
 
       // filling request with the notification id
-      linkRequest.notificationId = response.newNotification._id;
+      linkRequest.notificationId = response.notificationId;
 
       // emitting the notification to the receiver
-      await socket.emit("sendNotification", linkRequest);
+      await socket.emit("prepareNotification", linkRequest);
 
       toast.success("Link request sent successfully");
     } catch (error) {

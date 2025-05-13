@@ -5,32 +5,34 @@ import toast from "react-hot-toast";
 
 const useNotifications = () => {
   const { changeLinkStatus } = useLinkStore();
-  const { sendNotification } = useNotificationsStore();
+  const { prepareNotification } = useNotificationsStore();
   const { socket } = useSocket();
 
-  const handleLinkResponse = async (notification, flag) => {
+  const handleLinkResponse = async (notification, response) => {
     try {
-      //change link status 
-      await changeLinkStatus(notification.linkId, flag ? "Link" : "Ignored");
+      // Change link status
+      const linkStatusUpdate = await changeLinkStatus(notification.linkId, response);
+      if (!linkStatusUpdate) return;
 
-      // as user ignored the request, we don't need to send notification
-      if(!flag) return;
+      // If user ignored the request, don't send notification
+      if (response === "Ignore") return;
 
-      const linkRequestReply = {
+      const notificationData = {
         sender: notification.receiver,
         receiver: notification.sender._id,
-        type: "Response",
-        response: "Accepted",
+        type: "Link-Accepted",
+        notificationId: notification._id,
       };
-      const response = await sendNotification(linkRequestReply);
 
-      if (!response.success) {
-        toast.error("Failed to send notification");
-        return;
-      }
+      // Create notification document
+      const createdNotification = await prepareNotification(notificationData);
+      if (!createdNotification) return;
 
-      linkRequestReply.notificationId = response.newNotification._id;
-      await socket.emit("sendNotification", linkRequestReply);
+      notificationData.notificationId = createdNotification.notificationId;
+
+      // Send notification through socket
+      await socket.emit("sendNotification", notificationData);
+
     } catch (error) {
       toast.error("Failed to process link request");
     }
