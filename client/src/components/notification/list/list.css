@@ -195,10 +195,25 @@
   background: #198754;
 }
 
+.accept-button:hover {
+  background-color: #45a049;
+}
+
+.accept-button:active {
+  background-color: #3e8e41;
+}
+
 .reject-button {
-  background-color: #f44336;
   color: white;
   background: #dc3545;
+}
+
+.reject-button:hover {
+  background-color: #e14341;
+}
+
+.reject-button:active {
+  background-color: #d32f2f;
 }
 
 .infinite-scroll-loader {

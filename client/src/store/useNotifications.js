@@ -89,9 +89,8 @@ export const useNotificationsStore = create((set, get) => ({
     prepareNotification: async (notification) => {
         set({ loading: true });
         try {
+            const notificationId = notification.notificationId;
             const response = await axiosInstance.post("/notification/new", notification);
-            const { notificationId } = response.data;
-           
            if( notification.type === "Link-Accepted") {
             //update type of the notification
             set((state) => ({

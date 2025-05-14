@@ -1,9 +1,6 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import "./list.css";
 import { useNotificationsStore } from "../../../store/useNotifications";
-import { useLinkStore } from "../../../store/useLinkStore";
-import { useSocket } from "../../../providers/Socket";
-import toast from "react-hot-toast";
 import { resolveAvatar } from "../../../utilities/defaultImages";
 import { getTimeAgo } from "../../../utilities/timeAndDate";
 import { getNotificationMessage } from "../../../utilities/notificationItems";
@@ -18,7 +15,7 @@ export default function List() {
     hasMore,
   } = useNotificationsStore();
 
-  const { handleLinkResponse } = useNotifications();
+  const { handleLinkResponse, notificationProcess } = useNotifications();
   
   return (
     <div className="notification-list-container">
@@ -67,24 +64,27 @@ export default function List() {
                   <div className="link-actions">
                     <button
                       className="accept-button"
-                      onClick={() => handleLinkResponse(notification,"Link")}
+                      onClick={() => {handleLinkResponse(notification, "Link")}}
                     >
-                      Accept
+                      {notificationProcess?.id === notification._id && notificationProcess?.type === 'Link' ? (
+                        <Loader size={15} color="white" />
+                      ) : (
+                        "Accept"
+                      )}
                     </button>
                     <button
                       className="reject-button"
-                      onClick={() => handleLinkResponse(notification,"Ignore")}
+                      onClick={() => {handleLinkResponse(notification, "Ignore")}}
                     >
-                      Reject
+                     {notificationProcess?.id === notification._id && notificationProcess?.type === 'Ignore' ? (
+                        <Loader size={15} color="white" />
+                      ) : (
+                        "Reject"
+                      )}
                     </button>
                   </div>
                 )}
 
-                {notification.type === "Link-Accepted" && (
-                   <div className="link-accepted">
-                        and you are now connected 
-                   </div>
-                )}
               </div>
             </div>
           ))}

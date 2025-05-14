@@ -1,86 +1,41 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
 import "./recommendations.css";
 import { useLinkStore } from "../../store/useLinkStore.js";
 import { BsPersonPlusFill, BsChatDots } from "react-icons/bs";
 import { Link, useNavigate } from "react-router";
-import { useSocket } from "../../providers/Socket.jsx";
-import { useNotificationsStore } from "../../store/useNotifications.js";
 import { useAuthStore } from "../../store/useAuthStore.js";
-import toast from "react-hot-toast";
-import DefaultAvatar from '../../assets/images/avatar.png'
+import DefaultAvatar from "../../assets/images/avatar.png";
 import { useMessageStore } from "../../store/useMessageStore.js";
+import useNotifications from "../../hooks/useNotifications.js";
 
 const Recommendations = () => {
   //links related state and functions
-  const { getUserRecommendations, recommendations, sendRequest, loading } =
+  const { getUserRecommendations, recommendations, loading } =
     useLinkStore();
-  const [ requesting, setRequesting] = useState(null);
-
-  //notifications sender function
-  const { prepareNotification } = useNotificationsStore();
+  const { sendLinkRequest, notificationProcess } = useNotifications();
 
   // user and socket state
   const { authUser } = useAuthStore();
-  const { socket } = useSocket();
 
   // create conversations function
-  const { createConversation} = useMessageStore();
+  const { createConversation } = useMessageStore();
   const navigate = useNavigate();
-
 
   useEffect(() => {
     getUserRecommendations();
   }, [getUserRecommendations]);
 
-  const sendLinkRequest = async (user) => {
-    setRequesting(user._id)
-    try {
-      const linkRequest = {
-        sender: authUser._id,
-        receiver: user._id,
-        type: "Link",
-      };
+  const handleMessageClick = async (userId) => {
+    const members = [authUser._id, userId];
 
-      //intialiazing the link request doc in db
-      const linkId = await sendRequest(linkRequest.receiver);
+    // form the conversation
+    const response = await createConversation(members);
 
-      linkRequest.linkId = linkId;
-      console.log(linkId);
-      //creating new notifications doc in db
-      const response = await prepareNotification(linkRequest);
+    if (!response) return;
 
-      console.log(response);
-      if (!response.success) {
-
-        toast.error("Failed to send link request");
-        return;
-      }
-
-      // filling request with the notification id
-      linkRequest.notificationId = response.notificationId;
-
-      // emitting the notification to the receiver
-      await socket.emit("prepareNotification", linkRequest);
-
-      toast.success("Link request sent successfully");
-    } catch (error) {
-      toast.error("Failed to send link request");
-    } finally {
-      setRequesting(null)
-    }
+    // redirect to the messages page
+    navigate(`/chats`);
   };
-
-  const handleMessageClick = async (userId)=>{
-      const members = [authUser._id, userId];
-
-      // form the conversation
-      const response = await createConversation(members);
-
-      if(!response) return;
-
-      // redirect to the messages page
-      navigate(`/chats`);
-  }
 
   return (
     <div className="recommendations">
@@ -107,17 +62,20 @@ const Recommendations = () => {
                     user.status === "Requested" ? "requested" : ""
                   }`}
                   onClick={() => sendLinkRequest(user)}
-                  disabled={user.status === "Requested" || requesting}
+                  disabled={user.status === "Requested" || notificationProcess?.id === user._id}
                 >
                   <BsPersonPlusFill />{" "}
-                  {
-                  (requesting === user._id)?"Requesting..." :
-                  
-                   (user.status === "Requested" ?"Requested" : "Link")
-                  }
+                  {notificationProcess?.id === user._id
+                    ? "Requesting..."
+                    : user.status === "Requested"
+                    ? "Requested"
+                    : "Link"}
                 </button>
 
-                <button className="action-btn" onClick={()=> handleMessageClick(user._id)}>
+                <button
+                  className="action-btn"
+                  onClick={() => handleMessageClick(user._id)}
+                >
                   <BsChatDots /> Message
                 </button>
               </div>
