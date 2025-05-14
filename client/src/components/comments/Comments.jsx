@@ -229,6 +229,9 @@ const Comments = ({setCommentCounts, postId }) => {
           onChange={(e) => setInput(e.target.value)}
           className="comment-input"
           placeholder="Add a comment..."
+          onKeyDown={(e)=> {
+            if( e.key === "Enter") handleCommentSubmit();
+          }}
         />
         <button onClick={handleCommentSubmit} className="comment-send-button">
           <Send size={18} />

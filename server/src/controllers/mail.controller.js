@@ -28,34 +28,29 @@ const SendEmail = async (emailDetails) => {
         let text = "";
 
         switch (type) {
-            case "follow-req":
+            case "Link":
                 subject = "👤Link Alert!";
                 text = `🎉 ${sender.name} wants to follow you.\n Check out ${Client_url}/notifications`;
                 break;
-            case "follow-accept":
+            case "Link-Accepted":
                 subject = "👤Link Alert!";
                 text = `🎉 ${sender.name} accepted your follow request.\n Check out ${Client_url}/notifications`;
                 break;
 
-            // case "like_post":
-            //     subject = "❤️ Your Post Got a Like!";
-            //     text = `👍 ${data.likerName} liked your post: "${data.postSnippet}"`;
-            //     break;
+            case "Like":
+                subject = "❤️ You Got a Like!";
+                text = `👍 ${sender.name} liked"`;
+                break;
 
-            // case "like_comment":
-            //     subject = "💬 Your Comment Got a Like!";
-            //     text = `👍 ${data.likerName} liked your comment: "${data.commentSnippet}"`;
-            //     break;
+            case "Comment":
+                subject = "💬 New Comment on Your Post!";
+                text = `🗣️ ${sender.name} commented on your post`;
+                break;
 
-            // case "comment":
-            //     subject = "💬 New Comment on Your Post!";
-            //     text = `🗣️ ${data.commenterName} commented: "${data.commentText}"`;
-            //     break;
-
-            // case "mention":
-            //     subject = "📢 You Were Mentioned!";
-            //     text = `👀 ${data.mentionerName} mentioned you in a ${data.location}:\n"${data.mentionText}"`;
-            //     break;
+            case "Mention":
+                subject = "📢 You Were Mentioned!";
+                text = `👀 ${data.mentionerName} mentioned you in a ${data.location}:\n"${data.mentionText}"`;
+                break;
 
             default:
                 subject = "🔔 New Notification";

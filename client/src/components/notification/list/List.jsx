@@ -9,8 +9,11 @@ import Loader from "../../loader/Loader";
 import useNotifications from "../../../hooks/useNotifications";
 
 export default function List() {
-  const { notifications, getNotifications, hasMore } = useNotificationsStore();
 
+  // Zustand store for notifications
+  const { notifications, getNotifications, hasMore } = useNotificationsStore();
+  
+  // notification hook combining usage of several store functions
   const { handleLinkResponse, notificationProcess } = useNotifications();
 
   return (
@@ -68,12 +71,9 @@ export default function List() {
                         className="accept-button"
                         onClick={() => handleLinkResponse(notification, "Link")}
                       >
-                        {notificationProcess?.id === notification._id &&
-                        notificationProcess?.type === "Link" ? (
-                          <Loader size={15} color="white" />
-                        ) : (
-                          "Accept"
-                        )}
+                        {notificationProcess?.id === notification._id 
+                         ? ( <Loader size={15} color="white" /> ) 
+                         : ( "Accept" )}
                       </button>
                       <button
                         className="reject-button"
@@ -81,12 +81,9 @@ export default function List() {
                           handleLinkResponse(notification, "Ignore")
                         }
                       >
-                        {notificationProcess?.id === notification._id &&
-                        notificationProcess?.type === "Ignore" ? (
-                          <Loader size={15} color="white" />
-                        ) : (
-                          "Ignore"
-                        )}
+                        {notificationProcess?.id === notification._id 
+                         ? ( <Loader size={15} color="white" /> ) 
+                         : ( "Ignore" )}
                       </button>
                     </div>
                   )}

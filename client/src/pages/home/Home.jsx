@@ -30,22 +30,17 @@ const Home = () => {
   
 
   const handleNotificationGet = useCallback((notificationData) => {
-   console.log('receiver ko milna chahiye ye');
     const { notificationId } = notificationData;
     
     // fetch the data of the notification sent and set state
     getNotification(notificationId)
-
   }, [getNotification]);
 
 
   const handleReceiverIsOffline = useCallback((notificationData) => {
-     console.log('reciver offline hai tujhe hi dikhega ye message')
     //if the receiver is offline, send a mail to the user
     notificationData.sender = authUser;
     sendMail(notificationData)
-
-
   }, [authUser, sendMail])
 
   useEffect(() => {
