@@ -7,7 +7,7 @@ import { useAuthStore } from "../store/useAuthStore";
 
 const useNotifications = () => {
   const { changeLinkStatus, sendRequest } = useLinkStore();
-  const { prepareNotification } = useNotificationsStore();
+  const { prepareNotification, updateNotificationType } = useNotificationsStore();
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
 
@@ -22,11 +22,14 @@ const useNotifications = () => {
 
     try {
       // Change link status
-      const linkStatusUpdate = await changeLinkStatus(notification.linkId, response);
-      if (!linkStatusUpdate) return;
+      // const linkStatusUpdate = await changeLinkStatus(notification.linkId, response);
+      // if (!linkStatusUpdate) return;
 
-      // If user ignored the request, don't send notification
-      if (response === "Ignore") return;
+      // If user ignored the request, don't send notification,update the notification to ignored
+      if (response === "Ignore") {
+        await updateNotificationType(notification._id, "Link-Ignored");
+        return;
+      }
 
       const notificationData = {
         sender: notification.receiver,
@@ -72,7 +75,7 @@ const useNotifications = () => {
       linkRequest.linkId = linkResponse._id;
 
       //creating new notifications doc in db
-      const  createdNotification = await prepareNotification(linkRequest);
+      const createdNotification = await prepareNotification(linkRequest);
       if(!createdNotification) return ;
      
 

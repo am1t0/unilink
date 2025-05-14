@@ -144,5 +144,23 @@ export const useNotificationsStore = create((set, get) => ({
         }
     },
 
+    updateNotificationType: async (notificationId, type) => {
+        try {
+            const response = await axiosInstance.patch(`/notification/type/${notificationId}`, { type });
+            set((state) => ({
+                notifications: state.notifications.map((notification) =>
+                    notification._id === notificationId
+                        ? { ...notification, type }
+                        : notification
+                ),
+            }));
+            return response.data;
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Cannot update notification");
+        } finally {
+             
+        }
+    },
+
     hide: () => set((state) => ({ show: false })),
 }));

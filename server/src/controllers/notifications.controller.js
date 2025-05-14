@@ -223,3 +223,43 @@ export const markAllRead = asyncHandler(async (req, res) => {
     });
   }
 })
+
+/**
+ * @desc update type of notification
+ * @route PATCH /api/v1/notification/:notificationId
+ * @access Private
+ */
+
+export const updateNotificationType = asyncHandler(async (req, res) => {
+    const { notificationId } = req.params; // Extract notificationId from params
+    const { type } = req.body; // Extract the status from the request body
+
+    console.log(notificationId, type);
+    try {
+       if (!type) {
+      return res.status(400).json({ message: 'Type is required' });
+    }
+
+    // Find the notification by its ID
+    const notification = await Notification.findById(notificationId);
+
+    if (!notification) {
+        return res.status(404).json({ message: 'Notification not found' });
+    }
+
+    // Update the notification status
+    notification.type = type;
+
+    // Save the updated notification
+    await notification.save();
+
+    // Return the updated notification as response
+    res.status(200).json(notification);
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to update notification",
+            error: error.message
+        });
+    }
+});

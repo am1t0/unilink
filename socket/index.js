@@ -117,11 +117,9 @@ io.on("connection", (socket) => {
         //user is online
         if (receiverUser) {
             // Emit the notification to the receiver
-            console.log("user online hai");
             io.to(receiverUser.socketId).emit("getNotification", notificationData);
 
         } else {
-            console.log("receiver is offline");
             io.to(senderUser.socketId).emit("receiverOffline", notificationData);
         }
     });

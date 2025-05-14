@@ -45,7 +45,8 @@ const Recommendations = () => {
         <>
           <h3 className="recommendations-title">Recommendations</h3>
           {recommendations?.map((user) => (
-            <div key={user._id} className="user-card">
+            
+           <div key={user._id} className="user-card">
               <Link
                 to={`/profilePage/${user._id}`}
                 className="user-info-section"
