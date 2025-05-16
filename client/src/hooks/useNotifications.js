@@ -22,8 +22,8 @@ const useNotifications = () => {
 
     try {
       // Change link status
-      // const linkStatusUpdate = await changeLinkStatus(notification.linkId, response);
-      // if (!linkStatusUpdate) return;
+      const linkStatusUpdate = await changeLinkStatus(notification.linkId, response);
+      if (!linkStatusUpdate) return;
 
       // If user ignored the request, don't send notification,update the notification to ignored
       if (response === "Ignore") {

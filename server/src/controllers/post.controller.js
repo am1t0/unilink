@@ -163,7 +163,7 @@ export const getAllPosts = async (req, res) => {
 
         // Fetch posts with required fields and user details
         const posts = await Post.find()
-            .select("_id user description media tag likedBy likeCount commentCount share createdAt updatedAt") // Only required fields
+            .select("_id user description media tag likeCount commentCount share createdAt updatedAt") // Only required fields
             .populate('user', 'name email avatar position') // Fetch user details
             .sort({ createdAt: -1 })  // Newest first
             .skip(skip)
