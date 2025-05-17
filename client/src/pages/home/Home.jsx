@@ -12,6 +12,7 @@ import Overlay from '../../components/overlay/Overlay';
 
 const Home = () => {
 
+  
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
   const { getNotification, getNotifications, sendMail } = useNotificationsStore();
@@ -31,7 +32,7 @@ const Home = () => {
 
   const handleNotificationGet = useCallback((notificationData) => {
     const { notificationId } = notificationData;
-    
+  
     // fetch the data of the notification sent and set state
     getNotification(notificationId)
   }, [getNotification]);

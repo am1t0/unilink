@@ -12,6 +12,7 @@ import Comments from "../comments/Comments";
 import { usePostStore } from "../../store/usePostStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { Link } from "react-router";
+import useNotifications from "../../hooks/useNotifications";
 
 const Post = ({
   postId,
@@ -26,17 +27,8 @@ const Post = ({
 }) => {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [showComments, setShowComments] = useState(false); // State to manage comment visibility
-  const [liked, setLiked] = useState(false);
-  const [likeCounts, setLikedCounts] = useState(likeCount);
   const [commentCounts, setCommentCounts] = useState(commentCount);
-  const {likePost} = usePostStore();
   const { authUser } = useAuthStore();
-
-  useEffect(() => {
-    if (likedBy?.includes(authUser._id)) {
-      setLiked(true);
-    }
-  }, [authUser._id, likedBy, user._id]);
 
   useEffect(() => {
     if (showComments) {
@@ -45,7 +37,8 @@ const Post = ({
       document.body.style.overflow = "auto";
     }
   }, [showComments]);
-  
+
+  const { handleToggleLike } = useNotifications();
 
   const handleNext = () => {
     setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % mediaArray.length);
@@ -61,16 +54,6 @@ const Post = ({
     setShowComments(!showComments); // Toggle comment visibility
   };
 
-  const postLikedFunction = () => { 
-    setLiked(!liked);
-    if(liked){
-      setLikedCounts(likeCounts - 1);
-    }else{
-      setLikedCounts(likeCounts + 1);
-    }
-    likePost(postId);
-  }
-
   return (
     <div className="post-container">
       <div className="post-header">
@@ -81,7 +64,9 @@ const Post = ({
           </div>
           <div className="post-details">
             <div className="post-username-and-link">
-              <Link to={`/profilepage/${user._id}`} className="post-username" >{user.name}</Link>
+              <Link to={`/profilepage/${user._id}`} className="post-username">
+                {user.name}
+              </Link>
               <button className="post-link-btn">Link</button>
             </div>
             <p className="post-year">{user.position}</p>
@@ -129,11 +114,14 @@ const Post = ({
       <div className="post-actions">
         <div className="post-left-actions">
           <div className="post-action">
-            <div onClick={postLikedFunction}>
-              {!liked && <ThumbsUp size={20} />}
-              {liked && <ThumbsUp size={20} color="blue" fill="blue" />}
+            <div onClick={() => handleToggleLike(postId, user)}>
+              {!likedBy.includes(authUser._id) ? (
+                <ThumbsUp size={20} />
+              ) : (
+                <ThumbsUp size={20} color="blue" fill="blue" />
+              )}
             </div>
-            <span>{likeCounts}</span>
+            <span>{likeCount}</span>
           </div>
           <div className="post-action" onClick={toggleComments}>
             {" "}
@@ -163,7 +151,7 @@ const Post = ({
               </button>
             </div>
             <div className="comments-popup-content">
-              <Comments postId={postId} setCommentCounts={setCommentCounts}/>
+              <Comments postId={postId} setCommentCounts={setCommentCounts} />
             </div>
           </div>
         </div>

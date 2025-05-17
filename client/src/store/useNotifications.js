@@ -52,6 +52,7 @@ export const useNotificationsStore = create((set, get) => ({
     },
 
     getNotification: async (notificationId) => {
+        console.log('are we comming here...')
         set({ loading: true });
         try {
             const response = await axiosInstance.get(`/notification/${notificationId}`);
@@ -75,9 +76,9 @@ export const useNotificationsStore = create((set, get) => ({
             });
 
             // If the notification is new, show the notification card
-            set((state) => ({
-                show: true,
-            }))
+            // set((state) => ({
+            //     show: true,
+            // }))
 
         } catch (error) {
             toast.error(error.response?.data?.message || "Cannot fetch notification");

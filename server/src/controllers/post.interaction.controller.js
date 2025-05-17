@@ -40,7 +40,7 @@ export const toggleLike = asyncHandler(async (req, res) => {
         return res.status(200).json({ 
             success: true, 
             message: likedIndex === -1 ? "Post liked" : "Post unliked",
-            likeCount: post.likeCount
+            liked: likedIndex
         });
 
     } catch (error) {

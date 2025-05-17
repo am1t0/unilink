@@ -4,10 +4,12 @@ import { useSocket } from "../providers/Socket";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
+import { usePostStore } from "../store/usePostStore";
 
 const useNotifications = () => {
   const { changeLinkStatus, sendRequest } = useLinkStore();
   const { prepareNotification, updateNotificationType } = useNotificationsStore();
+  const { likePost } = usePostStore();
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
 
@@ -93,9 +95,35 @@ const useNotifications = () => {
     }
   };
 
+  const handleToggleLike = async (postId, user) => {
+   
+    try {    
+        //first handle the change in like
+      const likeResponse = await likePost(postId, authUser);
+      if(!likeResponse || !likeResponse.liked) return;
+
+      const notificationData = {
+        sender:authUser._id,
+        receiver: user._id,
+        type:"Like",
+        postId
+      }
+      const createdNotification = await prepareNotification(notificationData);
+      if (!createdNotification.success) return;
+
+      notificationData.notificationId = createdNotification.notificationId;
+
+      // Send notification through socket
+      await socket.emit("sendNotification", notificationData);
+
+    } catch (error) {
+       toast.error("Failed to like post")
+    }
+  }
   return {
     notificationProcess,
     handleLinkResponse,
+    handleToggleLike,
     sendLinkRequest,
   };
 };

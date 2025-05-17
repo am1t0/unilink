@@ -10,12 +10,39 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
  */
 export const addNotification = asyncHandler(async (req, res) => {
   const { receiver, type, linkId, postId, commentId, notificationId } = req.body;
-  const sender = req.user.id; // Assuming the sender is the authenticated user
+  const sender = req.user.id; // Assuming sender is authenticated user
 
   try {
+    // ✅ Don't notify yourself
+    if (sender === receiver) {
+      return res.status(200).json({
+        success: false,
+        message: "Sender and receiver are the same. Notification not created.",
+      });
+    }
+
+    // ✅ Avoid duplicate notifications
+    const existingNotification = await Notification.findOne({
+      sender,
+      receiver,
+      type,
+      ...(type === "Link" && linkId && { linkId }),
+      ...(type === "Like" && postId && { postId }),
+      ...(type === "Mention" && postId && { postId }),
+      ...(type === "Comment" && commentId && { commentId }),
+    });
+
+    if (existingNotification) {
+      return res.status(200).json({
+        success: false,
+        message: "Notification already exists",
+        notificationId: existingNotification._id,
+      });
+    }
+
     const notificationData = { sender, receiver, type };
 
-    // Conditionally include relevant ID based on type
+    // ✅ Validate and attach relevant fields based on type
     if (type === "Link") {
       if (!linkId) {
         return res.status(400).json({
@@ -40,24 +67,42 @@ export const addNotification = asyncHandler(async (req, res) => {
         });
       }
       notificationData.commentId = commentId;
-
     } else if (type === "Link-Accepted") {
-      //in-case of link accepted update the requester's notification doc 
+      if (!notificationId) {
+        return res.status(400).json({
+          success: false,
+          message: "notificationId is required to update Link-Accepted",
+        });
+      }
+
       const requestNotification = await Notification.findById(notificationId);
+      if (!requestNotification) {
+        return res.status(404).json({
+          success: false,
+          message: "Original notification not found for Link-Accepted",
+        });
+      }
+
       requestNotification.type = "Link-Accepted";
       await requestNotification.save();
+
+      return res.status(200).json({
+        success: true,
+        message: "Notification type updated to Link-Accepted",
+        notificationId: requestNotification._id,
+      });
     }
 
-    //new notification doc 
+    // ✅ Save new notification
     const newNotification = new Notification(notificationData);
     await newNotification.save();
-    const newNotificationId = newNotification._id;
 
     res.status(201).json({
       success: true,
       message: "Notification added successfully",
-      notificationId: newNotificationId,
+      notificationId: newNotification._id,
     });
+
   } catch (error) {
     res.status(500).json({
       success: false,
