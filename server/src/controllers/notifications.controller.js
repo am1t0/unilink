@@ -188,9 +188,6 @@ export const getNotification = asyncHandler(async (req, res) => {
       });
     }
 
-    // Mark the notification as read
-    notification.status = "read";
-
     await notification.save();
 
     res.status(200).json({
