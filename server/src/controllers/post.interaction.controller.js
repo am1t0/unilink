@@ -106,10 +106,24 @@ export const addComment = asyncHandler(async (req, res) => {
             await Comment.findByIdAndUpdate(parentId, { $inc: { repliesCount: 1 } });
         }
 
+        const populatedComment = await Comment.findById(newComment._id).populate("userId", "name avatar");
+
+        const structuredComment = {
+            _id: populatedComment._id,
+            username: populatedComment.userId?.name || "",
+            userId: populatedComment.userId._id,
+            avatar: populatedComment.userId?.avatar || "",
+            content: populatedComment.text,
+            likedBy: populatedComment.likes,
+            likes: populatedComment.likes.length || 0,
+            repliesCount: populatedComment.repliesCount || 0,
+            replies: [],
+        };
+
         return res.status(201).json({ 
             success: true, 
             message: "Comment added", 
-            comment: newComment 
+            comment: structuredComment 
         });
 
     } catch (error) {

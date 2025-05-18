@@ -31,8 +31,11 @@ export const useCommentStore = create((set) => ({
         { text, parentId }
       );
       set((state) => ({
-        comments: [...state.comments, response.data.comment],
+        comments: [response.data.comment, ...state.comments],
       }));
+
+      return response.data;
+
     } catch (error) {
       console.error("Error adding comment:", error);
     }

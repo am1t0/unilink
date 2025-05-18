@@ -5,11 +5,13 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import { usePostStore } from "../store/usePostStore";
+import { useCommentStore } from "../store/useCommentStore";
 
 const useNotifications = () => {
   const { changeLinkStatus, sendRequest } = useLinkStore();
+  const { addComment } = useCommentStore();
   const { prepareNotification, updateNotificationType } = useNotificationsStore();
-  const { likePost } = usePostStore();
+  const { likePost, commentCountIncrement } = usePostStore();
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
 
@@ -120,10 +122,48 @@ const useNotifications = () => {
        toast.error("Failed to like post")
     }
   }
+
+  const handleAddComment = async (user, postId, text, setInput, parentId = null)=> { 
+    try {    
+      if(text.trim() === "") return ;
+
+        //first handle the change in like
+      const commentResponse = await addComment(postId, text);
+      if(!commentResponse) return;
+      
+      commentCountIncrement(postId);
+      
+      //reset comment box
+      setInput("");
+
+      const { _id } = commentResponse.comment
+      
+      //increase comment count
+
+      const notificationData = {
+        sender:authUser._id,
+        receiver: user._id,
+        type:"Comment",
+        commentId: _id
+      }
+      const createdNotification = await prepareNotification(notificationData);
+      if (!createdNotification.success) return;
+
+      notificationData.notificationId = createdNotification.notificationId;
+
+      // Send notification through socket
+      await socket.emit("sendNotification", notificationData);
+
+    } catch (error) {
+       toast.error("Failed to like post")
+    }
+  }
+
   return {
     notificationProcess,
     handleLinkResponse,
     handleToggleLike,
+    handleAddComment,
     sendLinkRequest,
   };
 };

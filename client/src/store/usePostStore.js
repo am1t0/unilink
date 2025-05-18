@@ -99,5 +99,20 @@ export const usePostStore = create((set, get) => ({
     } catch (error) {
       toast.error(error.response?.data?.message || "Post could not be liked");
     }
+  },
+
+  commentCountIncrement: async (postId) => {
+      const currentPosts = get().posts || [];
+      const updatedPosts = currentPosts?.map((p) => {
+         return  p._id !== postId ? p : {...p, commentCount: p.commentCount+1 };
+      })
+
+      set({
+        posts: updatedPosts,
+        filteredPosts: get().currentFilter
+          ? updatedPosts.filter(post => post.tag === get().currentFilter)
+          : updatedPosts
+      });
   }
+
 }));

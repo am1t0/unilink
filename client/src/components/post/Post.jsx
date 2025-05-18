@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import "./Post.css";
 import Comments from "../comments/Comments";
-import { usePostStore } from "../../store/usePostStore";
 import { useAuthStore } from "../../store/useAuthStore";
 import { Link } from "react-router";
 import useNotifications from "../../hooks/useNotifications";
@@ -27,7 +26,6 @@ const Post = ({
 }) => {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
   const [showComments, setShowComments] = useState(false); // State to manage comment visibility
-  const [commentCounts, setCommentCounts] = useState(commentCount);
   const { authUser } = useAuthStore();
 
   useEffect(() => {
@@ -127,7 +125,7 @@ const Post = ({
             {" "}
             {/* Add click handler */}
             <MessageCircle size={20} />
-            <span>{commentCounts}</span>
+            <span>{commentCount}</span>
           </div>
           <div className="post-action">
             <Send size={20} />
@@ -151,7 +149,7 @@ const Post = ({
               </button>
             </div>
             <div className="comments-popup-content">
-              <Comments postId={postId} setCommentCounts={setCommentCounts} />
+              <Comments postId = {postId} user = {user} />
             </div>
           </div>
         </div>

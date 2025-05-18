@@ -3,8 +3,9 @@ import { Send, Heart, Trash } from "lucide-react";
 import "./comments.css";
 import { useCommentStore } from "../../store/useCommentStore";
 import { useAuthStore } from "../../store/useAuthStore.js";
+import useNotifications from "../../hooks/useNotifications.js";
 
-const Comments = ({setCommentCounts, postId }) => {
+const Comments = ({ user, postId }) => {
   const {
     comments,
     loading,
@@ -14,6 +15,7 @@ const Comments = ({setCommentCounts, postId }) => {
     removeComment,
     toggleCommentLike,
   } = useCommentStore();
+  const { handleAddComment } = useNotifications();
   const { authUser } = useAuthStore();
   const [input, setInput] = useState("");
   const [replyInput, setReplyInput] = useState("");
@@ -26,21 +28,9 @@ const Comments = ({setCommentCounts, postId }) => {
     }
   }, [postId, fetchComments]);
 
-  const handleCommentSubmit = async () => {
-    setCommentCounts((prev) => prev + 1);
-    if (input.trim() !== "") {
-      try {
-        await addComment(postId, input);
-        fetchComments(postId);
-        setInput("");
-      } catch (error) {
-        console.error("Error adding comment:", error);
-      }
-    }
-  };
-
   const handleReplySubmit = async (parentId) => {
-    setCommentCounts((prev) => prev + 1);
+    //post store me hai function whan se krenge
+    // setCommentCounts((prev) => prev + 1);
     if (replyInput.trim() !== "") {
       try {
         await addComment(postId, replyInput, parentId);
@@ -54,8 +44,11 @@ const Comments = ({setCommentCounts, postId }) => {
   };
 
   const handleDeleteComment = async (commentId) => {
-    setCommentCounts((prev) => prev - 1);
-    const userConfirmed = window.confirm("Are you sure you want to delete this comment?");
+    //post store me hai function whan se krenge
+    // setCommentCounts((prev) => prev - 1);
+    const userConfirmed = window.confirm(
+      "Are you sure you want to delete this comment?"
+    );
     if (!userConfirmed) return;
     try {
       await removeComment(commentId);
@@ -229,11 +222,16 @@ const Comments = ({setCommentCounts, postId }) => {
           onChange={(e) => setInput(e.target.value)}
           className="comment-input"
           placeholder="Add a comment..."
-          onKeyDown={(e)=> {
-            if( e.key === "Enter") handleCommentSubmit();
+          onKeyDown={(e) => {
+            if (e.key === "Enter")
+              handleAddComment(user, postId, input, setInput);
           }}
+          autoFocus
         />
-        <button onClick={handleCommentSubmit} className="comment-send-button">
+        <button
+          onClick={() => handleAddComment(user, postId, input, setInput)}
+          className="comment-send-button"
+        >
           <Send size={18} />
         </button>
       </div>

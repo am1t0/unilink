@@ -52,7 +52,7 @@ export const useNotificationsStore = create((set, get) => ({
     },
 
     getNotification: async (notificationId) => {
-        console.log('are we comming here...')
+ 
         set({ loading: true });
         try {
             const response = await axiosInstance.get(`/notification/${notificationId}`);
