@@ -4,6 +4,7 @@ import "./comments.css";
 import { useCommentStore } from "../../store/useCommentStore";
 import { useAuthStore } from "../../store/useAuthStore.js";
 import useNotifications from "../../hooks/useNotifications.js";
+import { resolveAvatar } from "../../utilities/defaultImages.js";
 
 const Comments = ({ user, postId }) => {
   const {
@@ -94,7 +95,7 @@ const Comments = ({ user, postId }) => {
             <div key={comment._id} className="comment-item">
               <div className="comment-header">
                 <img
-                  src={comment.avatar || "default-avatar-url.jpg"}
+                  src={ resolveAvatar(comment) }
                   alt="profile"
                   className="profile-pic"
                 />

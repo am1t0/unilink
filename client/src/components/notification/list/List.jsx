@@ -15,7 +15,7 @@ export default function List() {
   
   // notification hook combining usage of several store functions
   const { handleLinkResponse, notificationProcess } = useNotifications();
-
+  
   return (
     <div className="notification-list-container">
       <InfiniteScroll
@@ -60,8 +60,7 @@ export default function List() {
                 <div className="notification-other-content">
                   {notification.type === "Comment" && (
                     <p className="comment-text">
-                      Good Job Anshul 🚀 Keep going forward and shine. All the
-                      best ✨
+                      {notification.commentText}
                     </p>
                   )}
 

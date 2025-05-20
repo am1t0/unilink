@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Notification from "../models/notifications.model.js";
 import User from "../models/user.model.js";
+import Comments from "../models/comments.model.js"
 import { asyncHandler } from "../utilities/asyncHandler.js";
 
 /**
@@ -136,7 +137,7 @@ export const allNotifications = asyncHandler(async (req, res) => {
   }
 
   try {
-    const notifications = await Notification.find(query)
+    let notifications = await Notification.find(query)
       .populate("sender", "name avatar") // Populate sender details
       .sort({ createdAt: -1, _id: -1 }) // Sort by newest first
       .limit(pageSize + 1) // Fetch one extra document to check for `hasMore`
@@ -144,6 +145,29 @@ export const allNotifications = asyncHandler(async (req, res) => {
 
     const hasMore = notifications.length > pageSize; // Check if there are more notifications
     if (hasMore) notifications.pop(); // Remove the extra document
+
+    // Gather all commentIds where type === "Comment"
+    const commentIds = notifications
+      .filter(n => n.type === "Comment" && n.commentId)
+      .map(n => n.commentId);
+
+    let comments = [];
+    if(commentIds.length > 0 ) comments = await Comments.find({ _id: { $in: commentIds } })
+      .select("text")
+      .lean();
+
+    const commentMap = new Map(comments.map(c => [c._id.toString(), c.text]));
+
+    // Attach commentText to each notification
+    notifications = notifications.map(n => {
+      if (n.type === "Comment" && n.commentId) {
+        return {
+          ...n,
+          commentText: commentMap.get(n.commentId.toString()) || null,
+        };
+      }
+      return n;
+    });
 
     res.status(200).json({
       success: true,
@@ -166,21 +190,21 @@ export const allNotifications = asyncHandler(async (req, res) => {
  * @route PATCH /api/v1/notification/:notificationId
  * @access Private
  */
-
 export const getNotification = asyncHandler(async (req, res) => {
   const notificationId = req.params.notificationId;
   const userId = req.user.id;
-  try {
-    const notification = await Notification.findById(notificationId).populate("sender", "name avatar");
 
-    // Check if the notification exists and belongs to the user   
+  try {
+    let notification = await Notification.findById(notificationId)
+      .populate("sender", "name avatar");
+
     if (!notification) {
       return res.status(404).json({
         success: false,
         message: "Notification not found",
       });
     }
-    // Check if the notification belongs to the user
+
     if (notification.receiver.toString() !== userId) {
       return res.status(403).json({
         success: false,
@@ -188,7 +212,13 @@ export const getNotification = asyncHandler(async (req, res) => {
       });
     }
 
-    await notification.save();
+    // Convert to plain object so we can safely attach commentText
+    notification = notification.toObject();
+
+    if (notification.type === "Comment" && notification.commentId) {
+      const comment = await Comment.findById(notification.commentId).select("text");
+      notification.commentText = comment?.text || null;
+    }
 
     res.status(200).json({
       success: true,
@@ -202,7 +232,8 @@ export const getNotification = asyncHandler(async (req, res) => {
       error: error.message
     });
   }
-})
+});
+
 
 
 /**
@@ -273,12 +304,12 @@ export const markAllRead = asyncHandler(async (req, res) => {
  */
 
 export const updateNotificationType = asyncHandler(async (req, res) => {
-    const { notificationId } = req.params; // Extract notificationId from params
-    const { type } = req.body; // Extract the status from the request body
+  const { notificationId } = req.params; // Extract notificationId from params
+  const { type } = req.body; // Extract the status from the request body
 
-    console.log(notificationId, type);
-    try {
-       if (!type) {
+  console.log(notificationId, type);
+  try {
+    if (!type) {
       return res.status(400).json({ message: 'Type is required' });
     }
 
@@ -286,7 +317,7 @@ export const updateNotificationType = asyncHandler(async (req, res) => {
     const notification = await Notification.findById(notificationId);
 
     if (!notification) {
-        return res.status(404).json({ message: 'Notification not found' });
+      return res.status(404).json({ message: 'Notification not found' });
     }
 
     // Update the notification status
@@ -297,11 +328,11 @@ export const updateNotificationType = asyncHandler(async (req, res) => {
 
     // Return the updated notification as response
     res.status(200).json(notification);
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: "Failed to update notification",
-            error: error.message
-        });
-    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to update notification",
+      error: error.message
+    });
+  }
 });
