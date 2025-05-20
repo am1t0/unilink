@@ -60,7 +60,7 @@ export default function List() {
                 <div className="notification-other-content">
                   {notification.type === "Comment" && (
                     <p className="comment-text">
-                      {notification.commentText}
+                      {`${notification?.commentText?.slice(0,100)}...`}
                     </p>
                   )}
 

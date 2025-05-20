@@ -54,44 +54,56 @@ export const useCommentStore = create((set) => ({
   },
 
   // Like or unlike a comment
-  toggleCommentLike: async (commentId) => {
-    try {
-      const response = await axiosInstance.put(`/post-interaction/like-comment/${commentId}`);
-      set((state) => ({
-        comments: state.comments.map((comment) => {
-          // Handle main comments
-          if (comment._id === commentId) {
+  toggleCommentLike: async (commentId, userId) => {
+  try {
+    const response = await axiosInstance.put(`/post-interaction/like-comment/${commentId}`);
+    const { liked } = response.data;
+
+    set((state) => ({
+      comments: state.comments.map((comment) => {
+        // Handle main comments
+        if (comment._id === commentId) {
+          return {
+            ...comment,
+            likes: liked === -1 ? comment.likes + 1 : comment.likes - 1,
+            likedBy: liked === -1
+              ? [userId, ...comment.likedBy]
+              : comment.likedBy.filter((id) => id !== userId),
+          };
+        }
+
+        // Handle replies
+        const updatedReplies = comment.replies?.map((reply) => {
+          if (reply._id === commentId) {
             return {
-              ...comment,
-              likes: response.data.likeCount || 0,
-              likedBy: response.data.likedBy || []
+              ...reply,
+              likes: liked === -1 ? reply.likes + 1 : reply.likes - 1,
+              likedBy: liked === -1
+                ? [userId, ...reply.likedBy]
+                : reply.likedBy.filter((id) => id !== userId),
             };
           }
-          // Handle replies
-          const updatedReplies = comment.replies?.map((reply) => {
-            if (reply._id === commentId) {
-              return {
-                ...reply,
-                likes: response.data.likeCount || 0,
-                likedBy: response.data.likedBy || []
-              };
-            }
-            return reply;
-          });
-          if (updatedReplies) {
-            return {
-              ...comment,
-              replies: updatedReplies,
-            };
-          }
-          return comment;
-        }),
-      }));
-    } catch (error) {
-      console.error("Error toggling comment like:", error);
-      throw error;
-    }
-  },
+          return reply;
+        });
+
+        if (updatedReplies) {
+          return {
+            ...comment,
+            replies: updatedReplies,
+          };
+        }
+
+        return comment;
+      }),
+    }));
+
+    return response.data;
+    
+  } catch (error) {
+    console.error("Error toggling comment like:", error);
+    throw error;
+  }
+},
 
   // Clear all comments
   clearComments: () => set({ comments: [], replies: {} }),

@@ -9,7 +9,7 @@ import { useCommentStore } from "../store/useCommentStore";
 
 const useNotifications = () => {
   const { changeLinkStatus, sendRequest } = useLinkStore();
-  const { addComment } = useCommentStore();
+  const { addComment, toggleCommentLike } = useCommentStore();
   const { prepareNotification, updateNotificationType } = useNotificationsStore();
   const { likePost, commentCountIncrement } = usePostStore();
   const { authUser } = useAuthStore();
@@ -59,8 +59,8 @@ const useNotifications = () => {
   };
 
   const sendLinkRequest = async (user) => {
-    
-     setNotificationProcess({
+
+    setNotificationProcess({
       id: user._id,
       process: "request",
     });
@@ -74,14 +74,14 @@ const useNotifications = () => {
 
       //intialiazing the link request doc in db
       const linkResponse = await sendRequest(user._id);
-      if(!linkResponse) return ;
+      if (!linkResponse) return;
 
       linkRequest.linkId = linkResponse._id;
 
       //creating new notifications doc in db
       const createdNotification = await prepareNotification(linkRequest);
-      if(!createdNotification) return ;
-     
+      if (!createdNotification) return;
+
 
       // filling request with the notification id
       linkRequest.notificationId = createdNotification.notificationId;
@@ -98,16 +98,16 @@ const useNotifications = () => {
   };
 
   const handleToggleLike = async (postId, user) => {
-   
-    try {    
-        //first handle the change in like
+
+    try {
+      //first handle the change in like
       const likeResponse = await likePost(postId, authUser);
-      if(!likeResponse || !likeResponse.liked) return;
+      if (!likeResponse || !likeResponse.liked) return;
 
       const notificationData = {
-        sender:authUser._id,
+        sender: authUser._id,
         receiver: user._id,
-        type:"Like",
+        type: "Like",
         postId
       }
       const createdNotification = await prepareNotification(notificationData);
@@ -119,31 +119,31 @@ const useNotifications = () => {
       await socket.emit("sendNotification", notificationData);
 
     } catch (error) {
-       toast.error("Failed to like post")
+      toast.error("Failed to like post")
     }
   }
 
-  const handleAddComment = async (user, postId, text, setInput, parentId = null)=> { 
-    try {    
-      if(text.trim() === "") return ;
+  const handleAddComment = async (user, postId, text, setInput, parentId = null) => {
+    try {
+      if (text.trim() === "") return;
 
-        //first handle the change in like
+      //first handle the change in like
       const commentResponse = await addComment(postId, text);
-      if(!commentResponse) return;
-      
+      if (!commentResponse) return;
+
       commentCountIncrement(postId);
-      
+
       //reset comment box
       setInput("");
 
       const { _id } = commentResponse.comment
-      
+
       //increase comment count
 
       const notificationData = {
-        sender:authUser._id,
+        sender: authUser._id,
         receiver: user._id,
-        type:"Comment",
+        type: "Comment",
         commentId: _id
       }
       const createdNotification = await prepareNotification(notificationData);
@@ -155,7 +155,32 @@ const useNotifications = () => {
       await socket.emit("sendNotification", notificationData);
 
     } catch (error) {
-       toast.error("Failed to like post")
+      toast.error("Failed to like post")
+    }
+  }
+
+  const handleLikeComment = async (commentId, userId) => {
+    try {
+      // Change link status
+      const commentLikeResponse = await toggleCommentLike(commentId, userId);
+      if (!commentLikeResponse) return;
+
+      const notificationData = {
+        sender: authUser._id,
+        receiver: userId,
+        type: "Comment-Like",
+        commentId
+      }
+      const createdNotification = await prepareNotification(notificationData);
+      if (!createdNotification.success) return;
+
+      notificationData.notificationId = createdNotification.notificationId;
+
+      // Send notification through socket
+      await socket.emit("sendNotification", notificationData);
+
+    } catch (error) {
+      toast.error("Failed to like post")
     }
   }
 
@@ -165,6 +190,7 @@ const useNotifications = () => {
     handleToggleLike,
     handleAddComment,
     sendLinkRequest,
+    handleLikeComment
   };
 };
 

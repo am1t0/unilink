@@ -14,9 +14,8 @@ const Comments = ({ user, postId }) => {
     fetchComments,
     addComment,
     removeComment,
-    toggleCommentLike,
   } = useCommentStore();
-  const { handleAddComment } = useNotifications();
+  const { handleAddComment , handleLikeComment} = useNotifications();
   const { authUser } = useAuthStore();
   const [input, setInput] = useState("");
   const [replyInput, setReplyInput] = useState("");
@@ -56,15 +55,6 @@ const Comments = ({ user, postId }) => {
       fetchComments(postId);
     } catch (error) {
       console.error("Error deleting comment:", error);
-    }
-  };
-
-  const handleLikeComment = async (commentId) => {
-    try {
-      await toggleCommentLike(commentId);
-      // No need to fetch comments here if your store updates the state properly
-    } catch (error) {
-      console.error("Error toggling comment like:", error);
     }
   };
 
@@ -154,7 +144,7 @@ const Comments = ({ user, postId }) => {
                     className={`like-icon ${isLiked ? "liked" : ""}`}
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent event bubbling
-                      handleLikeComment(comment._id);
+                      handleLikeComment(comment._id, comment.userId);
                     }}
                     fill={isLiked ? "red" : "none"}
                     color={isLiked ? "red" : "currentColor"}

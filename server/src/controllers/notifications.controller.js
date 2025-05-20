@@ -31,6 +31,7 @@ export const addNotification = asyncHandler(async (req, res) => {
       ...(type === "Like" && postId && { postId }),
       ...(type === "Mention" && postId && { postId }),
       ...(type === "Comment" && commentId && { commentId }),
+      ...(type === "Comment-Like" && commentId && { commentId })
     });
 
     if (existingNotification) {
@@ -60,7 +61,7 @@ export const addNotification = asyncHandler(async (req, res) => {
         });
       }
       notificationData.postId = postId;
-    } else if (type === "Comment") {
+    } else if (type === "Comment" || type === "Comment-Like") {
       if (!commentId) {
         return res.status(400).json({
           success: false,
@@ -148,7 +149,7 @@ export const allNotifications = asyncHandler(async (req, res) => {
 
     // Gather all commentIds where type === "Comment"
     const commentIds = notifications
-      .filter(n => n.type === "Comment" && n.commentId)
+      .filter(n => (n.type === "Comment" || n.type === "Comment-Like") && n.commentId)
       .map(n => n.commentId);
 
     let comments = [];
@@ -160,7 +161,7 @@ export const allNotifications = asyncHandler(async (req, res) => {
 
     // Attach commentText to each notification
     notifications = notifications.map(n => {
-      if (n.type === "Comment" && n.commentId) {
+      if ((n.type === "Comment" || n.type === "Comment-Like") && n.commentId) {
         return {
           ...n,
           commentText: commentMap.get(n.commentId.toString()) || null,

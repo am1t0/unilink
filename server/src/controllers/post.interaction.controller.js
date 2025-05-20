@@ -452,7 +452,7 @@ export const toggleCommentLike = asyncHandler(async (req, res) => {
         return res.status(200).json({
             success: true,
             message: likeIndex === -1 ? "Comment liked" : "Comment unliked",
-            likeCount: comment.likes.length
+            liked: likeIndex
         });
 
     } catch (error) {

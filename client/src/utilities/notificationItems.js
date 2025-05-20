@@ -27,6 +27,9 @@ export const getNotificationMessage = (notification) => {
 
         case "Comment":
            return 'commented on your post';
+        
+        case "Comment-Like":
+           return 'Liked your comment';
 
         case "Link-Accepted":
             return 'and you are now connected';
