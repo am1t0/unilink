@@ -162,7 +162,7 @@ const useNotifications = () => {
   const handleLikeComment = async (commentId, userId) => {
     try {
       // Change link status
-      const commentLikeResponse = await toggleCommentLike(commentId, userId);
+      const commentLikeResponse = await toggleCommentLike(commentId, authUser._id);
       if (!commentLikeResponse) return;
 
       const notificationData = {

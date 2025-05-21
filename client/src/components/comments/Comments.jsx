@@ -141,7 +141,7 @@ const Comments = ({ user, postId }) => {
                   <span className="like-count">{likeCount}</span>
                   <Heart
                     size={18}
-                    className={`like-icon ${isLiked ? "liked" : ""}`}
+                    className={`like-icon ${isLiked? "liked" : ""}`}
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent event bubbling
                       handleLikeComment(comment._id, comment.userId);

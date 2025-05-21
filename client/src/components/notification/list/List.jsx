@@ -58,7 +58,7 @@ export default function List() {
                 </div>
 
                 <div className="notification-other-content">
-                  {notification.type === "Comment" && (
+                  { (notification.type === "Comment" || notification.type === "Comment-Like") && (
                     <p className="comment-text">
                       {`${notification?.commentText?.slice(0,100)}...`}
                     </p>

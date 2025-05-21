@@ -277,8 +277,6 @@ export const searchRelevantUsers = asyncHandler(async (req, res) => {
     if (!currentUser) {
       return res.status(404).json({ message: "Current user not found" });
     }
-
-    console.log(searchTerm, currentUser.collage);
   
     const query = {
       _id: { $ne: currentUser._id },

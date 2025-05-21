@@ -184,6 +184,11 @@
   cursor: pointer;
 }
 
+.header-user-profile img {
+  height: 45px;
+  border-radius: 50%;
+}
+
 .headder-menu-item:hover {
   background: white;
   color: #0A0F1E;

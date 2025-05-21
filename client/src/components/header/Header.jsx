@@ -142,9 +142,9 @@ const Header = () => {
           ) : (
             <>
               <Link to={`/profilepage/${authUser?._id}`}>
-                <button className="headder-menu-item">
-                  <UserRound size={20} />
-                </button>
+                <div className="header-user-profile">
+                  <img src={authUser?.avatar} alt="" />
+                </div>
               </Link>
               <button className="headder-menu-item" onClick={logout}>
                 <LogOut size={16} />

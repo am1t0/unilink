@@ -68,7 +68,7 @@ export const useCommentStore = create((set) => ({
             likes: liked === -1 ? comment.likes + 1 : comment.likes - 1,
             likedBy: liked === -1
               ? [userId, ...comment.likedBy]
-              : comment.likedBy.filter((id) => id !== userId),
+              : comment.likedBy.filter((id) => String(id) !== String(userId)),
           };
         }
 
@@ -96,6 +96,7 @@ export const useCommentStore = create((set) => ({
         return comment;
       }),
     }));
+
 
     return response.data;
     
