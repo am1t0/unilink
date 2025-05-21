@@ -18,6 +18,9 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { Link, NavLink } from "react-router-dom";
 import { useNotificationsStore } from "../../store/useNotifications";
 import { useEffect } from "react";
+import { resolveAvatar } from '../../utilities/defaultImages'
+import ProfilesSearch from "../profilesSearch/ProfilesSearch";
+import Overlay from "../overlay/Overlay";
 
 const Header = () => {
   //user and notification store states
@@ -28,6 +31,9 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); //mobile menu
   const [showNavbar, setShowNavbar] = useState(true); //navbar visibility on scroll
   const [lastScrollY, setLastScrollY] = useState(0); //last scroll position
+
+  //profile search 
+  const [ show, setShow]  = useState();
 
   //listen to scroll event to show/hide navbar
   useEffect(() => {
@@ -115,15 +121,19 @@ const Header = () => {
           </nav>
         </div>
 
-        <div className="headder-search-container">
+        {
+          show ?   <ProfilesSearch show = {show} setShow={setShow} purpose={"Search users"} />
+               :    <div className="headder-search-container">
           <input
             type="text"
             placeholder="Search Links"
             className="headder-search-input"
+            onClick={()=> setShow(!show)}
           />
           <Search size={18} className="headder-search-icon" />
           <Filter size={18} className="headder-filter-icon" />
         </div>
+        }
 
         <div className="headder-auth-buttons">
           {!authUser ? (
@@ -143,7 +153,7 @@ const Header = () => {
             <>
               <Link to={`/profilepage/${authUser?._id}`}>
                 <div className="header-user-profile">
-                  <img src={authUser?.avatar} alt="" />
+                  <img src={resolveAvatar(authUser)} alt="" />
                 </div>
               </Link>
               <button className="headder-menu-item" onClick={logout}>

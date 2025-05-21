@@ -4,7 +4,7 @@ import { resolveAvatar } from "../../utilities/defaultImages";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useMessageStore } from "../../store/useMessageStore";
 
-export default function ProfilesSearch({setShow, show}) {
+export default function ProfilesSearch({setShow, show, purpose}) {
 
   // Importing the authUser and searchUsers from the auth store
   // and createConversation from the message store
@@ -71,7 +71,7 @@ export default function ProfilesSearch({setShow, show}) {
       <div className="search-input">
         <input
           type="text"
-          placeholder="New conversation"
+          placeholder= { purpose }
           onChange={(e) => setQuery(e.target.value)}
           value={query}
         />

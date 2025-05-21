@@ -78,7 +78,7 @@ export default function ChatList({ typingUsers }) {
         </div>
         
         {
-           showProfileSearch && <ProfilesSearch show = {showProfileSearch} setShow = {setShowProfileSearch} />
+           showProfileSearch && <ProfilesSearch show = {showProfileSearch} setShow = {setShowProfileSearch} purpose={"New conversation"}/>
         }
         <div className="search-conversation">
           <input

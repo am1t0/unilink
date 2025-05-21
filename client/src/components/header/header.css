@@ -99,9 +99,9 @@
 .headder-search-container {
   display: flex;
   align-items: center;
-  border: 1px solid white;
-  border-radius: 25px;
-  padding: 0px 12px;
+  border-radius: 5px;
+  border: 1px solid rgb(83, 83, 83);
+  padding: 4px 12px;
   gap: 8px;
 }
 
@@ -109,7 +109,7 @@
   border: none;
   outline: none;
   padding: 6px;
-  width: 180px;
+  width: 300px;
   background: transparent;
   color: white;
 }
@@ -185,7 +185,7 @@
 }
 
 .header-user-profile img {
-  height: 45px;
+  height: 40px;
   border-radius: 50%;
 }
 
@@ -225,6 +225,7 @@
   }
 
   .headder-search-input {
+    border: 1px solid;
     width: 100px;
   }
 
