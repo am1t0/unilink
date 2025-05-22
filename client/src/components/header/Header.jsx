@@ -20,7 +20,6 @@ import { useNotificationsStore } from "../../store/useNotifications";
 import { useEffect } from "react";
 import { resolveAvatar } from '../../utilities/defaultImages'
 import ProfilesSearch from "../profilesSearch/ProfilesSearch";
-import Overlay from "../overlay/Overlay";
 
 const Header = () => {
   //user and notification store states
