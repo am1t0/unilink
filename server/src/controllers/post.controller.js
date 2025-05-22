@@ -132,18 +132,31 @@ export const getPost = asyncHandler(async (req, res) => {
     }
 });
 
+/**
+ * @desc get a user's all posts
+ * @route GET /api/v1/posts/getAll-posts/:userId
+ * @access Private
+ */
 export const getAllUserPosts = asyncHandler(async (req, res) => {
     const { userId } = req.params;
+    let { page = 1, limit = 3 } = req.query; // Default: page 1, 6 posts per page
+    page = parseInt(page);
+    limit = parseInt(limit);
+    const skip = (page - 1) * limit;
     try {
-        //get all posts for a user
         const posts = await Post.find({ user: userId })
-            .populate("user", "name avatar email"); // stuff user details
-
+            .populate("user", "name avatar email")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+        const totalPosts = await Post.countDocuments({ user: userId });
+        const hasMore = totalPosts > skip + limit;
         return res.status(200).json({
             success: true,
-            posts
+            posts,
+            hasMore,
+            currentPage: page,
         });
-
     } catch (error) {
         console.error("Error in getAllPosts:", error);
         return res.status(500).json({

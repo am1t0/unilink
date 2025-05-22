@@ -4,9 +4,10 @@ import { axiosInstance } from '../lib/axios';
 
 export const usePostStore = create((set, get) => ({
   posts: null,
+  currentFilter: null,
   filteredPosts: null,
   loading: false,
-  currentFilter: null,
+
 
 
   toggleFilter: (filterType) => {
@@ -60,6 +61,27 @@ export const usePostStore = create((set, get) => ({
       });
     } catch (error) {
       toast.error(error.response?.data?.message || "Can't Fetch Posts");
+    }
+  },
+
+  getUserPosts: async (profileId, setUserPosts, page = 1, limit = 6) => {
+    try {
+      const response = await axiosInstance.get(`/posts/getAll-posts/${profileId}?page=${page}&limit=${limit}`);
+      const newPosts = response.data.posts || [];
+
+      //avoid duplicates
+      setUserPosts(prevPosts => {
+        const existingIds = new Set((prevPosts || []).map(p => p._id));
+        const filtered = newPosts.filter(p => !existingIds.has(p._id));
+        return [...(prevPosts || []), ...filtered];
+      });
+      return {
+        hasMore: response.data.hasMore,
+        currentPage: response.data.currentPage
+      };
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Can't Fetch Posts");
+      return { hasMore: false };
     }
   },
 
