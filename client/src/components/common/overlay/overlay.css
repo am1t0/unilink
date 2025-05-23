@@ -1,0 +1,36 @@
+/* overlay.css */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(2px); /* Blurs background */
+  background-color: rgba(65, 65, 65, 0.4); /* Dimmed background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 13;
+}
+
+.overlay-item {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-height: 80vh;
+  width: 90%;
+  max-width: 500px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.overlay-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}

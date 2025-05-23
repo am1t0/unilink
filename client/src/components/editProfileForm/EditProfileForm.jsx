@@ -4,7 +4,7 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { BsX } from "react-icons/bs";
 
 const EditProfileForm = (props) => {
-  const { isOpen, onClose, show, setShow } = props;
+  const { show, setShow } = props;
 
   //user details from store
   const { authUser, updateProfile } = useAuthStore();
@@ -51,10 +51,10 @@ const EditProfileForm = (props) => {
     setLoading(true);
     await updateProfile(formData);
     setLoading(false);
-    onClose();
+    setShow(!show);
   };
 
-  if (!isOpen) return null;
+  if (!show) return null;
 
   return (
     <div className="edit-profile-overlay">
@@ -62,7 +62,7 @@ const EditProfileForm = (props) => {
         <div className="edit-profile-header">
           <h2>Edit Profile</h2>
 
-          <button className="close-button" onClick={onClose}>
+          <button className="close-button" onClick={()=> setShow(!show)}>
             <BsX size={24} />
           </button>
         </div>
@@ -169,7 +169,7 @@ const EditProfileForm = (props) => {
           </div>
 
           <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
+            <button type="button" className="cancel-btn" onClick={()=> setShow(!show)}>
               Cancel
             </button>
             <button type="submit" className="save-btn">
