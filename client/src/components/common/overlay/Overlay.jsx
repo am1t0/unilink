@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import './overlay.css'
 
 const Overlay = (props) => {
+    
     const { show, setShow, children } = props;
     const boxRef = useRef();
     
@@ -30,7 +31,6 @@ const Overlay = (props) => {
           ×
         </button>
         {children}
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit dolor odio at quos, officiis incidunt explicabo exercitationem corrupti architecto voluptatem laboriosam fugiat laudantium tenetur doloribus sunt inventore aperiam suscipit vel illum similique, maxime aspernatur. Expedita provident ullam est nulla ipsum!
       </div>
     </div>
   );

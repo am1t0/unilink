@@ -17,6 +17,7 @@ import { toast } from "react-hot-toast";
 import EditProfileForm from "../editProfileForm/EditProfileForm";
 import defaultAvatar from '../../assets/images/avatar.png'
 import Overlay from "../common/overlay/Overlay";
+import Links from "../links/Links";
 
 export default function ProfileCard({ user }) {
   const { uploadProfileImage, uploadBannerImage, authUser } = useAuthStore();
@@ -223,15 +224,8 @@ export default function ProfileCard({ user }) {
         setShow= {setIsEditFormOpen}
       />
 
-           <Overlay show={linksShow} setShow={setLinksShow}>
-        <div>
-          <h2>Followers</h2>
-          <ul>
-            <li>👤 User One</li>
-            <li>👤 User Two</li>
-            <li>👤 User Three</li>
-          </ul>
-        </div>
+      <Overlay show={linksShow} setShow={setLinksShow}>
+        <Links/>
       </Overlay>
     </>
   );

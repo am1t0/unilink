@@ -151,15 +151,13 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
 
 
 /**
- * @desc Fetch all links
- * @route GET /api/v1/links/all-links?status=abc?page=x?limit=y
+ * @desc Fetch paginated links for infinite scroll
+ * @route GET /api/v1/links/all-links?status=abc&page=x&limit=y
  * @access Private
  */
 export const getLinks = asyncHandler(async (req, res) => {
     const userId = req.user.id;
-    const { status = "Link", limit = 20, page = 1 } = req.query;
-
-    console.log(page);
+    const { status = "Link", limit = 10, page = 1 } = req.query;
     try {
         // Convert page and limit to numbers
         const pageNumber = Number(page);
@@ -167,28 +165,26 @@ export const getLinks = asyncHandler(async (req, res) => {
 
         // Find all links where the user is either user1 or user2
         const links = await Link.find({
-            $or: [{ user1: userId }, { user2: userId }],
+            user1: userId,
             status: status
         })
         .populate({
-            path: "user1",
-            select: "name email",
-            match: { _id: { $ne: userId } } // Exclude logged-in user's data
-        })
-        .populate({
             path: "user2",
-            select: "name email",
-            match: { _id: { $ne: userId } } // Exclude logged-in user's data
+            select: "name email avatar",
         })
-        .sort({ createdAt: -1 }) // Sort by most recent
+        .sort({ createdAt: -1 })
         .skip(limitNumber * (pageNumber - 1))
-        .limit(limitNumber);
+        .limit(limitNumber + 1); // Fetch one extra to check for hasMore
 
+        const hasMore = links.length > limitNumber;
+        if (hasMore) links.pop(); // Remove the extra
+        
         return res.status(200).json({
             success: true,
-            links
+            links,
+            hasMore,
+            currentPage: pageNumber
         });
-
     } catch (error) {
         console.error("Error in getLinks:", error);
         return res.status(500).json({
