@@ -21,6 +21,11 @@ const ProfilePage = () => {
   const { authUser, getProfile } = useAuthStore();
   const { getUserPosts } = usePostStore();
 
+  // scroll to top while rendering to avoid mismatch in posts fetch
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth"});
+  }, [profileId]);
+
   useEffect(() => {
     setUserPosts([]); // Reset posts
     setHasMore(true);

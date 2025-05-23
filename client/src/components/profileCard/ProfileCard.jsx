@@ -67,6 +67,7 @@ export default function ProfileCard({ user }) {
   const handleEditClick = () => {
     setIsEditFormOpen(true);
   };
+
  
 
   return (
@@ -215,6 +216,8 @@ export default function ProfileCard({ user }) {
         isOpen={isEditFormOpen}
         onClose={() => setIsEditFormOpen(false)}
         user={user}
+        show={isEditFormOpen}
+        setShow= {setIsEditFormOpen}
       />
     </>
   );
