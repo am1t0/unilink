@@ -61,12 +61,7 @@ export const useLinkStore = create((set, get) => ({
     set({ loading: true });
     try {
       const response = await axiosInstance.patch(`/links/${linkId}`, { status });
-      // set((state) => {
-      //   const updatedLinks = state.links.map((link) =>
-      //     link._id === linkId ? { ...link, status } : link
-      //   );
-      //   return { links: updatedLinks };
-      // });
+
       return response.data;
     } catch (error) {
       toast.error(error.response?.data?.message || "Cannot update link request");

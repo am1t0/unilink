@@ -7,7 +7,7 @@
   width: 100vw;
   height: 100vh;
   backdrop-filter: blur(2px); /* Blurs background */
-  background-color: rgba(65, 65, 65, 0.4); /* Dimmed background */
+  background:rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,10 +15,10 @@
 }
 
 .overlay-item {
-  background: white;
+  background: #1e293b;
   padding: 2rem;
   border-radius: 12px;
-  max-height: 80vh;
+  max-height: 60vh;
   width: 90%;
   max-width: 500px;
   overflow-y: auto;

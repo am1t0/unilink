@@ -4,6 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component'
 import { useLinkStore } from '../../store/useLinkStore'
 import Loader from '../loader/Loader';
 import { resolveAvatar } from '../../utilities/defaultImages';
+import { useAuthStore } from '../../store/useAuthStore';
 
 export default function Links() {
   const { links, fetchLinks } = useLinkStore();
@@ -30,28 +31,35 @@ export default function Links() {
     });
   }, [fetchLinks]);
 
+
   return (
-    <InfiniteScroll
-      dataLength={links.length}
-      next={fetchMoreLinks}
-      hasMore={hasMore}
-      loader={<Loader size={20}/>}
-      endMessage={<p className="user-posts-no-more">No more links</p>}
-    >
-      <ul className="links-list">
-        {links.map(link => (
-          <li key={link._id} className="links-list-item">
-            <div className="link-user-info">
-              <img
-                src={resolveAvatar(link.user2)}
-                alt={link.user2?.name || 'User'}
-                className="link-user-avatar"
-              />
-              <span className="link-user-name">{link.user2?.name}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </InfiniteScroll>
+      <InfiniteScroll
+        dataLength={links.length}
+        next={fetchMoreLinks}
+        hasMore={hasMore}
+        loader={<Loader size={20}/>} 
+        endMessage={<p className="links-end-message">No more links</p>}
+      >
+        <ul className="links-list">
+          {links.map(link => {
+            const linkUser = (!link.user1) ? link.user2 : link.user1;
+            return (
+              <li key={link._id} className="links-list-item">
+                <div className="link-user-info">
+                  <img
+                    src={resolveAvatar(linkUser)}
+                    alt={linkUser?.name || 'User'}
+                    className="link-user-avatar"
+                  />
+                  <div className="link-user-details">
+                    <span className="link-user-name">{linkUser?.name}</span>
+                    <span className="link-user-email">{linkUser?.email}</span>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </InfiniteScroll>
   )
 }

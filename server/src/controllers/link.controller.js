@@ -132,8 +132,20 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
         }
 
         // Update the request status
+        const prevStatus = linkRequest.status;
         linkRequest.status = status;
         await linkRequest.save();
+
+        // Update linksCount for both users if status changes
+        if (status === "Link" && prevStatus !== "Link") {
+            // Increment linksCount for both users
+            await User.updateOne({ _id: linkRequest.user1 }, { $inc: { linksCount: 1 } });
+            await User.updateOne({ _id: linkRequest.user2 }, { $inc: { linksCount: 1 } });
+        } else if ((status === "Blocked" || status === "Unlink") && prevStatus === "Link") {
+            // Decrement linksCount for both users
+            await User.updateOne({ _id: linkRequest.user1 }, { $inc: { linksCount: -1 } });
+            await User.updateOne({ _id: linkRequest.user2 }, { $inc: { linksCount: -1 } });
+        }
 
         return res.status(200).json({
             success: true,
@@ -158,33 +170,49 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
 export const getLinks = asyncHandler(async (req, res) => {
     const userId = req.user.id;
     const { status = "Link", limit = 10, page = 1 } = req.query;
+
     try {
-        // Convert page and limit to numbers
         const pageNumber = Number(page);
         const limitNumber = Number(limit);
 
-        // Find all links where the user is either user1 or user2
         const links = await Link.find({
-            user1: userId,
-            status: status
+            $or: [{ user1: userId }, { user2: userId }],
+            status
         })
-        .populate({
-            path: "user2",
-            select: "name email avatar",
-        })
+        .populate([
+            {
+                path: "user1",
+                select: "name email avatar",
+                match: { _id: { $ne: userId } }
+            },
+            {
+                path: "user2",
+                select: "name email avatar",
+                match: { _id: { $ne: userId } }
+            }
+        ])
         .sort({ createdAt: -1 })
         .skip(limitNumber * (pageNumber - 1))
-        .limit(limitNumber + 1); // Fetch one extra to check for hasMore
+        .limit(limitNumber + 1);
+
+        // Filter out any null users (in case one of the users is the logged-in user)
+        const filteredLinks = links.filter(link => { 
+            const user1Exists = link.user1 && link.user1._id.toString() !== userId;
+            const user2Exists = link.user2 && link.user2._id.toString() !== userId;
+            return user1Exists || user2Exists;
+        });
 
         const hasMore = links.length > limitNumber;
-        if (hasMore) links.pop(); // Remove the extra
-        
+        if (hasMore) links.pop();
+
+
         return res.status(200).json({
             success: true,
             links,
             hasMore,
             currentPage: pageNumber
         });
+
     } catch (error) {
         console.error("Error in getLinks:", error);
         return res.status(500).json({
@@ -193,6 +221,7 @@ export const getLinks = asyncHandler(async (req, res) => {
         });
     }
 });
+
 
 
 /**

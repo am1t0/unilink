@@ -53,6 +53,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    linksCount: {
+      type: Number,
+      default: 0, // Default to 0 for new users
+    },
   },
   { timestamps: true } // Fixed typo
 );

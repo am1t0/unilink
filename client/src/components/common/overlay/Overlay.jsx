@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from "react";
 import './overlay.css'
 
 const Overlay = (props) => {
-    
-    const { show, setShow, children } = props;
+    const { show, setShow, children, heading, subheading } = props;
     const boxRef = useRef();
     
     //closing the component on click outside
@@ -27,9 +26,16 @@ const Overlay = (props) => {
   return (
     <div className="overlay">
       <div className="overlay-item" ref={boxRef}>
-        <button className="overlay-close" onClick={()=> setShow(!show)}>
-          ×
-        </button>
+        {/* Overlay header row: heading and close button, perfectly aligned */}
+        {(heading || subheading) && (
+          <div className="overlay-header-row">
+            <div className="overlay-header-texts">
+              {heading && <h2 className="overlay-title">{heading}</h2>}
+              {subheading && <p className="overlay-subtitle">{subheading}</p>}
+            </div>
+            <button className="overlay-close-btn" onClick={()=> setShow(!show)} title="Close">×</button>
+          </div>
+        )}
         {children}
       </div>
     </div>

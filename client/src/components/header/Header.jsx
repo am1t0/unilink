@@ -23,7 +23,6 @@ import { resolveAvatar } from "../../utilities/defaultImages";
 const Header = () => {
   // Stores
   const { authUser, logout, searchUsers } = useAuthStore();
-  const { createConversation } = useMessageStore();
   const { notifications } = useNotificationsStore();
 
   // UI State
@@ -34,7 +33,6 @@ const Header = () => {
   // Search state
   const [searchText, setSearchText] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  console.log("searchResults", searchResults);
 
   const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
   const searchBoxRef = useRef();

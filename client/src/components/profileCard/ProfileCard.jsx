@@ -187,7 +187,7 @@ export default function ProfileCard({ user }) {
                 />
                 <BsArrow90DegRight />
               </div>
-              <span>400+ Connections</span>
+              <span>{`${user.linksCount} connections` || 'No connections yet'}</span>
             </div>
 
             <div className="third-row">
@@ -224,7 +224,11 @@ export default function ProfileCard({ user }) {
         setShow= {setIsEditFormOpen}
       />
 
-      <Overlay show={linksShow} setShow={setLinksShow}>
+      <Overlay 
+        show={linksShow} 
+        setShow={setLinksShow}
+        heading={"Links"}
+       >
         <Links/>
       </Overlay>
     </>
