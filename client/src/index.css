@@ -13,3 +13,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+/* For modern browsers */
+* {
+  scrollbar-width: thin;             /* Firefox */
+  scrollbar-color: rgba(210, 207, 207, 0.3) transparent; /* Firefox */
+}
+
+/* For Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 6px;     /* Thin scrollbar */
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;   /* No background track */
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(126, 126, 126, 0.3); /* Scrollbar color */
+  border-radius: 4px;
+  border: none;
+}

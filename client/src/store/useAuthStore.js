@@ -26,7 +26,7 @@ const registerSchema = yup.object().shape({
   collageName: yup.string().required("College is required"),
 });
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set, get) => ({
   authUser: null,
   checkingAuth: true,
   loading: false,
@@ -194,16 +194,24 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  getProfile: async (profileId) =>{
+  getProfile: async (profileId, setUserProfile) =>{
     try {
       set({ loading: true });
+      const authUser = get().authUser;
 
+      //user visiting his/her own profile
+      if( authUser._id === profileId){
+        setUserProfile(authUser);
+        return ;
+      }
+
+      //user visiting other's profile
       const res = await axiosInstance.get(`/auth/profile/${profileId}`);
-
-      return res.data.user;
+      const { user } = res.data;
+      setUserProfile(user);
 
     } catch (error) {
-      toast.error(error.response?.data?.message || "Error uploading banner image");
+      toast.error(error.response?.data?.message || "Error getting user profile image");
       return { success: false };
     } finally {
       set({ loading: false });

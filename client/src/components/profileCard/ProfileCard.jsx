@@ -16,11 +16,14 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { toast } from "react-hot-toast";
 import EditProfileForm from "../editProfileForm/EditProfileForm";
 import defaultAvatar from '../../assets/images/avatar.png'
+import Overlay from "../common/overlay/Overlay";
+import Links from "../links/Links";
 
 export default function ProfileCard({ user }) {
   const { uploadProfileImage, uploadBannerImage, authUser } = useAuthStore();
   const { profileId } = useParams();
   const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [linksShow, setLinksShow] = useState(false);
 
   const handleBannerUpload = async (e) => {
     const file = e.target.files[0];
@@ -67,6 +70,8 @@ export default function ProfileCard({ user }) {
   const handleEditClick = () => {
     setIsEditFormOpen(true);
   };
+
+
  
 
   return (
@@ -162,7 +167,7 @@ export default function ProfileCard({ user }) {
               )}
             </div>
 
-            <div className="second-row">
+            <div className="second-row" onClick={()=> setLinksShow(!linksShow)}>
               <div className="connections-imgs">
                 <img
                   src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ718nztPNJfCbDJjZG8fOkejBnBAeQw5eAUA&s"
@@ -215,7 +220,13 @@ export default function ProfileCard({ user }) {
         isOpen={isEditFormOpen}
         onClose={() => setIsEditFormOpen(false)}
         user={user}
+        show={isEditFormOpen}
+        setShow= {setIsEditFormOpen}
       />
+
+      <Overlay show={linksShow} setShow={setLinksShow}>
+        <Links/>
+      </Overlay>
     </>
   );
 }

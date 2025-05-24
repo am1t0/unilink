@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./editProfileForm.css";
 import { useAuthStore } from "../../store/useAuthStore";
 import { BsX } from "react-icons/bs";
 
-const EditProfileForm = ({ isOpen, onClose }) => {
+const EditProfileForm = (props) => {
+  const { show, setShow } = props;
+
+  //user details from store
   const { authUser, updateProfile } = useAuthStore();
+
+  //data in profile
   const [formData, setFormData] = useState({
     name: authUser?.name || "",
     bio: authUser?.bio || "",
@@ -15,7 +20,24 @@ const EditProfileForm = ({ isOpen, onClose }) => {
     phone: authUser?.phone || "",
   });
 
-  const [loading , setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const boxRef = useRef();
+
+  //closing the component on click outside
+  useEffect(() => {
+    // eslint-disable-next-line no-unused-vars
+    const handleClickOutside = (event) => {
+      if (boxRef.current && !boxRef.current.contains(event.target)) {
+        setShow(!show);
+      }
+    };
+
+    if (show) document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setShow, show]);
 
   const handleChange = (e) => {
     setFormData({
@@ -29,18 +51,18 @@ const EditProfileForm = ({ isOpen, onClose }) => {
     setLoading(true);
     await updateProfile(formData);
     setLoading(false);
-    onClose();
+    setShow(!show);
   };
 
-  if (!isOpen) return null;
+  if (!show) return null;
 
   return (
     <div className="edit-profile-overlay">
-      <div className="edit-profile-modal">
+      <div className="edit-profile-modal" ref={boxRef}>
         <div className="edit-profile-header">
           <h2>Edit Profile</h2>
 
-          <button className="close-button" onClick={onClose}>
+          <button className="close-button" onClick={()=> setShow(!show)}>
             <BsX size={24} />
           </button>
         </div>
@@ -77,8 +99,12 @@ const EditProfileForm = ({ isOpen, onClose }) => {
                 onChange={handleChange}
               >
                 <option value="">Select College</option>
-                <option value="Institute of Engineering and Technology, DAVV">Institute of Engineering and Technology, DAVV</option>
-                <option value="Shri Govindaram Seksariya Institute of Technology">Shri Govindaram Seksariya Institute of Technology</option>
+                <option value="Institute of Engineering and Technology, DAVV">
+                  Institute of Engineering and Technology, DAVV
+                </option>
+                <option value="Shri Govindaram Seksariya Institute of Technology">
+                  Shri Govindaram Seksariya Institute of Technology
+                </option>
               </select>
             </div>
 
@@ -104,8 +130,12 @@ const EditProfileForm = ({ isOpen, onClose }) => {
               >
                 <option value="">Select Branch</option>
                 <option value="Computer Science">Computer Science</option>
-                <option value="Information and Technology">Information and Technology</option>
-                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Information and Technology">
+                  Information and Technology
+                </option>
+                <option value="Mechanical Engineering">
+                  Mechanical Engineering
+                </option>
                 <option value="Civil Engineering">Civil Engineering</option>
               </select>
             </div>
@@ -139,11 +169,11 @@ const EditProfileForm = ({ isOpen, onClose }) => {
           </div>
 
           <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
+            <button type="button" className="cancel-btn" onClick={()=> setShow(!show)}>
               Cancel
             </button>
             <button type="submit" className="save-btn">
-            {loading ? "Saving..." : "Save Changes"}
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

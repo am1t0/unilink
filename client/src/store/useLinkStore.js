@@ -2,11 +2,10 @@ import toast from 'react-hot-toast';
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios';
 
-export const useLinkStore = create((set) => ({
-  links: null,
+export const useLinkStore = create((set, get) => ({
+  links: [],
   recommendations: null,
   loading: false,
-
 
   getLinks: async () => {
     set({ loading: true });
@@ -73,6 +72,32 @@ export const useLinkStore = create((set) => ({
       toast.error(error.response?.data?.message || "Cannot update link request");
     } finally {
       set({ loading: false });
+    }
+  },
+
+  fetchLinks: async (page = 1, limit = 10, reset = false) => {
+    set({ loading: true });
+    try {
+      const response = await axiosInstance.get(`/links/all-links?page=${page}&limit=${limit}`);
+      const newLinks = response.data.links || [];
+      set((state) => {
+        const existingIds = new Set((state.links || []).map(l => l._id));
+        const filtered = newLinks.filter(l => !existingIds.has(l._id));
+        
+        const updatedLinks =  [...(state.links || []), ...filtered];
+        return {
+          links: updatedLinks,
+          loading: false
+        };
+      });
+      return {
+        hasMore: response.data.hasMore,
+        currentPage: response.data.currentPage
+      };
+    } catch (error) {
+      set({ loading: false });
+      toast.error(error.response?.data?.message || "Cannot fetch links");
+      return { hasMore: false };
     }
   },
 
