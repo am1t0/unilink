@@ -18,6 +18,7 @@ import { SocketProvider } from "./providers/Socket";
 import Entry from "./pages/entry/Entry";
 import Notifications from "./pages/notifications/Notifications";
 import SavedPosts from "./pages/savedPostsByUser/SavedPosts";
+import { useSavePostsStore } from "./store/useSavePostsStore";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
 
   if(checkingAuth) return null
 

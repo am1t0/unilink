@@ -37,12 +37,14 @@ import userRouter from "./src/routes/user.route.js";
 import linkRouter from "./src/routes/links.route.js";
 import notificationsRouter from "./src/routes/notifications.route.js";
 import mailRouter from "./src/routes/mail.route.js"
+import savePostsRouter from "./src/routes/save.posts.routes.js";
 
 // routes decalaration   here mounting the specific routers to the app , this each router's will use Router.use('path',(rq,res));
 app.use("/api/v1/auth", authRouter);
 
 app.use("/api/v1/posts", postsRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/saveposts", savePostsRouter);
 
 
 app.use("/api/v1/comment", commentRouter);

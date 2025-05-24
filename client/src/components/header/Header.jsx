@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Home,
   MessageCircle,
@@ -15,36 +15,41 @@ import {
 } from "lucide-react";
 import "./header.css";
 import { useAuthStore } from "../../store/useAuthStore";
-import { Link, NavLink } from "react-router-dom";
+import { useMessageStore } from "../../store/useMessageStore";
 import { useNotificationsStore } from "../../store/useNotifications";
-import { useEffect } from "react";
-import { resolveAvatar } from '../../utilities/defaultImages'
-import ProfilesSearch from "../profilesSearch/ProfilesSearch";
-import Overlay from "../overlay/Overlay";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { resolveAvatar } from "../../utilities/defaultImages";
 
 const Header = () => {
-  //user and notification store states
-  const { authUser, logout } = useAuthStore();
+  // Stores
+  const { authUser, logout, searchUsers } = useAuthStore();
+  const { createConversation } = useMessageStore();
   const { notifications } = useNotificationsStore();
 
-  //component states
-  const [isMenuOpen, setIsMenuOpen] = useState(false); //mobile menu
-  const [showNavbar, setShowNavbar] = useState(true); //navbar visibility on scroll
-  const [lastScrollY, setLastScrollY] = useState(0); //last scroll position
+  // UI State
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
-  //profile search 
-  const [ show, setShow]  = useState();
+  // Search state
+  const [searchText, setSearchText] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  console.log("searchResults", searchResults);
 
-  //listen to scroll event to show/hide navbar
+  const [searchDropdownVisible, setSearchDropdownVisible] = useState(false);
+  const searchBoxRef = useRef();
+
+  //navigate
+  const navigate = useNavigate();
+
+  // Handle scroll to hide/show navbar
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
       if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down
         setShowNavbar(false);
       } else {
-        // Scrolling up
         setShowNavbar(true);
       }
 
@@ -52,18 +57,47 @@ const Header = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  // Click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchBoxRef.current &&
+        !searchBoxRef.current.contains(event.target)
+      ) {
+        setSearchDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Debounced search
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      const fetch = async () => {
+        if (!searchText.trim()) {
+          setSearchResults([]);
+          return;
+        }
+        const users = await searchUsers(searchText);
+        setSearchResults(users);
+      };
+
+      fetch();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchText]);
 
   const unreadNotifications = notifications?.filter(
     (notification) => notification?.status !== "read"
   );
 
   return (
-    // wrap for occupying space so main content does't hide below it
     <div className="wrap">
       <header
         className={`headder ${!showNavbar ? "hidden-navbar" : "show-navbar"}`}
@@ -89,7 +123,7 @@ const Header = () => {
               }
             >
               <MessageCircle size={20} className="headder-icon" />
-              <p className="headder-nav-text">Message</p>
+              <span className="headder-nav-text">Message</span>
             </NavLink>
 
             <NavLink
@@ -121,20 +155,50 @@ const Header = () => {
           </nav>
         </div>
 
-        {
-          show ?   <ProfilesSearch show = {show} setShow={setShow} purpose={"Search users"} />
-               :    <div className="headder-search-container">
+        {/* Search box */}
+        <div className="headder-search-container" ref={searchBoxRef}>
           <input
             type="text"
-            placeholder="Search Links"
+            placeholder="Search users"
             className="headder-search-input"
-            onClick={()=> setShow(!show)}
+            value={searchText}
+            onChange={(e) => {
+              setSearchText(e.target.value);
+              setSearchDropdownVisible(true);
+            }}
           />
           <Search size={18} className="headder-search-icon" />
           <Filter size={18} className="headder-filter-icon" />
-        </div>
-        }
 
+          {searchDropdownVisible && searchText && (
+            <div className="search-dropdown">
+              {searchResults.length > 0 ? (
+                searchResults.map((user) => (
+                  <div
+                    className="search-result"
+                    key={user._id}
+                    onClick={() => {
+                      navigate(`/profilepage/${user._id}`);
+                      setSearchText("");
+                      setSearchResults([]);
+                      setSearchDropdownVisible(false);
+                    }}
+                  >
+                    <img src={resolveAvatar(user)} alt="avatar" />
+                    <div>
+                      <h4>{user.name}</h4>
+                      <p>{user.email}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="search-result no-user">No users found</div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Auth buttons */}
         <div className="headder-auth-buttons">
           {!authUser ? (
             <>
@@ -163,6 +227,7 @@ const Header = () => {
           )}
         </div>
 
+        {/* Mobile menu */}
         <button
           className="headder-hamburger"
           onClick={() => setIsMenuOpen(!isMenuOpen)}

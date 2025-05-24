@@ -10,6 +10,7 @@ import {
 import "./Post.css";
 import Comments from "../comments/Comments";
 import { useAuthStore } from "../../store/useAuthStore";
+import { useSavePostsStore } from "../../store/useSavePostsStore";
 import { Link } from "react-router";
 import useNotifications from "../../hooks/useNotifications";
 
@@ -25,8 +26,15 @@ const Post = ({
   likedBy,
 }) => {
   const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
-  const [showComments, setShowComments] = useState(false); // State to manage comment visibility
+  const [showComments, setShowComments] = useState(false);
   const { authUser } = useAuthStore();
+  const { handleToggleLike } = useNotifications();
+
+  const {
+    toggeleSavePost,
+    savedPostIds,
+    loading: savingLoading,
+  } = useSavePostsStore();
 
   useEffect(() => {
     if (showComments) {
@@ -36,7 +44,6 @@ const Post = ({
     }
   }, [showComments]);
 
-  const { handleToggleLike } = useNotifications();
 
   const handleNext = () => {
     setCurrentMediaIndex((prevIndex) => (prevIndex + 1) % mediaArray.length);
@@ -49,8 +56,11 @@ const Post = ({
   };
 
   const toggleComments = () => {
-    setShowComments(!showComments); // Toggle comment visibility
+    setShowComments(!showComments);
   };
+
+  const isSaved = savedPostIds?.includes(postId);
+
 
   return (
     <div className="post-container">
@@ -122,8 +132,6 @@ const Post = ({
             <span>{likeCount}</span>
           </div>
           <div className="post-action" onClick={toggleComments}>
-            {" "}
-            {/* Add click handler */}
             <MessageCircle size={20} />
             <span>{commentCount}</span>
           </div>
@@ -132,13 +140,21 @@ const Post = ({
             <span>{share}</span>
           </div>
         </div>
-        <div className="post-right-action">
-          <Bookmark size={20} />
-          <span>Save</span>
+
+        <div
+          className="post-right-action"
+          onClick={() => toggeleSavePost(postId)}
+          style={{ cursor: "pointer", border: isSaved ? "2px solid blue" : "none" }}
+        >
+          <Bookmark
+            size={20}
+            color={isSaved ? "blue" : "black"}
+            fill={isSaved ? "blue" : "none"}
+          />
+          <span>{isSaved ? "💾 Saved" : "Save"}</span>
         </div>
       </div>
 
-      {/* Pop-up Comments Section */}
       {showComments && (
         <div className="comments-popup-overlay">
           <div className="comments-popup">
@@ -149,7 +165,7 @@ const Post = ({
               </button>
             </div>
             <div className="comments-popup-content">
-              <Comments postId = {postId} user = {user} />
+              <Comments postId={postId} user={user} />
             </div>
           </div>
         </div>
