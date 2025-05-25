@@ -235,6 +235,7 @@
     padding: 10px;
     border-radius: 30px;
     background-color: #cfcfcf;
+    
 }
   
 /* Consistent alignment for text */
@@ -246,6 +247,7 @@
     gap: 3%;
     color: rgb(209, 209, 209);
     padding: 8px 0;  /* Added padding for better spacing */
+    width: -webkit-fill-available;
 }
 
 .profile-institute p,
