@@ -76,7 +76,6 @@ export const addNotification = asyncHandler(async (req, res) => {
           message: "notificationId is required to update Link-Accepted",
         });
       }
-
       const requestNotification = await Notification.findById(notificationId);
       if (!requestNotification) {
         return res.status(404).json({
@@ -87,12 +86,6 @@ export const addNotification = asyncHandler(async (req, res) => {
 
       requestNotification.type = "Link-Accepted";
       await requestNotification.save();
-
-      return res.status(200).json({
-        success: true,
-        message: "Notification type updated to Link-Accepted",
-        notificationId: requestNotification._id,
-      });
     }
 
     // ✅ Save new notification

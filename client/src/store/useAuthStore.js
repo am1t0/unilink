@@ -240,11 +240,15 @@ export const useAuthStore = create((set, get) => ({
   },
   
   changeLinkCount: (response) => {
+ 
     set((state) => {
       let linksCount = state.authUser.linksCount || 0;
       
       switch(response){
         case "Link": linksCount++;
+        break;
+
+        case "Link-Accepted": linksCount++;
         break;
 
         case "Blocked": linksCount--;

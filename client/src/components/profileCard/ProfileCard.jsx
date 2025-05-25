@@ -187,7 +187,7 @@ export default function ProfileCard({ user }) {
                 />
                 <BsArrow90DegRight />
               </div>
-              <span>{`${user.linksCount} connections` || 'No connections yet'}</span>
+              <span>{`${user.linksCount} links` || 'No links yet'}</span>
             </div>
 
             <div className="third-row">

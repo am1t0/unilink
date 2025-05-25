@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
 import { io } from "socket.io-client";
+import { useAuthStore } from "../store/useAuthStore";
 
 const SocketContext = createContext(null);
 
@@ -8,11 +9,14 @@ export const useSocket = () => {
 }
 
 export const SocketProvider = (props) => {
-  const socket = useMemo(
-    () =>
-      io("ws://localhost:8900"),
-    []
-  );
+  const { authUser } = useAuthStore();
+  const socket = useMemo(() =>io("ws://localhost:8900"),[]);
+
+  useEffect(() => {
+    if (authUser?._id) {
+      socket.emit("addUser", authUser._id);
+    }
+  }, [authUser, socket]);
 
   return (
     <SocketContext.Provider value={{ socket }}>

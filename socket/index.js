@@ -4,20 +4,27 @@ const io = require("socket.io")( 8900, {
     },
 });
 
-let users = [];
+// Use a Map for efficient userId -> socketId mapping
+let users = new Map();
 
-const addUser = (userId, socketId)=>{
-    !users.some(user=> user.userId == userId) &&
-      users.push({ userId, socketId});
-}
+const addUser = (userId, socketId) => {
+    users.set(userId, socketId); // Always updates or adds
+};
 
-const removeUser = (socketId)=>{
-    users = users.filter(user=> user.socketId!=socketId);
-}
+const removeUser = (socketId) => {
+    // Remove by socketId (need to find the userId first)
+    for (const [userId, sId] of users.entries()) {
+        if (sId === socketId) {
+            users.delete(userId);
+            break;
+        }
+    }
+};
 
-const getUser = (userId)=>{
-    return users.find(user=> user.userId == userId);
-}
+const getUser = (userId) => {
+    const socketId = users.get(userId);
+    return socketId ? { userId, socketId } : undefined;
+};
 
 io.on("connection", (socket) => {
 
@@ -27,10 +34,8 @@ io.on("connection", (socket) => {
     //take userId and socketId from user
     socket.on("addUser", userId => { 
         addUser(userId, socket.id);
-
         console.log('user added')
-
-        io.emit("getUsers", users);
+        io.emit("getUsers", Array.from(users.entries()).map(([userId, socketId]) => ({ userId, socketId })));
     })
 
     //send and get message
@@ -127,8 +132,7 @@ io.on("connection", (socket) => {
     //a user lefts the chat section
     socket.on("disconnect", ()=>{
        console.log("a user is disconnected");
-       removeUser(socket.Id);
-
-       io.emit("getUsers", users);
+       removeUser(socket.id);
+       io.emit("getUsers", Array.from(users.entries()).map(([userId, socketId]) => ({ userId, socketId })));
     })
 })
