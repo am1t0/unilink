@@ -237,6 +237,29 @@ export const useAuthStore = create((set, get) => ({
       toast.error(error.response?.data?.message || "Error searching users");
       return [];
     }
+  },
+  
+  changeLinkCount: (response) => {
+    set((state) => {
+      let linksCount = state.authUser.linksCount || 0;
+      
+      switch(response){
+        case "Link": linksCount++;
+        break;
+
+        case "Blocked": linksCount--;
+        break;
+
+        case "Unblocked": linksCount++;
+        break;
+
+        default:
+          // do nothing
+      }
+
+      const updatedUser = { ...state.authUser, linksCount };
+      return { authUser: updatedUser };
+    });
   }
 
 }));

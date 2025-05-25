@@ -12,7 +12,7 @@ const useNotifications = () => {
   const { addComment, toggleCommentLike } = useCommentStore();
   const { prepareNotification, updateNotificationType } = useNotificationsStore();
   const { likePost, commentCountIncrement } = usePostStore();
-  const { authUser } = useAuthStore();
+  const { authUser , changeLinkCount} = useAuthStore();
   const { socket } = useSocket();
 
   const [notificationProcess, setNotificationProcess] = useState(null);
@@ -28,6 +28,8 @@ const useNotifications = () => {
       // Change link status
       const linkStatusUpdate = await changeLinkStatus(notification.linkId, response);
       if (!linkStatusUpdate) return;
+
+      changeLinkCount(response);
 
       // If user ignored the request, don't send notification,update the notification to ignored
       if (response === "Ignore") {
