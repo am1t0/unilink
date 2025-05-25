@@ -180,6 +180,7 @@
     font-weight: 600;
     color: #fff;
     margin: 0;
+    align-self: center;
 }
   
 /* Year Tag Styling */
@@ -210,6 +211,7 @@
     color: #a8a8a8;
     margin: 5px;
     max-width: 80%;
+    align-self: center;
 }
   
 /* Institute & Course Info */
@@ -359,3 +361,144 @@
     margin-left: 10px;
 }
 
+/* ProfileCard Styles */
+.profile-card {
+    width: 100%;
+    min-height: auto; /* Changed from 50vh */
+    position: relative;
+    background-color: #232D4A;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+    margin-top: 20px;
+    padding-bottom: 1rem;
+    color: rgb(216, 216, 216);
+}
+
+/* Header with profile image */
+.profile-header {
+    height: 150px; /* Reduced further for mobile */
+    width: 100%;
+    background-color: #01112a;
+    position: relative;
+    border-radius: 10px 10px 0 0;
+    background-position: center;
+    background-size: cover;
+}
+
+.profile-image-container {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%); /* Center the profile image */
+    width: 100px; /* Reduced size for mobile */
+    height: 100px;
+    z-index: 2;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+/* Profile Information Container */
+.profile-info-container {
+    display: flex;
+    flex-direction: column; /* Stack on mobile */
+    gap: 20px;
+    margin-top: 50px; /* Adjusted for smaller profile image */
+    padding: 16px;
+}
+
+.profile-info {
+    width: 100%; /* Full width on mobile */
+    padding-top: 1rem;
+    text-align: center; /* Center align on mobile */
+}
+
+.profile-details {
+    width: 100%; /* Full width on mobile */
+    margin-top: 1rem;
+}
+
+.connection-info {
+    width: 100%; /* Full width on mobile */
+    padding: 0;
+    gap: 1rem; /* Reduced gap for mobile */
+}
+
+/* Connection images styling */
+.connections-imgs, .posts-imgs {
+    justify-content: center; /* Center images on mobile */
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    padding: 8px;
+}
+
+.connections-imgs img, .posts-imgs img {
+    width: 40px; /* Smaller images on mobile */
+    height: 40px;
+}
+
+/* Button row adjustments */
+.first-row {
+    justify-content: center; /* Center buttons on mobile */
+    flex-wrap: wrap; /* Allow wrapping */
+    gap: 12px;
+}
+
+/* Tablet and Desktop Styles */
+@media (min-width: 768px) {
+    .profile-header {
+        height: 180px;
+    }
+    
+    .profile-image-container {
+        left: 22%;
+        transform: none;
+        width: 125px;
+        height: 125px;
+    }
+    
+    .profile-info-container {
+        flex-direction: row;
+        margin-top: 10px;
+        padding: 16px 24px;
+    }
+    
+    .profile-info {
+        width: 55%;
+        text-align: left;
+        align-items: flex-start;
+    }
+    
+    .profile-details {
+        width: 80%;
+        align-items: flex-start;
+    }
+    
+    .connection-info {
+        width: 40%;
+        gap: 2rem;
+        padding: 0 20px;
+    }
+    
+    .first-row {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+    }
+    
+    .connections-imgs, .posts-imgs {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        padding: 10px;
+    }
+    
+    .connections-imgs img, .posts-imgs img {
+        width: 45px;
+        height: 45px;
+    }
+}
+
+/* Large Desktop Styles */
+@media (min-width: 1200px) {
+    .profile-header {
+        height: 200px;
+    }
+}

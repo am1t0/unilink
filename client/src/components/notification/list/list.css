@@ -232,5 +232,129 @@
   color: white;
 }
 
+/* Responsive Notification List Styles */
 
+/* Tablet screens (≤ 900px) */
+@media (max-width: 900px) {
+  .notification-list-container {
+    min-width: 90%;
+    margin-top: 2rem;
+  }
+  .notification-item {
+    width: 95vw;
+    min-width: 0;
+    max-width: 99vw;
+    padding: .2rem .5rem;
+  }
+  .notification-list-header {
+    padding: 0.7rem;
+  }
+  .notification-other-content {
+    width: 95%;
+    padding-left: 2.5rem;
+  }
+  .link-actions {
+    width: 98%;
+    gap: 0.5rem;
+  }
+}
 
+/* Mobile screens (≤ 600px) */
+@media (max-width: 600px) {
+  .notification-list-container {
+    min-width: 100vw; 
+    margin-top: 2rem;
+    padding: 0;
+  }
+  .notification-list-header {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.93rem;
+  }
+  .read-unread-notif span {
+    font-size: 12px;
+    padding: 4px 7px;
+    width: 38px;
+  }
+  .notification-item {
+    width: 99vw;
+    min-width: 0;
+    max-width: 99vw;
+    padding: .15rem .3rem;
+    min-height: 70px;
+    max-height: 100px;
+  }
+  .notification-header {
+    font-size: 0.93rem;
+  }
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  .sender-name {
+    font-size: 0.92rem;
+  }
+  .sender-info p {
+    font-size: 0.85rem;
+  }
+  .notification-message,
+  .comment-text {
+    font-size: 0.85rem;
+  }
+  .notification-time {
+    font-size: 10px;
+  }
+  .notification-other-content {
+    width: 100%;
+    padding-left: 1.5rem;
+  }
+  .link-actions {
+    width: 100%;
+    gap: 0.4rem;
+  }
+  .accept-button,
+  .reject-button {
+    font-size: 0.75rem;
+    width: 90px;
+    padding: 5px 8px;
+  }
+  .infinite-scroll-loader,
+  .no-more-notification {
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra small screens (≤ 400px) */
+@media (max-width: 400px) {
+  .notification-list-header {
+    font-size: 0.86rem;
+    padding: 0.3rem 0.1rem;
+  }
+  .notification-item {
+    min-height: 55px;
+    max-height: 90px;
+    padding: .08rem .1rem;
+  }
+  .user-avatar {
+    width: 22px;
+    height: 22px;
+  }
+  .sender-name {
+    font-size: 0.8rem;
+  }
+  .sender-info p {
+    font-size: 0.75rem;
+  }
+  .notification-message,
+  .comment-text {
+    font-size: 0.75rem;
+  }
+  .notification-time {
+    font-size: 9px;
+  }
+  .accept-button,
+  .reject-button {
+    font-size: 0.65rem;
+    width: 70px;
+    padding: 3px 5px;
+  }
+}
