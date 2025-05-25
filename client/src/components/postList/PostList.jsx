@@ -1,18 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import "./postList.css";
 import Post from "../post/Post";
 import { usePostStore } from "../../store/usePostStore";
+import { useInView } from "react-intersection-observer";
 
 export default function PostList() {
-  const { getAllPosts, filteredPosts } = usePostStore();
+  const {
+    getAllPosts,
+    filteredPosts,
+    currentPage,
+    hasMore
+  } = usePostStore();
 
+  const { ref, inView } = useInView({
+    threshold: 1
+  });
+
+  // Initial load
   useEffect(() => {
-    getAllPosts();
+    getAllPosts(1, false);
   }, [getAllPosts]);
+
+  // Fetch next page when scrolled into view
+  useEffect(() => {
+    if (inView && hasMore) {
+      getAllPosts(currentPage + 1, true);
+    }
+  }, [inView, hasMore, currentPage, getAllPosts]);
 
   return (
     <ul className="post-list">
-      {filteredPosts?.map((post) => (
+      {filteredPosts?.map((post, index) => (
         <Post
           key={post._id}
           postId={post._id}
@@ -26,6 +44,8 @@ export default function PostList() {
           likedBy={post.likedBy}
         />
       ))}
+      {/* Loader trigger */}
+      {hasMore && <div ref={ref} className="loading">Loading more...</div>}
     </ul>
   );
 }
