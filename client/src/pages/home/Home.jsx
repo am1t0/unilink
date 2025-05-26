@@ -20,9 +20,6 @@ const Home = () => {
 
   const { process } = useMessageStore(); 
 
-  useEffect(()=>{
-     console.log(socket.id);
-  },[socket.id])
   //get all the notifications when user enters
   useEffect(()=>{
     getNotifications()

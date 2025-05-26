@@ -209,8 +209,9 @@ export const getNotification = asyncHandler(async (req, res) => {
     // Convert to plain object so we can safely attach commentText
     notification = notification.toObject();
 
+    //If comment notification, fetch comment text
     if (notification.type === "Comment" && notification.commentId) {
-      const comment = await Comment.findById(notification.commentId).select("text");
+      const comment = await Comments.findById(notification.commentId).select("text");
       notification.commentText = comment?.text || null;
     }
 
