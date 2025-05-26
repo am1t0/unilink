@@ -40,6 +40,8 @@ export default function Links() {
         loader={<Loader size={20}/>} 
         endMessage={<p className="links-end-message">No more links</p>}
       >
+
+
         <ul className="links-list">
           {links.map(link => {
             const linkUser = (!link.user1) ? link.user2 : link.user1;

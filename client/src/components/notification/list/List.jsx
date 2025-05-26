@@ -69,8 +69,9 @@ export default function List() {
                       <button
                         className="accept-button"
                         onClick={() => handleLinkResponse(notification, "Link")}
+                        disabled = {notification._id === notificationProcess?.id}
                       >
-                        {notificationProcess?.id === notification._id 
+                        {(notificationProcess?.id === notification._id && notificationProcess?.process === "Link")
                          ? ( <Loader size={15} color="white" /> ) 
                          : ( "Accept" )}
                       </button>
@@ -79,8 +80,9 @@ export default function List() {
                         onClick={() =>
                           handleLinkResponse(notification, "Ignore")
                         }
+                        disabled = {notification._id === notificationProcess?.id}
                       >
-                        {notificationProcess?.id === notification._id 
+                        { (notificationProcess?.id === notification._id && notificationProcess?.process === "Ignore")
                          ? ( <Loader size={15} color="white" /> ) 
                          : ( "Ignore" )}
                       </button>
