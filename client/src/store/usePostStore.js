@@ -85,45 +85,64 @@ export const usePostStore = create((set, get) => ({
     }
   },
 
+  // Utility to update like count and likedBy array for a post
+  updatePostLikeCount: (data) => {
+
+    let { postId, userId, liked } = data;
+    let { type, sender } = data;  // in case of this f(x) usage through notification
+    if(type === "Post-Like") liked = -1;
+    if(sender) userId = sender;
+
+    // liked: -1 means add like, 1 means remove like
+    const currentPosts = get().posts || [];
+    const updatedPosts = currentPosts.map((post) => {
+      if (post._id === postId) {
+        let updatedLikeCount = post.likeCount;
+        let updatedLikersArr = post.likedBy;
+        if (liked === -1) {
+          // Add like
+          if (!post.likedBy.includes(userId)) {
+            updatedLikeCount = post.likeCount + 1;
+            updatedLikersArr = [...post.likedBy, userId];
+          }
+        } else if (liked === 1) {
+          // Remove like
+          if (post.likedBy.includes(userId)) {
+            updatedLikeCount = post.likeCount - 1;
+            updatedLikersArr = post.likedBy.filter(id => id !== userId);
+          }
+        }
+        return {
+          ...post,
+          likeCount: updatedLikeCount,
+          likedBy: updatedLikersArr,
+        };
+      }
+      return post;
+    });
+    set({
+      posts: updatedPosts,
+      filteredPosts: get().currentFilter
+        ? updatedPosts.filter(post => post.tag === get().currentFilter)
+        : updatedPosts
+    });
+  },
+
   likePost: async (postId, user) => {
     try {
       const response = await axiosInstance.put(`/post-interaction/like/${postId}`);
-      const currentPosts = get().posts || [];
       const { liked } = response.data;
       const userId = user._id;
-
-      const updatedPosts = currentPosts.map((post) => {
-        if (post._id === postId) {
-          const updatedLikeCount = liked === -1 ? post.likeCount + 1 : post.likeCount - 1;
-
-          const updatedLikersArr = liked === -1
-            ? [...post.likedBy, userId] // Add user ID
-            : post.likedBy.filter(id => id !== userId); // Remove user ID
-
-          return {
-            ...post,
-            likeCount: updatedLikeCount,
-            likedBy: updatedLikersArr,
-          };
-        }
-        return post;
-      });
-
-      set({
-        posts: updatedPosts,
-        filteredPosts: get().currentFilter
-          ? updatedPosts.filter(post => post.tag === get().currentFilter)
-          : updatedPosts
-      });
-
+      // Use the utility to update state
+      get().updatePostLikeCount({postId, userId, liked});
       return response.data;
-
     } catch (error) {
       toast.error(error.response?.data?.message || "Post could not be liked");
     }
   },
 
-  commentCountIncrement: async (postId) => {
+  commentCountIncrement: async (data) => {
+      const { postId } = data;
       const currentPosts = get().posts || [];
       const updatedPosts = currentPosts?.map((p) => {
          return  p._id !== postId ? p : {...p, commentCount: p.commentCount+1 };

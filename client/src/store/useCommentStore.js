@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 
-export const useCommentStore = create((set) => ({
+export const useCommentStore = create((set, get) => ({
   comments: [], // Stores all parent comments
   loading: false, // Indicates if comments are being fetched
   error: null, // Stores any error that occurs during fetching
@@ -53,58 +53,85 @@ export const useCommentStore = create((set) => ({
     }
   },
 
-  // Like or unlike a comment
-  toggleCommentLike: async (commentId, userId) => {
-  try {
-    const response = await axiosInstance.put(`/post-interaction/like-comment/${commentId}`);
-    const { liked } = response.data;
+  // Utility to update like count and likedBy array for a comment or reply
+  updateCommentLikeCount: (data) => {
+    let { commentId, userId, liked } = data;
+    let { type, sender } = data; // in case of this function usage through notification
+
+    if (type === "Comment-Like") liked = -1; 
+    if (sender) userId = sender; 
 
     set((state) => ({
       comments: state.comments.map((comment) => {
         // Handle main comments
         if (comment._id === commentId) {
+          let updatedLikes = comment.likes;
+          let updatedLikersArr = comment.likedBy;
+          if (liked === -1) {
+            if (!comment.likedBy.includes(userId)) {
+              updatedLikes = comment.likes + 1;
+              updatedLikersArr = [userId, ...comment.likedBy];
+            }
+          } else {
+            if (comment.likedBy.includes(userId)) {
+              updatedLikes = comment.likes - 1;
+              updatedLikersArr = comment.likedBy.filter((id) => String(id) !== String(userId));
+            }
+          }
           return {
             ...comment,
-            likes: liked === -1 ? comment.likes + 1 : comment.likes - 1,
-            likedBy: liked === -1
-              ? [userId, ...comment.likedBy]
-              : comment.likedBy.filter((id) => String(id) !== String(userId)),
+            likes: updatedLikes,
+            likedBy: updatedLikersArr,
           };
         }
-
         // Handle replies
         const updatedReplies = comment.replies?.map((reply) => {
           if (reply._id === commentId) {
+            let updatedLikes = reply.likes;
+            let updatedLikersArr = reply.likedBy;
+            if (liked === -1) {
+              if (!reply.likedBy.includes(userId)) {
+                updatedLikes = reply.likes + 1;
+                updatedLikersArr = [userId, ...reply.likedBy];
+              }
+            } else if (liked === 1) {
+              if (reply.likedBy.includes(userId)) {
+                updatedLikes = reply.likes - 1;
+                updatedLikersArr = reply.likedBy.filter((id) => String(id) !== String(userId));
+              }
+            }
             return {
               ...reply,
-              likes: liked === -1 ? reply.likes + 1 : reply.likes - 1,
-              likedBy: liked === -1
-                ? [userId, ...reply.likedBy]
-                : reply.likedBy.filter((id) => id !== userId),
+              likes: updatedLikes,
+              likedBy: updatedLikersArr,
             };
           }
           return reply;
         });
-
         if (updatedReplies) {
           return {
             ...comment,
             replies: updatedReplies,
           };
         }
-
         return comment;
       }),
     }));
+  },
 
-
-    return response.data;
-    
-  } catch (error) {
-    console.error("Error toggling comment like:", error);
-    throw error;
-  }
-},
+  // Like or unlike a comment
+  toggleCommentLike: async (commentId, userId) => {
+    try {
+      const response = await axiosInstance.put(`/post-interaction/like-comment/${commentId}`);
+      const { liked } = response.data;
+      // Use the utility to update state
+      get().updateCommentLikeCount({commentId, userId, liked});
+      return response.data;
+    } catch (error) {
+      console.error("Error toggling comment like:", error);
+      throw error;
+    }
+  },
 
   // Clear all comments
   clearComments: () => set({ comments: [], replies: {} }),

@@ -109,7 +109,7 @@ const useNotifications = () => {
       const notificationData = {
         sender: authUser._id,
         receiver: user._id,
-        type: "Like",
+        type: "Post-Like",
         postId
       }
       const createdNotification = await prepareNotification(notificationData);
@@ -133,7 +133,7 @@ const useNotifications = () => {
       const commentResponse = await addComment(postId, text);
       if (!commentResponse) return;
 
-      commentCountIncrement(postId);
+      commentCountIncrement({postId});
 
       //reset comment box
       setInput("");
@@ -146,7 +146,8 @@ const useNotifications = () => {
         sender: authUser._id,
         receiver: user._id,
         type: "Comment",
-        commentId: _id
+        commentId: _id,
+        postId
       }
       const createdNotification = await prepareNotification(notificationData);
       if (!createdNotification.success) return;

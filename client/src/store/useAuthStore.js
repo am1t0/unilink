@@ -239,12 +239,13 @@ export const useAuthStore = create((set, get) => ({
     }
   },
   
-  changeLinkCount: (response) => {
- 
+  changeLinkCount: (data) => {
+   const { type } = data;
+
     set((state) => {
       let linksCount = state.authUser.linksCount || 0;
       
-      switch(response){
+      switch( type ){
         case "Link": linksCount++;
         break;
 

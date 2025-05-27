@@ -8,14 +8,17 @@ import NotificationCard from '../../components/notificationCard/NotificationCard
 import { useNotificationsStore } from '../../store/useNotifications';
 import { useMessageStore } from '../../store/useMessageStore';
 import Overlay from '../../components/overlay/Overlay';
-import { useLinkStore } from '../../store/useLinkStore';
+import { usePostStore } from '../../store/usePostStore';
+import { useCommentStore } from '../../store/useCommentStore';
 
 
 const Home = () => {
 
   
-  const { authUser, changeLinkCount } = useAuthStore();
   const { socket } = useSocket();
+  const { updateCommentLikeCount } = useCommentStore();
+  const { authUser, changeLinkCount } = useAuthStore();
+  const { updatePostLikeCount, commentCountIncrement } = usePostStore();
   const { getNotification, getNotifications, sendMail } = useNotificationsStore();
 
   const { process } = useMessageStore(); 
@@ -27,10 +30,10 @@ const Home = () => {
 
  const actionsOnNotification = useMemo(() => ({
     "Link-Accepted": changeLinkCount,
-    "Like-Post": () => {},
-    "Like-Comment": () => {},
-    "Comment": () => {},
-}), [changeLinkCount]);
+    "Post-Like": updatePostLikeCount,
+    "Comment-Like": updateCommentLikeCount,
+    "Comment": commentCountIncrement,
+}), [changeLinkCount, commentCountIncrement, updateCommentLikeCount, updatePostLikeCount]);
 
 
   const handleNotificationGet = useCallback( async (notificationData) => {
@@ -39,7 +42,7 @@ const Home = () => {
     // fetch the data of the notification sent and set state
     await getNotification(notificationId)
 
-    actionsOnNotification[type]?.(type);
+    actionsOnNotification[type]?.(notificationData);
     
   }, [actionsOnNotification, getNotification]);
 
@@ -65,6 +68,9 @@ const Home = () => {
       <NotificationCard/>
       { process && <Overlay message = {process} />}
       <Header />
+     <center>
+      <h2>In case of negative response decrease the parameters</h2>
+      </center> 
       <Outlet />
     </div>
   );

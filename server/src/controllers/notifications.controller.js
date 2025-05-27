@@ -28,7 +28,7 @@ export const addNotification = asyncHandler(async (req, res) => {
       receiver,
       type,
       ...(type === "Link" && linkId && { linkId }),
-      ...(type === "Like" && postId && { postId }),
+      ...(type === "Post-Like" && postId && { postId }),
       ...(type === "Mention" && postId && { postId }),
       ...(type === "Comment" && commentId && { commentId }),
       ...(type === "Comment-Like" && commentId && { commentId })
@@ -53,7 +53,7 @@ export const addNotification = asyncHandler(async (req, res) => {
         });
       }
       notificationData.linkId = linkId;
-    } else if (type === "Like" || type === "Mention") {
+    } else if (type === "Post-Like" || type === "Mention") {
       if (!postId) {
         return res.status(400).json({
           success: false,
