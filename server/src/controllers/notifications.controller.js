@@ -69,6 +69,7 @@ export const addNotification = asyncHandler(async (req, res) => {
         });
       }
       notificationData.commentId = commentId;
+      notificationData.postId = postId; // Attach postId for Comment notifications
     } else if (type === "Link-Accepted") {
       if (!notificationId) {
         return res.status(400).json({
@@ -132,7 +133,8 @@ export const allNotifications = asyncHandler(async (req, res) => {
 
   try {
     let notifications = await Notification.find(query)
-      .populate("sender", "name avatar") // Populate sender details
+      .populate({ path: "sender", select: "name avatar" }) // Populate sender details
+      .populate({ path: "postId", select: "media description"}) // Populate postId with media and _id
       .sort({ createdAt: -1, _id: -1 }) // Sort by newest first
       .limit(pageSize + 1) // Fetch one extra document to check for `hasMore`
       .lean();
@@ -190,7 +192,8 @@ export const getNotification = asyncHandler(async (req, res) => {
 
   try {
     let notification = await Notification.findById(notificationId)
-      .populate("sender", "name avatar");
+      .populate({ path: "sender", select: "name avatar"})
+      .populate({ path: "postId", select: "media _id" });
 
     if (!notification) {
       return res.status(404).json({

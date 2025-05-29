@@ -13,6 +13,8 @@ export default function List() {
   // Zustand store for notifications
   const { notifications, getNotifications, hasMore } = useNotificationsStore();
   
+  console.log(notifications);
+  
   // notification hook combining usage of several store functions
   const { handleLinkResponse, notificationProcess } = useNotifications();
   
