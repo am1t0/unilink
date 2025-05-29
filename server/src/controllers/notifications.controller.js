@@ -134,7 +134,7 @@ export const allNotifications = asyncHandler(async (req, res) => {
   try {
     let notifications = await Notification.find(query)
       .populate({ path: "sender", select: "name avatar" }) // Populate sender details
-      .populate({ path: "postId", select: "media description"}) // Populate postId with media and _id
+      .populate({ path: "postId", select: "description media"}) // Populate postId with media and description
       .sort({ createdAt: -1, _id: -1 }) // Sort by newest first
       .limit(pageSize + 1) // Fetch one extra document to check for `hasMore`
       .lean();

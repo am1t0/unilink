@@ -2,6 +2,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import "./list.css";
 import { useNotificationsStore } from "../../../store/useNotifications";
 import { resolveAvatar } from "../../../utilities/defaultImages";
+import { resolveNotificationMedia } from "../../../utilities/defaultImages";
 import { getTimeAgo } from "../../../utilities/timeAndDate";
 import { getNotificationMessage } from "../../../utilities/notificationItems";
 import { getNotificationIcon } from "../../../utilities/notificationItems";
@@ -12,8 +13,6 @@ export default function List() {
 
   // Zustand store for notifications
   const { notifications, getNotifications, hasMore } = useNotificationsStore();
-  
-  console.log(notifications);
   
   // notification hook combining usage of several store functions
   const { handleLinkResponse, notificationProcess } = useNotifications();
@@ -54,6 +53,7 @@ export default function List() {
                     <h4>{notification.sender.name}</h4>
                     <p>{getNotificationMessage(notification)}</p>
                   </div>
+                  { notification.postId  && <img className ="post-img" src={ resolveNotificationMedia(notification)} alt="" /> }
                   <p className="notification-time">
                     {getTimeAgo(notification.createdAt)}
                   </p>

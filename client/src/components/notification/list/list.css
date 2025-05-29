@@ -135,6 +135,12 @@
   object-fit: cover;
 }
 
+.post-img {
+  object-fit: cover;
+  height: 60px;
+  width: 50px;
+}
+
 .sender-name {
   font-weight: bold;
   font-size: 1rem;
