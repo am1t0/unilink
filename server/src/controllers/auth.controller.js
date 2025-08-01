@@ -2,6 +2,25 @@ import User from "../models/user.model.js";
 import cloudinary from "../utilities/cloudinary.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import jwt from "jsonwebtoken";
+import { totp } from "otplib"
+import crypto from "crypto";
+import { validateCollegeEmail } from "../utilities/emailValidation.js";
+import { sendOtp } from "./mail.controller.js";
+
+// Configure TOTP settings
+totp.options = {
+  digits: 4,   // 4-digit OTP
+  step: 60     // valid for 60 seconds
+};
+
+const SALT = process.env.SALT;
+
+//prepare secret for otp
+function getSecret(value) {
+  const combined = `${value}:${SALT}`;
+  const hash = crypto.createHash("sha256").update(combined).digest("hex");
+  return hash;
+}
 
 // Function to generate JWT tokens
 const signToken = (id) => {
@@ -9,6 +28,39 @@ const signToken = (id) => {
     expiresIn: "7d",
   });
 };
+
+//verify college mail and owner with otp
+export const verifyCollegeEmail = asyncHandler(async (req, res) => {
+  const { email, college } = req.body;
+
+  try {
+    if (!email || !college) {
+      return res.status(400).json({ error: "Email and college are required" });
+    }
+
+    //check if email is valid for the selected college
+    const isValid = validateCollegeEmail(email, college);
+
+    if (!isValid) {
+      return res.status(400).json({ error: "Invalid college email" });
+    }
+
+    // Generate and send OTP
+    const secret = getSecret(email);
+    const otp = totp.generate(secret);
+
+    await sendOtp(email, otp);
+    
+    return res.status(200).json({ message: "OTP sent to email" });
+  } catch (error) {
+
+    return res.status(400).json({
+      success: false,
+      message: "Error uploading image",
+    });
+  }
+
+});
 
 const registerUser = asyncHandler(async (req, res) => {
   try {
@@ -47,7 +99,7 @@ const registerUser = asyncHandler(async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
       httpOnly: true, // prevents XSS attacks
       sameSite: "strict", // prevents CSRF attacks
-      secure: process.env.NODE_ENV === "production" ?true : false,
+      secure: process.env.NODE_ENV === "production" ? true : false,
     });
 
     res.status(201).json({
@@ -112,16 +164,16 @@ export const sendMe = asyncHandler((req, res) => {
 
 
 export const updateProfile = async (req, res) => {
-	// image => cloudinary -> image.cloudinary.your => mongodb
+  // image => cloudinary -> image.cloudinary.your => mongodb
 
-	try {
-		const { image, ...otherData } = req.body;
+  try {
+    const { image, ...otherData } = req.body;
 
-		let updatedData = otherData;
+    let updatedData = otherData;
 
-		if (image) {
-			// base64 format
-			if (image.startsWith("data:image")) {
+    if (image) {
+      // base64 format
+      if (image.startsWith("data:image")) {
         // Calculate the file size in bytes
         const base64Length = image.length;
         const padding = (image.endsWith("==") ? 2 : (image.endsWith("=") ? 1 : 0));
@@ -132,43 +184,43 @@ export const updateProfile = async (req, res) => {
 
         // Check if the file size exceeds the limit
         if (fileSizeInBytes > uploadLimitInBytes) {
-            return res.status(400).json({
-                success: false,
-                message: "Image size exceeds the upload limit of 100kb",
-            });
+          return res.status(400).json({
+            success: false,
+            message: "Image size exceeds the upload limit of 100kb",
+          });
         }
 
-				try {
-					const uploadResponse = await cloudinary.uploader.upload(image);
-					updatedData.avatar = uploadResponse.secure_url;
-				} catch (error) {
-					console.error("Error uploading image:", error);
+        try {
+          const uploadResponse = await cloudinary.uploader.upload(image);
+          updatedData.avatar = uploadResponse.secure_url;
+        } catch (error) {
+          console.error("Error uploading image:", error);
 
-					return res.status(400).json({
-						success: false,
-						message: "Error uploading image",
-					});
-				}
-			}
-		}
+          return res.status(400).json({
+            success: false,
+            message: "Error uploading image",
+          });
+        }
+      }
+    }
 
-		const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedData, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedData, { new: true });
 
-		return res.status(200).json({
-			success: true,
-			user: updatedUser,
-		});
-	} catch (error) {
-		return res.status(500).json({
-			success: false,
-			message: "Internal server error",
-		});
-	}
+    return res.status(200).json({
+      success: true,
+      user: updatedUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };
 
 export const logout = async (req, res) => {
-	res.clearCookie("jwt")
-	res.status(200).json({ success: true, message: "Logged out successfully" });
+  res.clearCookie("jwt")
+  res.status(200).json({ success: true, message: "Logged out successfully" });
 }
 
 export const uploadProfileImage = asyncHandler(async (req, res) => {
@@ -243,7 +295,7 @@ export const uploadBannerImage = asyncHandler(async (req, res) => {
   }
 });
 
-export const getProfile = asyncHandler( async ( req, res) => {
+export const getProfile = asyncHandler(async (req, res) => {
   try {
     const { profileId } = req.params; // Get the user ID from the request parameters
     const user = await User.findById(profileId).select("-password -phone"); // Find the user by ID
@@ -277,7 +329,7 @@ export const searchRelevantUsers = asyncHandler(async (req, res) => {
     if (!currentUser) {
       return res.status(404).json({ message: "Current user not found" });
     }
-  
+
     const query = {
       _id: { $ne: currentUser._id },
       collage: currentUser.collage,
@@ -286,7 +338,7 @@ export const searchRelevantUsers = asyncHandler(async (req, res) => {
         { email: new RegExp(searchTerm, "i") }
       ]
     };
-  
+
     const users = await User.aggregate([
       { $match: query },
       {
@@ -313,7 +365,7 @@ export const searchRelevantUsers = asyncHandler(async (req, res) => {
         }
       }
     ]);
-  
+
     res.status(200).json({
       success: true,
       users,
@@ -329,4 +381,4 @@ export const searchRelevantUsers = asyncHandler(async (req, res) => {
 
 
 
-export { registerUser, loginUser};
+export { registerUser, loginUser };

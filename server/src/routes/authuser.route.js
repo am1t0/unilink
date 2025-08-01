@@ -8,13 +8,15 @@ import {
     uploadProfileImage,
     uploadBannerImage,
     getProfile,
-    searchRelevantUsers
+    searchRelevantUsers,
+    verifyCollegeEmail
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
+router.post("/mail-verify", verifyCollegeEmail)
 router.post("/register", registerUser)
 router.post("/login", loginUser)
 router.post("/logout", logout)

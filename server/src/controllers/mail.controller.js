@@ -71,6 +71,23 @@ const SendEmail = async (emailDetails) => {
     }
 };
 
+// Function to send OTP to the user's email
+export const sendOtp = async (email, otp) => {
+    try {
+        const mailOptions = {
+            from: SenderEmail,
+            to: email,
+            subject: "Email verification code",
+            text: `Your OTP code is ${otp}. It is valid for 5 minutes.`,
+        };
+        await transporter.sendMail(mailOptions);
+
+    } catch (error) {
+        console.error(`Error sending OTP to ${email}:`, error);
+        throw error;
+    }
+}
+
 
 /**
  * @desc Send Email
