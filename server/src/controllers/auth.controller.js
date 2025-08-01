@@ -2,32 +2,16 @@ import User from "../models/user.model.js";
 import cloudinary from "../utilities/cloudinary.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import jwt from "jsonwebtoken";
-import { totp } from "otplib"
+import otpGenerator from "otp-generator"
 import crypto from "crypto";
 import { validateCollegeEmail } from "../utilities/emailValidation.js";
 import { sendOtp } from "./mail.controller.js";
 
-// Configure TOTP settings
-totp.options = {
-  digits: 4,   // 4-digit OTP
-  step: 60     // valid for 60 seconds
-};
 
 const SALT = process.env.SALT;
 
-//prepare secret for otp
-function getSecret(value) {
-  const combined = `${value}:${SALT}`;
-  const hash = crypto.createHash("sha256").update(combined).digest("hex");
-  return hash;
-}
-
-// Function to generate JWT tokens
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-};
+//replace with REDIS IN FUTURE
+const otpStore = new Map();  
 
 //verify college mail and owner with otp
 export const verifyCollegeEmail = asyncHandler(async (req, res) => {
@@ -46,21 +30,51 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
     }
 
     // Generate and send OTP
-    const secret = getSecret(email);
-    const otp = totp.generate(secret);
+    const otp = otpGenerator.generate(4, { upperCase: false, specialChars: false })
+    otpStore.set(email, { otp, expires: Date.now() + 2*60*1000 });  //2 minutes expiry
 
     await sendOtp(email, otp);
-    
+
     return res.status(200).json({ message: "OTP sent to email" });
   } catch (error) {
 
     return res.status(400).json({
       success: false,
-      message: "Error uploading image",
+      message: "Error sending image",
     });
   }
 
 });
+
+export const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    if (!email || !otp) {
+      return res.status(400).json({ error: "Email and OTP are required" });
+    }
+    const data = otpStore.get(email);
+
+   if (!data) return res.status(400).send({ error: 'OTP not found' });
+  if (Date.now() > data.expires) return res.status(400).send({ error: 'OTP expired' });
+  if (data.otp !== otp) return res.status(400).send({ error: 'Invalid OTP' });
+
+  otpStore.delete(email); // Clear OTP after verification
+
+  res.send({ message: 'OTP verified successfully' });
+
+  } catch (error) {
+    return res.status(500).json({
+      error: "Server error during OTP verification",
+    });
+  }
+});
+
+// Function to generate JWT tokens
+const signToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+};
 
 const registerUser = asyncHandler(async (req, res) => {
   try {

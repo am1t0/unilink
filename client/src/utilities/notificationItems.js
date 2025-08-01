@@ -10,6 +10,7 @@ export const getNotificationMessage = (notification) => {
 
     const { type, sender, postId, commentId } = notification;
 
+    console.log(type);
     switch (type) {
         case "Link":
             return 'wants to connect with you';
@@ -17,14 +18,9 @@ export const getNotificationMessage = (notification) => {
         case "Accepted":
             return 'is now connected with you';
 
-        case "Like":
-            if (commentId) {
-                return 'liked your comment';
-            } else if (postId) {
-                return 'liked your post';
-            }
-            return 'liked something';
-
+        case "Post-Like":
+            return 'liked your post';
+        
         case "Comment":
            return 'commented on your post';
         
@@ -40,25 +36,23 @@ export const getNotificationMessage = (notification) => {
 };
 
 export const getNotificationIcon = (notification) => {
-    const { type, postId, commentId } = notification;
+    const { type } = notification;
   
     switch (type) {
       case "Link":
         return <UserPlus className="notification-icon link" />;
   
-      case "Accepted":
+      case "Link-Accepted":
         return <Handshake className="notification-icon accepted" />;
   
-      case "Like":
-        if (commentId) {
-          return <Heart className="notification-icon comment-like" />;
-        } else if (postId) {
+      case "Post-Like":
           return <Heart className="notification-icon post-like" />;
-        }
-        return <Heart className="notification-icon default-like" />;
-  
+
       case "Comment":
         return <MessageCircle className="notification-icon comment" />;
+      
+      case "Comment-Like":
+        return <Heart className="notification-icon comment-like"/>;
   
       default:
         return <Bell className="notification-icon default" />;

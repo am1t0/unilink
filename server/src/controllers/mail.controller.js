@@ -77,16 +77,34 @@ export const sendOtp = async (email, otp) => {
         const mailOptions = {
             from: SenderEmail,
             to: email,
-            subject: "Email verification code",
-            text: `Your OTP code is ${otp}. It is valid for 5 minutes.`,
+            subject: "Email Verification Code",
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                    <h2 style="color: #333;">🔐 Email Verification</h2>
+                    <p style="font-size: 16px; color: #555;">Hello,</p>
+                    <p style="font-size: 16px; color: #555;">
+                        Your One-Time Password (OTP) for email verification is:
+                    </p>
+                    <div style="text-align: center; margin: 20px 0;">
+                        <span style="display: inline-block; background-color: #f0f0f0; padding: 15px 25px; font-size: 24px; font-weight: bold; color: #2c3e50; border-radius: 6px;">
+                            ${otp}
+                        </span>
+                    </div>
+                    <p style="font-size: 14px; color: #888;">
+                        This OTP is valid for <strong>5 minutes</strong>. Please do not share it with anyone.
+                    </p>
+                    <p style="font-size: 14px; color: #888;">If you didn’t request this, you can ignore this email.</p>
+                    <p style="font-size: 14px; color: #888;">Thanks,<br>The Team</p>
+                </div>
+            `,
         };
         await transporter.sendMail(mailOptions);
-
     } catch (error) {
         console.error(`Error sending OTP to ${email}:`, error);
         throw error;
     }
 }
+
 
 
 /**

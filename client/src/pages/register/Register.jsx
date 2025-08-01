@@ -58,7 +58,7 @@ const Register = () => {
           <select className="register-select" onChange={(e) => setCollageName(e.target.value)} value={collageName}>
             <option value="">Select Your College</option>
             <option>Institute of Engineering and Technology, DAVV</option>
-            <option>LNCT Bhopal</option>
+            {/* <option>LNCT Bhopal</option>
             <option>SGSITS Indore</option>
             <option>MIT Pune</option>
             <option>VIT Vellore</option>
@@ -66,7 +66,7 @@ const Register = () => {
             <option>Delhi Technological University</option>
             <option>Manipal Institute of Technology</option>
             <option>PES University</option>
-            <option>KIIT Bhubaneswar</option>
+            <option>KIIT Bhubaneswar</option>  */}
           </select>
 
           <div className="register-buttons">
