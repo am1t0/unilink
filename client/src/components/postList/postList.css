@@ -8,3 +8,10 @@
     width: 100%;
     max-width: 800px;
 }
+
+.loading {
+  text-align: center;
+  padding: 1rem;
+  color: gray;
+  font-weight: bold;
+}

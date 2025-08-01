@@ -187,6 +187,8 @@
 .header-user-profile img {
   height: 40px;
   border-radius: 50%;
+  width: 40px;
+  object-fit: cover;
 }
 
 .headder-menu-item:hover {

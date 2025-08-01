@@ -144,14 +144,14 @@ const Post = ({
         <div
           className="post-right-action"
           onClick={() => toggeleSavePost(postId)}
-          style={{ cursor: "pointer", border: isSaved ? "2px solid blue" : "none" }}
+          style={{ cursor: "pointer" }}
         >
           <Bookmark
             size={20}
-            color={isSaved ? "blue" : "black"}
+            color={isSaved ? "blue" : "white"}
             fill={isSaved ? "blue" : "none"}
           />
-          <span>{isSaved ? "💾 Saved" : "Save"}</span>
+          <span>{isSaved ? "Saved" : "Save"}</span>
         </div>
       </div>
 
