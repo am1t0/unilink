@@ -5,7 +5,6 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
       trim: true, // Avoids unnecessary spaces
     },
     email: {
@@ -17,12 +16,15 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
     },
-    collage: {
+    college: {
       type: String,
       required: true,
       trim: true,
+    },
+    verified: {
+      type: Boolean,
+      default: false, // Default to false for new users
     },
     degree: {
       type: String,

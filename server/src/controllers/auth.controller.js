@@ -3,15 +3,12 @@ import cloudinary from "../utilities/cloudinary.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator"
-import crypto from "crypto";
 import { validateCollegeEmail } from "../utilities/emailValidation.js";
 import { sendOtp } from "./mail.controller.js";
 
 
-const SALT = process.env.SALT;
-
 //replace with REDIS IN FUTURE
-const otpStore = new Map();  
+const otpStore = new Map();
 
 //verify college mail and owner with otp
 export const verifyCollegeEmail = asyncHandler(async (req, res) => {
@@ -20,6 +17,18 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
   try {
     if (!email || !college) {
       return res.status(400).json({ error: "Email and college are required" });
+    }
+
+    //check whether mail is already in use
+    const user = await User.find({ email });
+
+    // Check if email is already in use
+    if (user) {
+      if (user.verified) {
+        return res.status(200).json({ move: true, message: "Email already verified" });
+      } else {
+        return res.status(409).json({ error: "Email already in use but not verified" }); // Conflict
+      }
     }
 
     //check if email is valid for the selected college
@@ -31,7 +40,7 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
 
     // Generate and send OTP
     const otp = otpGenerator.generate(4, { upperCase: false, specialChars: false })
-    otpStore.set(email, { otp, expires: Date.now() + 2*60*1000 });  //2 minutes expiry
+    otpStore.set(email, { otp, expires: Date.now() + 2 * 60 * 1000 });  //2 minutes expiry
 
     await sendOtp(email, otp);
 
@@ -47,20 +56,27 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
 });
 
 export const verifyOtp = asyncHandler(async (req, res) => {
-  const { email, otp } = req.body;
+  const { email, college, otp } = req.body;
   try {
-    if (!email || !otp) {
-      return res.status(400).json({ error: "Email and OTP are required" });
+    if (!email || !otp || !college) {
+      return res.status(400).json({ error: "Email, College and OTP are required" });
     }
     const data = otpStore.get(email);
 
-   if (!data) return res.status(400).send({ error: 'OTP not found' });
-  if (Date.now() > data.expires) return res.status(400).send({ error: 'OTP expired' });
-  if (data.otp !== otp) return res.status(400).send({ error: 'Invalid OTP' });
+    if (!data) return res.status(400).send({ error: 'OTP not found' });
+    if (Date.now() > data.expires) return res.status(400).send({ error: 'OTP expired' });
+    if (data.otp !== otp) return res.status(400).send({ error: 'Invalid OTP' });
 
-  otpStore.delete(email); // Clear OTP after verification
+    otpStore.delete(email); // Clear OTP after verification
 
-  res.send({ message: 'OTP verified successfully' });
+    //add email, college to user collection, provide verified tag
+    const user = User.create({
+      email,
+      college,
+      verified: true,
+    })
+
+    res.send({ move:true, message: 'OTP verified successfully' });
 
   } catch (error) {
     return res.status(500).json({
@@ -78,34 +94,20 @@ const signToken = (id) => {
 
 const registerUser = asyncHandler(async (req, res) => {
   try {
-    const { name, email, password, collageName } = req.body;
-    if (!name || !email || !password || !collageName) {
+    const { name, password} = req.body;
+
+    if (!name || !password ) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must be at least 6 characters",
-      });
-    }
-
-    if (await User.findOne({ email })) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exist",
-      });
-    }
-
-    const newLink = await User.create({
-      name,
-      email,
-      password,
-      collage: collageName,
-    });
+    // now add name and password of user
+    const user = await User.find({ email })
+    user.name = name;
+    user.password = password;
+    await user.save();
 
     const token = signToken(newLink._id);
 
@@ -121,7 +123,6 @@ const registerUser = asyncHandler(async (req, res) => {
       link: newLink,
     });
   } catch (error) {
-    console.log("Error in register controller:", error);
     return res.status(500).json({ success: false, message: "Server error in register" });
   }
 });
