@@ -16,15 +16,18 @@ const loginSchema = yup.object().shape({
 });
 
 //validation schema for register
-const registerSchema = yup.object().shape({
-  name: yup.string().required("Name is required"),
+const collegeAndEmailSchema = yup.object().shape({
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .required("Password is required"),
-  collageName: yup.string().required("College is required"),
+  college: yup.string().required("College is required"),
 });
+
+// const nameAndPasswordSchema = yup.object().shape({
+//   name: yup.string().required("Name is required"),
+//   password: yup
+//     .string()
+//     .min(8, "Password must be at least 8 characters")
+//     .required("Password is required"),
+// })
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -42,42 +45,90 @@ export const useAuthStore = create((set, get) => ({
       set({ checkingAuth: false });
     }
   },
+  
+  sendOtp: async (data, setShowOtpBoxes) => { 
+     try {
+      set({loading: true})
 
-  registerUser: async (data) => {
-    try {
-      set({ loading: true });
-      // Validate input
-      await registerSchema.validate(data, { abortEarly: false });
+      //validate college and mail
+      await collegeAndEmailSchema.validate(data, { abortEarly: false });
+     
+      // make api request for otp sending
+      const res = await axiosInstance.post("/auth/mail-verify", data);
+      // otp send successfully
+      toast.success(res.data.message);
 
-      // Make API request
-      const res = await axiosInstance.post("/auth/register", data);
-      set({ authUser: res.data.link });
+      setShowOtpBoxes(true);
 
-      return { success: true };
-    } catch (error) {
-      if (error.name === "ValidationError") {
-        // If Yup validation error, return structured error messages
-        const validationErrors = error.inner.map((err) => err.message); // Extract all validation error messages
-        return { success: false, type: "validation", errors: validationErrors };
-      } else if (error.response) {
-        // If API error, handle based on backend response
-        return {
-          success: false,
-          type: "api",
-          message: error.response.data.message || "An error occurred",
-        };
-      } else {
-        // Other errors (e.g., network issues)
-        return {
-          success: false,
-          type: "other",
-          message: "Something went wrong. Please try again.",
-        };
-      }
-    } finally {
-      set({ loading: false });
-    }
+      return;
+      
+     } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+     } finally {
+       set({loading: false})
+     }
   },
+
+  verifyOtp: async (data, setShowOtpBoxes, setStep) => {
+      try {
+        set({ loading: true });
+        //validate otp
+        if (!data.otp || data.otp.length !== 4) {
+          toast.error("Please enter a valid 4-digit OTP");
+          return;
+        }
+
+        //make api request for otp verification
+        const res = await axiosInstance.post("/auth//otp-verify", data);
+        // otp verified successfully
+        toast.success("OTP verified successfully!");
+
+        setShowOtpBoxes(false);
+        setStep(2);
+
+      } catch (error){
+        toast.error(error.response?.data?.message || "Something went wrong");
+      }  finally {
+         set({ loading: false });
+      }
+  },
+
+  // registerUser: async (data) => {
+  //   try {
+  //     set({ loading: true });
+  //     // Validate input
+  //     await registerSchema.validate(data, { abortEarly: false });
+
+  //     // Make API request
+  //     const res = await axiosInstance.post("/auth/register", data);
+  //     set({ authUser: res.data.link });
+
+  //     return { success: true };
+  //   } catch (error) {
+  //     if (error.name === "ValidationError") {
+  //       // If Yup validation error, return structured error messages
+  //       const validationErrors = error.inner.map((err) => err.message); // Extract all validation error messages
+  //       return { success: false, type: "validation", errors: validationErrors };
+  //     } else if (error.response) {
+  //       // If API error, handle based on backend response
+  //       return {
+  //         success: false,
+  //         type: "api",
+  //         message: error.response.data.message || "An error occurred",
+  //       };
+  //     } else {
+  //       // Other errors (e.g., network issues)
+  //       return {
+  //         success: false,
+  //         type: "other",
+  //         message: "Something went wrong. Please try again.",
+  //       };
+  //     }
+  //   } finally {
+  //     set({ loading: false });
+  //   }
+  // },
+  
   loginUser: async (loginData) => {
     try {
       set({ loading: true });

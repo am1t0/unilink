@@ -10,7 +10,11 @@ import { sendOtp } from "./mail.controller.js";
 //replace with REDIS IN FUTURE
 const otpStore = new Map();
 
-//verify college mail and owner with otp
+/**
+ * @desc Send Otp for email verification
+ * @route POST /api/v1/auth/mail-verify
+ * @access Private
+ */
 export const verifyCollegeEmail = asyncHandler(async (req, res) => {
   const { email, college } = req.body;
 
@@ -20,7 +24,7 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
     }
 
     //check whether mail is already in use
-    const user = await User.find({ email });
+    const user = await User.findOne({ email });
 
     // Check if email is already in use
     if (user) {
@@ -35,12 +39,13 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
     const isValid = validateCollegeEmail(email, college);
 
     if (!isValid) {
-      return res.status(400).json({ error: "Invalid college email" });
+      return res.status(400).json({  error: "Invalid college email" });
     }
 
     // Generate and send OTP
-    const otp = otpGenerator.generate(4, { upperCase: false, specialChars: false })
-    otpStore.set(email, { otp, expires: Date.now() + 2 * 60 * 1000 });  //2 minutes expiry
+    const otp = otpGenerator.generate(4, { lowerCaseAlphabets:false ,upperCaseAlphabets: false, specialChars: false })
+    // CACHE TYPE STORAGE   
+    otpStore.set(email, { otp, expires: Date.now() + 2 * 60 * 1000 });  //2 minutes expiry 
 
     await sendOtp(email, otp);
 
@@ -63,7 +68,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     }
     const data = otpStore.get(email);
 
-    if (!data) return res.status(400).send({ error: 'OTP not found' });
+    if (!data) return res.status(404).send({ error: 'OTP not found' });
     if (Date.now() > data.expires) return res.status(400).send({ error: 'OTP expired' });
     if (data.otp !== otp) return res.status(400).send({ error: 'Invalid OTP' });
 
@@ -104,7 +109,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // now add name and password of user
-    const user = await User.find({ email })
+    const user = await User.findOne({ email })
     user.name = name;
     user.password = password;
     await user.save();
