@@ -46,19 +46,22 @@ export const useAuthStore = create((set, get) => ({
     }
   },
   
-  sendOtp: async (data, setShowOtpBoxes) => { 
+  sendOtp: async (data, setStep) => { 
      try {
       set({loading: true})
 
       //validate college and mail
       await collegeAndEmailSchema.validate(data, { abortEarly: false });
-     
+      
+      // set college and mail locally in case of refresh hit
+      sessionStorage.setItem("registrationData", JSON.stringify(data));
+
       // make api request for otp sending
       const res = await axiosInstance.post("/auth/mail-verify", data);
       // otp send successfully
       toast.success(res.data.message);
 
-      setShowOtpBoxes(true);
+      setStep(2);
 
       return;
       
@@ -69,7 +72,7 @@ export const useAuthStore = create((set, get) => ({
      }
   },
 
-  verifyOtp: async (data, setShowOtpBoxes, setStep) => {
+  verifyOtp: async (data, setStep) => {
       try {
         set({ loading: true });
         //validate otp
@@ -78,13 +81,27 @@ export const useAuthStore = create((set, get) => ({
           return;
         }
 
+        const { email, college, step} = data;
+
+        //user must have refreshed page
+        if( !email || !college ) {
+
+          //use sesssion storage to get email and college
+          const savedData = sessionStorage.getItem("registrationData");
+          const parsedData = savedData ? JSON.parse(savedData) : null;
+          data.email = parsedData?.email;
+          data.college = parsedData?.college;
+        }
+       
+        //update step in session storage
+        sessionStorage.setItem("registrationData", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
+
         //make api request for otp verification
         const res = await axiosInstance.post("/auth//otp-verify", data);
         // otp verified successfully
         toast.success("OTP verified successfully!");
 
-        setShowOtpBoxes(false);
-        setStep(2);
+        setStep(3);
 
       } catch (error){
         toast.error(error.response?.data?.message || "Something went wrong");

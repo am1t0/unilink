@@ -7,19 +7,26 @@ import { useAuthStore } from "../../store/useAuthStore";
 
 const Register = () => {
   const { registerUser, sendOtp, verifyOtp, loading } = useAuthStore();
-  const [step, setStep] = useState(1);
+
+  //user details registetration states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
+  // Check if there's saved registration data in sessionStorage
+  const registrationData = sessionStorage.getItem("registrationData")
+    ? JSON.parse(sessionStorage.getItem("registrationData"))
+    : null;
+  const [step, setStep] = useState(registrationData?.step || 1);
+
   const [password, setPassword] = useState("");
   const [college, setCollege] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [showOtpBoxes, setShowOtpBoxes] = useState(true);
   const [timer, setTimer] = useState(120);
   const timerRef = useRef(null);
 
-  // Live timer effect
+  // Start timer only when step === 2 (OTP sent successfully)
   useEffect(() => {
-    if (showOtpBoxes) {
+    if (step === 2) {
       setTimer(120);
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
@@ -37,13 +44,12 @@ const Register = () => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [showOtpBoxes]);
+  }, [step]);
 
   // Stop timer on step change
   useEffect(() => {
     if (step !== 1 && timerRef.current) clearInterval(timerRef.current);
   }, [step]);
-  const navigate = useNavigate();
 
   return (
     <div className="register-container">
@@ -82,7 +88,7 @@ const Register = () => {
               className="register-btn-primary"
               onClick={(e) => {
                 e.preventDefault();
-                sendOtp({ email, college }, setShowOtpBoxes);
+                sendOtp({ email, college, step: 2 }, setStep);
               }}
             >
               {loading ? (
@@ -98,46 +104,62 @@ const Register = () => {
                 "Send OTP"
               )}
             </button>
-            <div className="refresh-button">
-              <RefreshCcw />
-            </div>
           </form>
         )}
         {step === 2 && (
           <>
-           <div className="register-otp-timer">OTP expires in: {timer}s</div>
-                <div className="register-otp-row">
-                  {[0, 1, 2, 3].map((i) => (
-                    <input
-                      key={i}
-                      id={`otp-box-${i}`}
-                      type="text"
-                      className="register-otp-box"
-                      maxLength={1}
-                      value={otp[i]}
-                      onChange={(e) => {
-                        const val = e.target.value.replace(/[^0-9a-z]/g, "").toLowerCase();
-                        const newOtp = [...otp];
-                        newOtp[i] = val;
-                        setOtp(newOtp);
-                        // Focus next box if value entered
-                        if (val && i < 3) {
-                          document.getElementById(`otp-box-${i+1}`)?.focus();
-                        }
-                        // Focus previous box if deleted
-                        if (!val && i > 0) {
-                          document.getElementById(`otp-box-${i-1}`)?.focus();
-                        }
-                      }}
-                      disabled={timer === 0}
-                    />
-                  ))}
-                  <button type="button" className="register-btn-primary" style={{marginLeft:16}} onClick={(e)=> {e.preventDefault(); verifyOtp({email, college, otp: otp.join("")}, setShowOtpBoxes, setStep) }} disabled={timer === 0 || otp.join("").length !== 4}>{loading ? (<Loader className="animate-spin" style={{height:"18px"}}/> ): "Verify OTP"}</button>
-                </div>
-                <div className="refresh-button"  onClick={(e)=> {}}><RefreshCcw /></div>
-           </>
+            <div className="register-otp-timer">OTP expires in: {timer}s</div>
+            <div className="register-otp-row">
+              {[0, 1, 2, 3].map((i) => (
+                <input
+                  key={i}
+                  id={`otp-box-${i}`}
+                  type="text"
+                  className="register-otp-box"
+                  maxLength={1}
+                  value={otp[i]}
+                  onChange={(e) => {
+                    const val = e.target.value
+                      .replace(/[^0-9a-z]/g, "")
+                      .toLowerCase();
+                    const newOtp = [...otp];
+                    newOtp[i] = val;
+                    setOtp(newOtp);
+                    // Focus next box if value entered
+                    if (val && i < 3) {
+                      document.getElementById(`otp-box-${i + 1}`)?.focus();
+                    }
+                    // Focus previous box if deleted
+                    if (!val && i > 0) {
+                      document.getElementById(`otp-box-${i - 1}`)?.focus();
+                    }
+                  }}
+                  disabled={timer === 0}
+                />
+              ))}
+              <button
+                type="button"
+                className="register-btn-primary"
+                style={{ marginLeft: 16 }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  verifyOtp({ email, college, otp: otp.join("") }, setStep);
+                }}
+                disabled={timer === 0 || otp.join("").length !== 4}
+              >
+                {loading ? (
+                  <Loader className="animate-spin" style={{ height: "18px" }} />
+                ) : (
+                  "Verify OTP"
+                )}
+              </button>
+            </div>
+            <div className="refresh-button" onClick={(e) => {}}>
+              <RefreshCcw />
+            </div>
+          </>
         )}
-        {step === 2 && (
+        {step === 3 && (
           <form className="register-form" onSubmit={() => {}}>
             <label className="register-label">Name</label>
             <input
