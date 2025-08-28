@@ -39,11 +39,11 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
     const isValid = validateCollegeEmail(email, college);
 
     if (!isValid) {
-      return res.status(400).json({  error: "Invalid college email" });
+      return res.status(400).json({ error: "Invalid college email" });
     }
 
     // Generate and send OTP
-    const otp = otpGenerator.generate(4, { lowerCaseAlphabets:false ,upperCaseAlphabets: false, specialChars: false })
+    const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
     // CACHE TYPE STORAGE   
     otpStore.set(email, { otp, expires: Date.now() + 2 * 60 * 1000 });  //2 minutes expiry 
 
@@ -79,7 +79,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
     otpStore.delete(email); // Clear OTP after verification
 
-    res.send({ move:true, message: 'OTP verified successfully' });
+    res.send({ move: true, message: 'OTP verified successfully' });
 
   } catch (error) {
     return res.status(500).json({
@@ -97,7 +97,7 @@ const signToken = (id) => {
 
 const registerUser = asyncHandler(async (req, res) => {
   try {
-    const { name, password, college, email} = req.body;
+    const { name, password, college, email } = req.body;
 
     if (!name || !password || !college || !email) {
       return res.status(400).json({
