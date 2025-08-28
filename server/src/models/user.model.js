@@ -22,10 +22,6 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    verified: {
-      type: Boolean,
-      default: false, // Default to false for new users
-    },
     degree: {
       type: String,
       default: "", // Prevents null values
