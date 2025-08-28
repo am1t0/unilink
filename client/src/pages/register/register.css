@@ -112,8 +112,24 @@
 
  /* STEP - 2 style  */
  .register-otp-timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   margin-bottom: 8px;
   color: white;
+ }
+
+ .resend-otp-btn {
+   padding: .4rem;
+   background-color: rgb(255, 217, 0);
+   border: none;
+   outline: none;
+ }
+
+ .resend-otp-btn:hover {
+    background-color: rgb(255, 255, 0);
+    cursor: pointer;
  }
  .register-otp-row{
   display: flex;

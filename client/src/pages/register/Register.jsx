@@ -1,55 +1,58 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./register.css";
 import { Loader, RefreshCcw } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/useAuthStore";
 
 const Register = () => {
-  const { registerUser, sendOtp, verifyOtp, loading } = useAuthStore();
+  const { sendOtp, verifyOtp, loading } = useAuthStore();
 
-  //user details registetration states
+  // User registration states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-
-  // Check if there's saved registration data in sessionStorage
-  const registrationData = sessionStorage.getItem("registrationData")
-    ? JSON.parse(sessionStorage.getItem("registrationData"))
-    : null;
-  const [step, setStep] = useState(registrationData?.step || 1);
-
-  const [password, setPassword] = useState("");
   const [college, setCollege] = useState("");
+  const [password, setPassword] = useState("");
+  const [step, setStep] = useState(1);
   const [otp, setOtp] = useState(["", "", "", ""]);
-  const [timer, setTimer] = useState(120);
+  const [timer, setTimer] = useState(0);
   const timerRef = useRef(null);
 
-  // Start timer only when step === 2 (OTP sent successfully)
+  // Load saved registration data (if any) from sessionStorage
   useEffect(() => {
-    if (step === 2) {
-      setTimer(120);
-      if (timerRef.current) clearInterval(timerRef.current);
-      timerRef.current = setInterval(() => {
-        setTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(timerRef.current);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      if (timerRef.current) clearInterval(timerRef.current);
+    const savedData = sessionStorage.getItem("registrationData");
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      setStep(parsed.step || 1);
+      setEmail(parsed.email || "");
+      setCollege(parsed.college || "");
     }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [step]);
 
-  // Stop timer on step change
-  useEffect(() => {
-    if (step !== 1 && timerRef.current) clearInterval(timerRef.current);
-  }, [step]);
+    // Check existing OTP expiry
+    const expiry = sessionStorage.getItem("otpExpiry");
+    if (expiry) {
+      const remaining = Math.floor((parseInt(expiry) - Date.now()) / 1000);
+      if (remaining > 0) startTimer(remaining);
+      else setTimer(0); // expired
+    }
+  }, []);
+
+  // Timer function
+  const startTimer = (seconds) => {
+    setTimer(seconds);
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          sessionStorage.removeItem("otpExpiry");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   return (
     <div className="register-container">
@@ -61,43 +64,39 @@ const Register = () => {
             Login
           </Link>
         </p>
+
+        {/* Step 1: Email & College */}
         {step === 1 && (
-          <form className="register-form" onSubmit={() => {}}>
+          <form className="register-form" onSubmit={(e) => e.preventDefault()}>
             <label className="register-label">College Email</label>
             <input
               type="email"
               className="register-input"
               placeholder="Enter your college email"
-              onChange={(e) => setEmail(e.target.value)}
               value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
+
             <label className="register-label">Your College</label>
             <select
               className="register-select"
-              onChange={(e) => setCollege(e.target.value)}
               value={college}
+              onChange={(e) => setCollege(e.target.value)}
             >
               <option value="">Select Your College</option>
               <option>Institute of Engineering and Technology, DAVV</option>
-              {/* Add more colleges here */}
+              {/* Add more colleges */}
             </select>
 
             <button
               type="button"
-              disabled={loading}
               className="register-btn-primary"
-              onClick={(e) => {
-                e.preventDefault();
-                sendOtp({ email, college, step: 2 }, setStep);
-              }}
+              disabled={loading}
+              onClick={()=> sendOtp({email, college, step:2}, setStep, startTimer)}
             >
               {loading ? (
                 <div className="login-loader">
-                  {" "}
-                  <Loader
-                    className="animate-spin"
-                    style={{ height: "18px" }}
-                  />{" "}
+                  <Loader className="animate-spin" style={{ height: "18px" }} />{" "}
                   Sending OTP...
                 </div>
               ) : (
@@ -106,9 +105,20 @@ const Register = () => {
             </button>
           </form>
         )}
+
+        {/* Step 2: OTP Verification */}
         {step === 2 && (
           <>
-            <div className="register-otp-timer">OTP expires in: {timer}s</div>
+            <div className="register-otp-timer">
+              {timer > 0 ? (
+                <p>OTP expires in: {timer}s</p>
+              ) : (
+                <button className="resend-otp-btn" onClick={()=> sendOtp({email, college, step: 2}, setStep, startTimer)}>
+                  Resend OTP
+                </button>
+              )}
+            </div>
+
             <div className="register-otp-row">
               {[0, 1, 2, 3].map((i) => (
                 <input
@@ -119,33 +129,24 @@ const Register = () => {
                   maxLength={1}
                   value={otp[i]}
                   onChange={(e) => {
-                    const val = e.target.value
-                      .replace(/[^0-9a-z]/g, "")
-                      .toLowerCase();
+                    const val = e.target.value.replace(/[^0-9a-z]/g, "").toLowerCase();
                     const newOtp = [...otp];
                     newOtp[i] = val;
                     setOtp(newOtp);
-                    // Focus next box if value entered
-                    if (val && i < 3) {
+                    if (val && i < 3)
                       document.getElementById(`otp-box-${i + 1}`)?.focus();
-                    }
-                    // Focus previous box if deleted
-                    if (!val && i > 0) {
+                    if (!val && i > 0)
                       document.getElementById(`otp-box-${i - 1}`)?.focus();
-                    }
                   }}
-                  disabled={timer === 0}
+                  disabled={timer <= 0}
                 />
               ))}
               <button
                 type="button"
                 className="register-btn-primary"
                 style={{ marginLeft: 16 }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  verifyOtp({ email, college, otp: otp.join("") }, setStep);
-                }}
-                disabled={timer === 0 || otp.join("").length !== 4}
+                disabled={timer <= 0 || otp.join("").length !== 4}
+                onClick={() => verifyOtp({ email, college, otp: otp.join("") }, setStep)}
               >
                 {loading ? (
                   <Loader className="animate-spin" style={{ height: "18px" }} />
@@ -154,59 +155,41 @@ const Register = () => {
                 )}
               </button>
             </div>
-            <div className="refresh-button" onClick={(e) => {}}>
-              <RefreshCcw />
-            </div>
           </>
         )}
+
+        {/* Step 3: User Details */}
         {step === 3 && (
-          <form className="register-form" onSubmit={() => {}}>
+          <form className="register-form" onSubmit={(e) => e.preventDefault()}>
             <label className="register-label">Name</label>
             <input
               type="text"
               className="register-input"
               placeholder="Enter your name"
-              onChange={(e) => setName(e.target.value)}
               value={name}
+              onChange={(e) => setName(e.target.value)}
             />
             <label className="register-label">Password</label>
             <input
               type="password"
               className="register-input"
               placeholder="Enter your password"
-              onChange={(e) => setPassword(e.target.value)}
               value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
-            <div className="register-buttons">
-              <button
-                type="submit"
-                disabled={loading}
-                className="register-btn-primary"
-              >
-                {loading ? (
-                  <div className="login-loader">
-                    {" "}
-                    <Loader
-                      className="animate-spin"
-                      style={{ height: "18px" }}
-                    />{" "}
-                    Creating.....
-                  </div>
-                ) : (
-                  "Create Account"
-                )}
-              </button>
-              <div className="refresh-button" onClick={() => {}}>
-                <RefreshCcw />
-              </div>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="register-btn-primary"
+            >
+              {loading ? (
+                <Loader className="animate-spin" style={{ height: "18px" }} />
+              ) : (
+                "Create Account"
+              )}
+            </button>
           </form>
         )}
-        <div className="register-icons">
-          <div className="register-circle"></div>
-          <div className="register-circle"></div>
-          <div className="register-circle"></div>
-        </div>
       </div>
     </div>
   );

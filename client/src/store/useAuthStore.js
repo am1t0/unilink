@@ -45,69 +45,78 @@ export const useAuthStore = create((set, get) => ({
       set({ checkingAuth: false });
     }
   },
-  
-  sendOtp: async (data, setStep) => { 
-     try {
-      set({loading: true})
 
-      //validate college and mail
+  sendOtp: async (data, setStep, startTimer) => {
+    try {
+      set({ loading: true });
+
+      // Validate college and email
       await collegeAndEmailSchema.validate(data, { abortEarly: false });
-      
-      // set college and mail locally in case of refresh hit
+
+      // Store email + college in sessionStorage (in case of refresh)
       sessionStorage.setItem("registrationData", JSON.stringify(data));
 
-      // make api request for otp sending
+      // Make API request to send OTP
       const res = await axiosInstance.post("/auth/mail-verify", data);
-      // otp send successfully
       toast.success(res.data.message);
 
+      // Set OTP expiry for 2 minutes from now
+      const expiryTime = Date.now() + 2 * 60 * 1000; // 2 minutes
+      sessionStorage.setItem("otpExpiry", expiryTime.toString());
+
+      // Move to next step
       setStep(2);
 
-      return;
-      
-     } catch (error) {
-      toast.error(error.response?.data?.message || "Something went wrong");
-     } finally {
-       set({loading: false})
-     }
+      //set timer for 2 minutes
+      startTimer(120);
+
+
+      return res.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message || "Something went wrong");
+    } finally {
+      set({ loading: false });
+    }
   },
 
   verifyOtp: async (data, setStep) => {
-      try {
-        set({ loading: true });
-        //validate otp
-        if (!data.otp || data.otp.length !== 4) {
-          toast.error("Please enter a valid 4-digit OTP");
-          return;
-        }
-
-        const { email, college, step} = data;
-
-        //user must have refreshed page
-        if( !email || !college ) {
-
-          //use sesssion storage to get email and college
-          const savedData = sessionStorage.getItem("registrationData");
-          const parsedData = savedData ? JSON.parse(savedData) : null;
-          data.email = parsedData?.email;
-          data.college = parsedData?.college;
-        }
-       
-        //update step in session storage
-        sessionStorage.setItem("registrationData", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
-
-        //make api request for otp verification
-        const res = await axiosInstance.post("/auth//otp-verify", data);
-        // otp verified successfully
-        toast.success("OTP verified successfully!");
-
-        setStep(3);
-
-      } catch (error){
-        toast.error(error.response?.data?.message || "Something went wrong");
-      }  finally {
-         set({ loading: false });
+    try {
+      set({ loading: true });
+      //validate otp
+      if (!data.otp || data.otp.length !== 4) {
+        toast.error("Please enter a valid 4-digit OTP");
+        return;
       }
+
+      const { email, college } = data;
+
+      //user must have refreshed page
+      if (!email || !college) {
+
+        //use sesssion storage to get email and college
+        const savedData = sessionStorage.getItem("registrationData");
+        const parsedData = savedData ? JSON.parse(savedData) : null;
+        data.email = parsedData?.email;
+        data.college = parsedData?.college;
+      }
+
+      //make api request for otp verification
+      await axiosInstance.post("/auth/otp-verify", data);
+
+      // otp verified successfully
+      toast.success("OTP verified successfully!");
+
+      //update step in session storage
+      sessionStorage.setItem("registrationData", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
+
+      //show next step
+      setStep(3);
+
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Something went wrong");
+    } finally {
+      set({ loading: false });
+    }
   },
 
   // registerUser: async (data) => {
@@ -145,7 +154,7 @@ export const useAuthStore = create((set, get) => ({
   //     set({ loading: false });
   //   }
   // },
-  
+
   loginUser: async (loginData) => {
     try {
       set({ loading: true });
@@ -188,12 +197,12 @@ export const useAuthStore = create((set, get) => ({
 
       set({ loading: true });
 
-    //validate phone input if given
-    const phoneRegex = /^[6-9]\d{9}$/;
-    if(data.phone && !phoneRegex.test(data.phone)){
-      toast.error("Please enter a valid phone number");
-      return;
-    }
+      //validate phone input if given
+      const phoneRegex = /^[6-9]\d{9}$/;
+      if (data.phone && !phoneRegex.test(data.phone)) {
+        toast.error("Please enter a valid phone number");
+        return;
+      }
 
       // Make API request
       const res = await axiosInstance.put("/auth/profileedit", data);
@@ -239,10 +248,10 @@ export const useAuthStore = create((set, get) => ({
 
   uploadBannerImage: async (file) => {
     try {
-      set({ loading: true }); 
+      set({ loading: true });
       const formData = new FormData();
       formData.append("bannerImage", file);
-      const res = await axiosInstance.post("/auth/upload-banner-image", formData , {
+      const res = await axiosInstance.post("/auth/upload-banner-image", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -262,15 +271,15 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  getProfile: async (profileId, setUserProfile) =>{
+  getProfile: async (profileId, setUserProfile) => {
     try {
       set({ loading: true });
       const authUser = get().authUser;
 
       //user visiting his/her own profile
-      if( authUser._id === profileId){
+      if (authUser._id === profileId) {
         setUserProfile(authUser);
-        return ;
+        return;
       }
 
       //user visiting other's profile
@@ -306,28 +315,28 @@ export const useAuthStore = create((set, get) => ({
       return [];
     }
   },
-  
+
   changeLinkCount: (data) => {
-   const { type } = data;
+    const { type } = data;
 
     set((state) => {
       let linksCount = state.authUser.linksCount || 0;
-      
-      switch( type ){
+
+      switch (type) {
         case "Link": linksCount++;
-        break;
+          break;
 
         case "Link-Accepted": linksCount++;
-        break;
+          break;
 
         case "Blocked": linksCount--;
-        break;
+          break;
 
         case "Unblocked": linksCount++;
-        break;
+          break;
 
         default:
-          // do nothing
+        // do nothing
       }
 
       const updatedUser = { ...state.authUser, linksCount };

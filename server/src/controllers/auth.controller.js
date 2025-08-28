@@ -60,6 +60,11 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
 
 });
 
+/**
+ * @desc Otp verification
+ * @route POST /api/v1/auth/otp-verify
+ * @access Private
+ */
 export const verifyOtp = asyncHandler(async (req, res) => {
   const { email, college, otp } = req.body;
   try {
@@ -73,13 +78,6 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     if (data.otp !== otp) return res.status(400).send({ error: 'Invalid OTP' });
 
     otpStore.delete(email); // Clear OTP after verification
-
-    //add email, college to user collection, provide verified tag
-    const user = User.create({
-      email,
-      college,
-      verified: true,
-    })
 
     res.send({ move:true, message: 'OTP verified successfully' });
 
@@ -99,9 +97,9 @@ const signToken = (id) => {
 
 const registerUser = asyncHandler(async (req, res) => {
   try {
-    const { name, password} = req.body;
+    const { name, password, college, email} = req.body;
 
-    if (!name || !password ) {
+    if (!name || !password || !college || !email) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -109,9 +107,12 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     // now add name and password of user
-    const user = await User.findOne({ email })
-    user.name = name;
-    user.password = password;
+    const user = await User.create({
+      name,
+      password,
+      email,
+      college
+    })
     await user.save();
 
     const token = signToken(newLink._id);
