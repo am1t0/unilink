@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/useAuthStore";
 
 const Register = () => {
-  const { sendOtp, verifyOtp, loading } = useAuthStore();
+  const { registerUser, sendOtp, verifyOtp, loading } = useAuthStore();
 
   // User registration states
   const [name, setName] = useState("");
@@ -92,7 +92,9 @@ const Register = () => {
               type="button"
               className="register-btn-primary"
               disabled={loading}
-              onClick={()=> sendOtp({email, college, step:2}, setStep, startTimer)}
+              onClick={() =>
+                sendOtp({ email, college, step: 2 }, setStep, startTimer)
+              }
             >
               {loading ? (
                 <div className="login-loader">
@@ -113,7 +115,12 @@ const Register = () => {
               {timer > 0 ? (
                 <p>OTP expires in: {timer}s</p>
               ) : (
-                <button className="resend-otp-btn" onClick={()=> sendOtp({email, college, step: 2}, setStep, startTimer)}>
+                <button
+                  className="resend-otp-btn"
+                  onClick={() =>
+                    sendOtp({ email, college, step: 2 }, setStep, startTimer)
+                  }
+                >
                   Resend OTP
                 </button>
               )}
@@ -129,7 +136,9 @@ const Register = () => {
                   maxLength={1}
                   value={otp[i]}
                   onChange={(e) => {
-                    const val = e.target.value.replace(/[^0-9a-z]/g, "").toLowerCase();
+                    const val = e.target.value
+                      .replace(/[^0-9a-z]/g, "")
+                      .toLowerCase();
                     const newOtp = [...otp];
                     newOtp[i] = val;
                     setOtp(newOtp);
@@ -146,7 +155,9 @@ const Register = () => {
                 className="register-btn-primary"
                 style={{ marginLeft: 16 }}
                 disabled={timer <= 0 || otp.join("").length !== 4}
-                onClick={() => verifyOtp({ email, college, otp: otp.join("") }, setStep)}
+                onClick={() =>
+                  verifyOtp({ email, college, otp: otp.join("") }, setStep)
+                }
               >
                 {loading ? (
                   <Loader className="animate-spin" style={{ height: "18px" }} />
@@ -160,7 +171,13 @@ const Register = () => {
 
         {/* Step 3: User Details */}
         {step === 3 && (
-          <form className="register-form" onSubmit={(e) => e.preventDefault()}>
+          <form
+            className="register-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              registerUser({ email, college, name, password });
+            }}
+          >
             <label className="register-label">Name</label>
             <input
               type="text"

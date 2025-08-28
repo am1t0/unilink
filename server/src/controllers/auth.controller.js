@@ -106,30 +106,46 @@ const registerUser = asyncHandler(async (req, res) => {
       });
     }
 
-    // now add name and password of user
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: "User with this email already exists",
+      });
+    }
+
+    console.log('1');
+    // Create user (password will be hashed automatically in the model)
     const user = await User.create({
       name,
       password,
       email,
-      college
-    })
-    await user.save();
-
-    const token = signToken(newLink._id);
-
-    res.cookie("jwt", token, {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-      httpOnly: true, // prevents XSS attacks
-      sameSite: "strict", // prevents CSRF attacks
-      secure: process.env.NODE_ENV === "production" ? true : false,
+      college,
     });
 
+    console.log('2');
+    // Generate JWT
+    const token = signToken(user._id);
+
+    // Set cookie
+    res.cookie("jwt", token, {
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    // Send response
     res.status(201).json({
       success: true,
-      link: newLink,
+      link: user, // return created user
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Server error in register" });
+    return res.status(500).json({
+      success: false,
+      message: "Server error in register",
+    });
   }
 });
 

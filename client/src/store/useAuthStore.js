@@ -21,13 +21,13 @@ const collegeAndEmailSchema = yup.object().shape({
   college: yup.string().required("College is required"),
 });
 
-// const nameAndPasswordSchema = yup.object().shape({
-//   name: yup.string().required("Name is required"),
-//   password: yup
-//     .string()
-//     .min(8, "Password must be at least 8 characters")
-//     .required("Password is required"),
-// })
+const nameAndPasswordSchema = yup.object().shape({
+  name: yup.string().required("Name is required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .required("Password is required"),
+})
 
 export const useAuthStore = create((set, get) => ({
   authUser: null,
@@ -119,41 +119,24 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // registerUser: async (data) => {
-  //   try {
-  //     set({ loading: true });
-  //     // Validate input
-  //     await registerSchema.validate(data, { abortEarly: false });
+  registerUser: async (data) => {
+    try {
+      set({ loading: true });
+      // Validate input
+      // await registerSchema.validate(data, { abortEarly: false });
 
-  //     // Make API request
-  //     const res = await axiosInstance.post("/auth/register", data);
-  //     set({ authUser: res.data.link });
+      // Make API request
+      const res = await axiosInstance.post("/auth/register", data);
+      set({ authUser: res.data.link });
 
-  //     return { success: true };
-  //   } catch (error) {
-  //     if (error.name === "ValidationError") {
-  //       // If Yup validation error, return structured error messages
-  //       const validationErrors = error.inner.map((err) => err.message); // Extract all validation error messages
-  //       return { success: false, type: "validation", errors: validationErrors };
-  //     } else if (error.response) {
-  //       // If API error, handle based on backend response
-  //       return {
-  //         success: false,
-  //         type: "api",
-  //         message: error.response.data.message || "An error occurred",
-  //       };
-  //     } else {
-  //       // Other errors (e.g., network issues)
-  //       return {
-  //         success: false,
-  //         type: "other",
-  //         message: "Something went wrong. Please try again.",
-  //       };
-  //     }
-  //   } finally {
-  //     set({ loading: false });
-  //   }
-  // },
+      return { success: true };
+      
+    } catch (error) {
+          toast.error(error.response?.data?.message || error.message || "Something went wrong");
+    } finally {
+      set({ loading: false });
+    }
+  },
 
   loginUser: async (loginData) => {
     try {
