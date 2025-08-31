@@ -51,7 +51,7 @@ export const useAuthStore = create((set, get) => ({
       set({ loading: true });
 
       // Validate college and email when registering 
-     if(data.college) await collegeAndEmailSchema.validate(data, { abortEarly: false });
+      if (data.college) await collegeAndEmailSchema.validate(data, { abortEarly: false });
 
       // Store email + college in sessionStorage (in case of refresh)
       sessionStorage.setItem(key, JSON.stringify(data));
@@ -89,27 +89,24 @@ export const useAuthStore = create((set, get) => ({
         return;
       }
 
-      const { email } = data;
-
-      //user must have refreshed page
-      if (!email ) {
-
-        //use sesssion storage to get email and college
-        const savedData = sessionStorage.getItem(key);
-        const parsedData = savedData ? JSON.parse(savedData) : null;
-        data.email = parsedData?.email;
-      }
+      //modifying data so backend controller can be adjusted
+      data.type = key;
 
       //make api request for otp verification
-      await axiosInstance.post("/auth/otp-verify", data);
+      const res = await axiosInstance.post("/auth/otp-verify", data);
 
       // otp verified successfully
       toast.success("OTP verified successfully!");
 
-      //update step in session storage
-      if(key === "loginData") sessionStorage.removeItem("loginData");
+      //in case of login data added it will be removed and user will be set
+      sessionStorage.removeItem("loginData");
+      set({ authUser: res.data.link });
 
-      else sessionStorage.setItem("registrationData", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
+      //in case of registration otp verification , session storage will be updated
+      sessionStorage.setItem("registrationData", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
+      
+      //remove otp expiry from session storage so it doesn't interfere in future
+      sessionStorage.removeItem("otpExpiry");
 
       //show next step
       setStep(3);
@@ -134,9 +131,9 @@ export const useAuthStore = create((set, get) => ({
       sessionStorage.removeItem("registrationData");
 
       return { success: true };
-      
+
     } catch (error) {
-          toast.error(error.response?.data?.message || error.message || "Something went wrong");
+      toast.error(error.response?.data?.message || error.message || "Something went wrong");
     } finally {
       set({ loading: false });
     }

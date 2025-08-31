@@ -61,17 +61,17 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
  */
 export const sendLoginOtp = asyncHandler(async (req, res) => {
   try {
-     const { email } = req.body;
+    const { email } = req.body;
     // no email provided
-     if( !email ) return res.status(400).json({ error: "Email is required" });
+    if (!email) return res.status(400).json({ error: "Email is required" });
 
-     //check user exist or not
-     const user = await User.findOne({ email });
-     if( !user ) return res.status(404).json({ error: "User not found" });
+    //check user exist or not
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
     // Generate and send OTP
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
-   
+
     // CACHE TYPE STORAGE   
     otpStore.set(email, { otp, expires: Date.now() + 2 * 60 * 1000 });  //2 minutes expiry 
 
@@ -80,7 +80,7 @@ export const sendLoginOtp = asyncHandler(async (req, res) => {
     return res.status(200).json({ message: "OTP sent to email" });
 
   } catch (error) {
-     return res.status(400).json({
+    return res.status(400).json({
       success: false,
       message: "Error sending image",
     });
@@ -94,9 +94,9 @@ export const sendLoginOtp = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const verifyOtp = asyncHandler(async (req, res) => {
-  const { email, otp } = req.body;
+  const { email, otp, type } = req.body;
   try {
-    if (!email || !otp ) {
+    if (!email || !otp) {
       return res.status(400).json({ error: "Email and OTP are required" });
     }
     const data = otpStore.get(email);
@@ -107,7 +107,27 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
     otpStore.delete(email); // Clear OTP after verification
 
-    res.send({ message: 'OTP verified successfully' });
+    let user = null;
+    let token = null;
+
+    // for login related otp requests
+    if (type === 'loginData') {
+       user = await User.findOne({ email }).select("+password");;
+       token = signToken(user._id);
+
+      res.cookie("jwt", token, {
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+        httpOnly: true, // prevents XSS attacks
+        sameSite: "strict", // prevents CSRF attacks
+        secure: process.env.NODE_ENV === "production",
+      });
+    }
+
+     res.status(200).json({
+      message: "OTP verified successfully",
+      success: true,
+      link: user,
+    });
 
   } catch (error) {
     return res.status(500).json({
