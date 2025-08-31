@@ -111,7 +111,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     let token = null;
 
     // for login related otp requests
-    if (type === 'loginData') {
+    if (type === 'login') {
        user = await User.findOne({ email }).select("+password");;
        token = signToken(user._id);
 

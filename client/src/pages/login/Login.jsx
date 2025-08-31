@@ -11,7 +11,7 @@ const Login = () => {
   //user login states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loginWay, setLoginWay] = useState(2);
+  const [loginWay, setLoginWay] = useState(1);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(0);
   const timerRef = useRef(null);
@@ -20,7 +20,7 @@ const Login = () => {
 
   // Load saved registration data (if any) from sessionStorage
   useEffect(() => {
-    const savedData = sessionStorage.getItem("loginData");
+    const savedData = sessionStorage.getItem("login");
     if (savedData) {
       const parsed = JSON.parse(savedData);
       setLoginWay(parsed.step || 1);
@@ -146,7 +146,7 @@ const Login = () => {
                 className="login-btn-primary"
                 onClick={ (e) => { 
                   e.preventDefault()
-                  sendOtp({ email, step: 2}, setLoginWay, startTimer, "loginData");
+                  sendOtp({ email, step: 2}, setLoginWay, startTimer, "login");
                 }}
               >
                 Send OTP

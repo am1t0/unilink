@@ -57,7 +57,7 @@ export const useAuthStore = create((set, get) => ({
       sessionStorage.setItem(key, JSON.stringify(data));
 
       // Make API request to send OTP
-      const url = (key === "loginData") ? "/auth/login-otp" : "/auth/mail-verify";
+      const url = (key === "login") ? "/auth/login-otp" : "/auth/mail-verify";
       const res = await axiosInstance.post(url, data);
       toast.success(res.data.message);
 
@@ -99,11 +99,11 @@ export const useAuthStore = create((set, get) => ({
       toast.success("OTP verified successfully!");
 
       //in case of login data added it will be removed and user will be set
-      sessionStorage.removeItem("loginData");
+      sessionStorage.removeItem("login");
       set({ authUser: res.data.link });
 
       //in case of registration otp verification , session storage will be updated
-      sessionStorage.setItem("registrationData", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
+      sessionStorage.setItem("register", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
       
       //remove otp expiry from session storage so it doesn't interfere in future
       sessionStorage.removeItem("otpExpiry");
@@ -128,7 +128,7 @@ export const useAuthStore = create((set, get) => ({
       const res = await axiosInstance.post("/auth/register", data);
       set({ authUser: res.data.link });
 
-      sessionStorage.removeItem("registrationData");
+      sessionStorage.removeItem("register");
 
       return { success: true };
 

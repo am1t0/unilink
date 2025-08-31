@@ -20,7 +20,7 @@ const Register = () => {
 
   // Load saved registration data (if any) from sessionStorage
   useEffect(() => {
-    const savedData = sessionStorage.getItem("registrationData");
+    const savedData = sessionStorage.getItem("register");
     if (savedData) {
       const parsed = JSON.parse(savedData);
       setStep(parsed.step || 1);
@@ -36,6 +36,7 @@ const Register = () => {
       else setTimer(0); // expired
     }
   }, []);
+
 
   // Timer function
   const startTimer = (seconds) => {
@@ -67,7 +68,7 @@ const Register = () => {
 
         {/* Step 1: Email & College */}
         {step === 1 && (
-          <form className="register-form" onSubmit={(e) => e.preventDefault()}>
+          <form className="register-form">
             <label className="register-label">College Email</label>
             <input
               type="email"
@@ -93,7 +94,7 @@ const Register = () => {
               className="register-btn-primary"
               disabled={loading}
               onClick={() =>
-                sendOtp({ email, college, step: 2 }, setStep, startTimer)
+                sendOtp({ email, college, step: 2 }, setStep, startTimer, "register")
               }
             >
               {loading ? (
