@@ -199,7 +199,7 @@ const Login = () => {
                     style={{ marginLeft: 16 }}
                     disabled={timer <= 0 || otp.join("").length !== 4}
                     onClick={() => 
-                      verifyOtp({ email, otp: otp.join("") }, setLoginWay, "loginData")
+                      verifyOtp({ email, otp: otp.join("") }, setLoginWay, "login")
                      }
                   >
                     {loading ? (

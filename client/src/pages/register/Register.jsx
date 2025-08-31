@@ -158,7 +158,7 @@ const Register = () => {
                 style={{ marginLeft: 16 }}
                 disabled={timer <= 0 || otp.join("").length !== 4}
                 onClick={() =>
-                  verifyOtp({ email, college, otp: otp.join("") }, setStep)
+                  verifyOtp({ email, college, otp: otp.join("") }, setStep, "register")
                 }
               >
                 {loading ? (
