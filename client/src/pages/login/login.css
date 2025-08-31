@@ -67,6 +67,17 @@
     background-color: #0056b3; /* Darker shade for hover effect */
 }
 
+.forgot-passwored{
+    color: #e4d144;
+    cursor: pointer;
+    margin: 30px 1px 20px 1px;
+}
+
+.forgot-passwored:hover {
+    color: #efe175;
+}
+
+
 .login-box-container {
     display: flex;
     justify-content: center;
