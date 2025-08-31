@@ -143,6 +143,7 @@ const Login = () => {
                             id={`otp-box-${i}`}
                             type="text"
                             className="register-otp-box"
+                            autoComplete="off"
                             maxLength={1}
                             value={otp[i]}
                             onChange={(e) => {
