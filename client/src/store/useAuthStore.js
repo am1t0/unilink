@@ -46,18 +46,19 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  sendOtp: async (data, setStep, startTimer) => {
+  sendOtp: async (data, setStep, startTimer, key) => {
     try {
       set({ loading: true });
 
-      // Validate college and email
-      await collegeAndEmailSchema.validate(data, { abortEarly: false });
+      // Validate college and email when registering 
+     if(data.college) await collegeAndEmailSchema.validate(data, { abortEarly: false });
 
       // Store email + college in sessionStorage (in case of refresh)
-      sessionStorage.setItem("registrationData", JSON.stringify(data));
+      sessionStorage.setItem(key, JSON.stringify(data));
 
       // Make API request to send OTP
-      const res = await axiosInstance.post("/auth/mail-verify", data);
+      const url = (key === "loginData") ? "/auth/login-otp" : "/auth/mail-verify";
+      const res = await axiosInstance.post(url, data);
       toast.success(res.data.message);
 
       // Set OTP expiry for 2 minutes from now
@@ -73,13 +74,13 @@ export const useAuthStore = create((set, get) => ({
 
       return res.data;
     } catch (error) {
-      toast.error(error.response?.data?.message || error.message || "Something went wrong");
+      toast.error(error.response?.data?.error || error.message || "Something went wrong");
     } finally {
       set({ loading: false });
     }
   },
 
-  verifyOtp: async (data, setStep) => {
+  verifyOtp: async (data, setStep, key) => {
     try {
       set({ loading: true });
       //validate otp
@@ -88,16 +89,15 @@ export const useAuthStore = create((set, get) => ({
         return;
       }
 
-      const { email, college } = data;
+      const { email } = data;
 
       //user must have refreshed page
-      if (!email || !college) {
+      if (!email ) {
 
         //use sesssion storage to get email and college
-        const savedData = sessionStorage.getItem("registrationData");
+        const savedData = sessionStorage.getItem(key);
         const parsedData = savedData ? JSON.parse(savedData) : null;
         data.email = parsedData?.email;
-        data.college = parsedData?.college;
       }
 
       //make api request for otp verification
@@ -107,7 +107,9 @@ export const useAuthStore = create((set, get) => ({
       toast.success("OTP verified successfully!");
 
       //update step in session storage
-      sessionStorage.setItem("registrationData", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
+      if(key === "loginData") sessionStorage.removeItem("loginData");
+
+      else sessionStorage.setItem("registrationData", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
 
       //show next step
       setStep(3);
@@ -128,6 +130,8 @@ export const useAuthStore = create((set, get) => ({
       // Make API request
       const res = await axiosInstance.post("/auth/register", data);
       set({ authUser: res.data.link });
+
+      sessionStorage.removeItem("registrationData");
 
       return { success: true };
       

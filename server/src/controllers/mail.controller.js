@@ -91,7 +91,7 @@ export const sendOtp = async (email, otp) => {
                         </span>
                     </div>
                     <p style="font-size: 14px; color: #888;">
-                        This OTP is valid for <strong>5 minutes</strong>. Please do not share it with anyone.
+                        This OTP is valid for <strong>2 minutes</strong>. Please do not share it with anyone.
                     </p>
                     <p style="font-size: 14px; color: #888;">If you didn’t request this, you can ignore this email.</p>
                     <p style="font-size: 14px; color: #888;">Thanks,<br>The Team</p>

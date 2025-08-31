@@ -27,13 +27,7 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email });
 
     // Check if email is already in use
-    if (user) {
-      if (user.verified) {
-        return res.status(200).json({ move: true, message: "Email already verified" });
-      } else {
-        return res.status(409).json({ error: "Email already in use but not verified" }); // Conflict
-      }
-    }
+    if (user) return res.status(409).json({ error: "Email already in use" }); // Conflict
 
     //check if email is valid for the selected college
     const isValid = validateCollegeEmail(email, college);
@@ -61,15 +55,49 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
 });
 
 /**
+ * @desc Send Otp for login
+ * @route POST /api/v1/auth/login-otp
+ * @access Private
+ */
+export const sendLoginOtp = asyncHandler(async (req, res) => {
+  try {
+     const { email } = req.body;
+    // no email provided
+     if( !email ) return res.status(400).json({ error: "Email is required" });
+
+     //check user exist or not
+     const user = await User.findOne({ email });
+     if( !user ) return res.status(404).json({ error: "User not found" });
+
+    // Generate and send OTP
+    const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
+   
+    // CACHE TYPE STORAGE   
+    otpStore.set(email, { otp, expires: Date.now() + 2 * 60 * 1000 });  //2 minutes expiry 
+
+    await sendOtp(email, otp);
+
+    return res.status(200).json({ message: "OTP sent to email" });
+
+  } catch (error) {
+     return res.status(400).json({
+      success: false,
+      message: "Error sending image",
+    });
+  }
+})
+
+
+/**
  * @desc Otp verification
  * @route POST /api/v1/auth/otp-verify
  * @access Private
  */
 export const verifyOtp = asyncHandler(async (req, res) => {
-  const { email, college, otp } = req.body;
+  const { email, otp } = req.body;
   try {
-    if (!email || !otp || !college) {
-      return res.status(400).json({ error: "Email, College and OTP are required" });
+    if (!email || !otp ) {
+      return res.status(400).json({ error: "Email and OTP are required" });
     }
     const data = otpStore.get(email);
 
@@ -79,7 +107,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
     otpStore.delete(email); // Clear OTP after verification
 
-    res.send({ move: true, message: 'OTP verified successfully' });
+    res.send({ message: 'OTP verified successfully' });
 
   } catch (error) {
     return res.status(500).json({

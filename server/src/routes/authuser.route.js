@@ -10,7 +10,8 @@ import {
     getProfile,
     searchRelevantUsers,
     verifyCollegeEmail,
-    verifyOtp
+    verifyOtp,
+    sendLoginOtp
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -18,6 +19,7 @@ import { upload } from "../middlewares/multer.middleware.js";
 const router = Router();
 
 router.post("/mail-verify", verifyCollegeEmail)
+router.post("/login-otp", sendLoginOtp)
 router.post("/otp-verify", verifyOtp)
 router.post("/register", registerUser)
 router.post("/login", loginUser)
