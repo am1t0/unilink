@@ -13,7 +13,7 @@ const EditProfileForm = (props) => {
   const [formData, setFormData] = useState({
     name: authUser?.name || "",
     bio: authUser?.bio || "",
-    collage: authUser?.collage || "",
+    college: authUser?.college || "",
     branch: authUser?.branch || "",
     degree: authUser?.degree || "",
     position: authUser?.position || "I",
@@ -94,8 +94,8 @@ const EditProfileForm = (props) => {
             <div className="form-group">
               <label>College</label>
               <select
-                name="collage"
-                value={formData.collage}
+                name="college"
+                value={formData.college}
                 onChange={handleChange}
               >
                 <option value="">Select College</option>

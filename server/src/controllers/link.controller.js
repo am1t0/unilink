@@ -252,7 +252,7 @@ export const getUserRecommendations = async (req, res) => {
       // Define query: Prioritize college, exclude linked users
       const query = {
         _id: { $ne: loggedInUserId, $nin: linkedUserIds }, // Exclude self and linked users
-        collage: currentUser.collage, // Only same college
+        college: currentUser.college, // Only same college
       };
   
       // Fetch recommended users, prioritizing college matches

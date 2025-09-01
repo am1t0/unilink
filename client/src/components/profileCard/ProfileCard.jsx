@@ -127,7 +127,7 @@ export default function ProfileCard({ user }) {
             <div className="profile-details">
               <div className="profile-institute">
                 <BsBuilding className="icon" />
-                <p>{user?.collage || "Add College"}</p>
+                <p>{user?.college || "Add College"}</p>
               </div>
               <div className="profile-course">
                 <BsBook className="icon" />

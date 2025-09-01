@@ -54,7 +54,7 @@ const Recommendations = () => {
                 <img src={user.avatar || DefaultAvatar} alt={user.name} />
                 <div className="user-info">
                   <h4>{user.name}</h4>
-                  <p>{user.collage}</p>
+                  <p>{user.college}</p>
                 </div>
               </Link>
               <div className="action-buttons">

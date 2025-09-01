@@ -417,7 +417,7 @@ export const searchRelevantUsers = asyncHandler(async (req, res) => {
 
     const query = {
       _id: { $ne: currentUser._id },
-      collage: currentUser.collage,
+      college: currentUser.college,
       $or: [
         { name: new RegExp(searchTerm, "i") },
         { email: new RegExp(searchTerm, "i") }

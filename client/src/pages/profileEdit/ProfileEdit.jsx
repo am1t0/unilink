@@ -10,7 +10,7 @@ const ProfileEdit = () => {
  
   const [profile, setProfile] = useState({
     name: authUser.name || "",
-    collage: authUser.collage || "",
+    college: authUser.college || "",
     degree: authUser.degree || "",
     branch: authUser.name || "",
     phone: authUser.phone || "",
@@ -87,16 +87,16 @@ const ProfileEdit = () => {
             onChange={handleChange}
           />
 
-          <label className="profile-edit-label">Your Collage</label>
+          <label className="profile-edit-label">Your college</label>
           <select
-            name="collage"
+            name="college"
             className="profile-edit-input"
-            value={profile.collage}
+            value={profile.college}
             onChange={handleChange}
           >
-            <option>Select Your Collage</option>
-            <option>Collage A</option>
-            <option>Collage B</option>
+            <option>Select Your college</option>
+            <option>college A</option>
+            <option>college B</option>
           </select>
 
           <label className="profile-edit-label">Degree</label>

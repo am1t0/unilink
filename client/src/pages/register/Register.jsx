@@ -116,6 +116,7 @@ const Register = () => {
               {timer > 0 ? (
                 <p>OTP expires in: {timer}s</p>
               ) : (
+                <>
                 <button
                   className="resend-otp-btn"
                   onClick={() =>
@@ -124,6 +125,13 @@ const Register = () => {
                 >
                   Resend OTP
                 </button>
+                 or 
+                <span onClick={() => setStep(1)} className="register-otp-edit">
+                  change email or college{" "}
+                </span>
+                </>
+
+                 
               )}
             </div>
 
