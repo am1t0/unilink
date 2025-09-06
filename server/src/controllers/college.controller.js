@@ -4,7 +4,8 @@ import mongoose from "mongoose";
 
 export const getColleges = asyncHandler(async (req, res) => {
     try {
-        const colleges = await College.find();
+        //fetch all colleges list data excluding email regex
+        const colleges = await College.find().select('-regex');
 
         res.status(200).json({
             success: true,
