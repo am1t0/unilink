@@ -9,7 +9,7 @@ const PostSchema = mongoose.Schema({
     },
     description: {
         type: String,
-        default : ""
+        default: ""
     },
     media: [
         {
@@ -43,6 +43,10 @@ const PostSchema = mongoose.Schema({
     },
     endDate: {
         type: Date,
+    },
+    code: {
+        type: Number,
+        required: true
     },
 }, { timestamps: true })
 

@@ -55,15 +55,19 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0, // Default to 0 for new users
     },
+    code: {
+      type: Number,
+      required: true
+    },
   },
   { timestamps: true } // Fixed typo
 );
 
 // ✅ Hash the password before saving
 userSchema.pre("save", async function (next) {
-	if (!this.isModified("password")) return next();
-	this.password = await bcrypt.hash(this.password, 10);
-	next();
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
 });
 
 // ✅ Compare password for authentication
