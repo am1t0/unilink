@@ -9,4 +9,4 @@ const router = Router();
 /* fetch all colleges list */
 router.get('/',  getColleges);
 
-export default router;``
+export default router;

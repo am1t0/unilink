@@ -326,6 +326,17 @@ export const useAuthStore = create((set, get) => ({
       const updatedUser = { ...state.authUser, linksCount };
       return { authUser: updatedUser };
     });
+  },
+
+  allColleges: async (setCollege_list)=> {
+    try {
+      const res = await axiosInstance.get('/college');
+      
+      setCollege_list(res.data.colleges);
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Error fetching colleges list");
+      
+    }
   }
 
 }));

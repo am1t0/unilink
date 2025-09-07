@@ -2,6 +2,11 @@ import College from "../models/college.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import mongoose from "mongoose";
 
+/**
+ * @desc get list of colleges
+ * @route POST /api/v1/college
+ * @access Private
+ */
 export const getColleges = asyncHandler(async (req, res) => {
     try {
         //fetch all colleges list data excluding email regex

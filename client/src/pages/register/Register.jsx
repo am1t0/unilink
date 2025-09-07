@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import "./register.css";
 import { Loader, RefreshCcw } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -6,11 +12,13 @@ import toast from "react-hot-toast";
 import { useAuthStore } from "../../store/useAuthStore";
 
 const Register = () => {
-  const { registerUser, sendOtp, verifyOtp, loading } = useAuthStore();
+  const { allColleges, registerUser, sendOtp, verifyOtp, loading } =
+    useAuthStore();
 
   // User registration states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [college_list, setCollege_list] = useState(null);
   const [college, setCollege] = useState("");
   const [password, setPassword] = useState("");
   const [step, setStep] = useState(1);
@@ -37,6 +45,10 @@ const Register = () => {
     }
   }, []);
 
+  // Fetch colleges list
+  useEffect(() => {
+    allColleges(setCollege_list);
+  }, [allColleges]);
 
   // Timer function
   const startTimer = (seconds) => {
@@ -84,9 +96,15 @@ const Register = () => {
               value={college}
               onChange={(e) => setCollege(e.target.value)}
             >
-              <option value="">Select Your College</option>
-              <option>Institute of Engineering and Technology, DAVV</option>
-              {/* Add more colleges */}
+              <option value="" disabled>
+                Select your college
+              </option>
+              {college_list &&
+                college_list.map((college) => (
+                  <option key={college._id} value={college._id}>
+                    {college.name}
+                  </option>
+                ))}
             </select>
 
             <button
@@ -94,7 +112,12 @@ const Register = () => {
               className="register-btn-primary"
               disabled={loading}
               onClick={() =>
-                sendOtp({ email, college, step: 2 }, setStep, startTimer, "register")
+                sendOtp(
+                  { email, college, step: 2 },
+                  setStep,
+                  startTimer,
+                  "register"
+                )
               }
             >
               {loading ? (
@@ -117,21 +140,22 @@ const Register = () => {
                 <p>OTP expires in: {timer}s</p>
               ) : (
                 <>
-                <button
-                  className="resend-otp-btn"
-                  onClick={() =>
-                    sendOtp({ email, college, step: 2 }, setStep, startTimer)
-                  }
-                >
-                  Resend OTP
-                </button>
-                 or 
-                <span onClick={() => setStep(1)} className="register-otp-edit">
-                  change email or college{" "}
-                </span>
+                  <button
+                    className="resend-otp-btn"
+                    onClick={() =>
+                      sendOtp({ email, college, step: 2 }, setStep, startTimer)
+                    }
+                  >
+                    Resend OTP
+                  </button>
+                  or
+                  <span
+                    onClick={() => setStep(1)}
+                    className="register-otp-edit"
+                  >
+                    change email or college{" "}
+                  </span>
                 </>
-
-                 
               )}
             </div>
 
@@ -166,7 +190,11 @@ const Register = () => {
                 style={{ marginLeft: 16 }}
                 disabled={timer <= 0 || otp.join("").length !== 4}
                 onClick={() =>
-                  verifyOtp({ email, college, otp: otp.join("") }, setStep, "register")
+                  verifyOtp(
+                    { email, college, otp: otp.join("") },
+                    setStep,
+                    "register"
+                  )
                 }
               >
                 {loading ? (
