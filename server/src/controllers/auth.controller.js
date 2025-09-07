@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import College from '../models/college.model.js'
 import cloudinary from "../utilities/cloudinary.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import jwt from "jsonwebtoken";
@@ -16,25 +17,25 @@ const otpStore = new Map();
  * @access Private
  */
 export const verifyCollegeEmail = asyncHandler(async (req, res) => {
-  const { email, college } = req.body;
-
+  const { email, college, code } = req.body;
   try {
-    if (!email || !college) {
-      return res.status(400).json({ error: "Email and college are required" });
+    if (!email || !college || !code) {
+      return res.status(400).json({ error: "Email, college and code are required" });
     }
 
     //check whether mail is already in use
     const user = await User.findOne({ email });
-
     // Check if email is already in use
     if (user) return res.status(409).json({ error: "Email already in use" }); // Conflict
 
     //check if email is valid for the selected college
-    const isValid = validateCollegeEmail(email, college);
+    const collegeDetails = await College.findOne({ code });
+    if( !collegeDetails ) res.status(404).json({ error: "No such college exist"});
 
-    if (!isValid) {
-      return res.status(400).json({ error: "Invalid college email" });
-    }
+    // Check if the email matches the college's regex pattern
+    const { regex } = collegeDetails;
+    const pattern = new RegExp(regex);
+    if( !pattern.test(email)) res.status(400).json({ error: "Invalid email"})
 
     // Generate and send OTP
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
@@ -48,7 +49,7 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
 
     return res.status(400).json({
       success: false,
-      message: "Error sending image",
+      message: "Error sending in sending otp",
     });
   }
 
@@ -112,8 +113,8 @@ export const verifyOtp = asyncHandler(async (req, res) => {
 
     // for login related otp requests
     if (type === 'login') {
-       user = await User.findOne({ email }).select("+password");;
-       token = signToken(user._id);
+      user = await User.findOne({ email }).select("+password");;
+      token = signToken(user._id);
 
       res.cookie("jwt", token, {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
@@ -123,7 +124,7 @@ export const verifyOtp = asyncHandler(async (req, res) => {
       });
     }
 
-     res.status(200).json({
+    res.status(200).json({
       message: "OTP verified successfully",
       success: true,
       link: user,
@@ -145,9 +146,9 @@ const signToken = (id) => {
 
 const registerUser = asyncHandler(async (req, res) => {
   try {
-    const { name, password, college, email } = req.body;
+    const { name, password, college, email, code } = req.body;
 
-    if (!name || !password || !college || !email) {
+    if (!name || !password || !college || !email || !code) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -163,16 +164,15 @@ const registerUser = asyncHandler(async (req, res) => {
       });
     }
 
-    console.log('1');
     // Create user (password will be hashed automatically in the model)
     const user = await User.create({
       name,
       password,
       email,
       college,
+      code
     });
 
-    console.log('2');
     // Generate JWT
     const token = signToken(user._id);
 

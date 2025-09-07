@@ -18,10 +18,11 @@ const Register = () => {
   // User registration states
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [college_list, setCollege_list] = useState(null);
+  const [code, setCode] = useState("");
   const [college, setCollege] = useState("");
   const [password, setPassword] = useState("");
   const [step, setStep] = useState(1);
+  const [college_list, setCollege_list] = useState(null);
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [timer, setTimer] = useState(0);
   const timerRef = useRef(null);
@@ -94,14 +95,18 @@ const Register = () => {
             <select
               className="register-select"
               value={college}
-              onChange={(e) => setCollege(e.target.value)}
+              onChange={(e) => {
+                setCollege(e.target.value.split("!")[0])
+                setCode(e.target.value.split("!")[1])
+              }}
             >
               <option value="" disabled>
                 Select your college
               </option>
               {college_list &&
                 college_list.map((college) => (
-                  <option key={college._id} value={college._id}>
+                  // name + code of college for feeding into user schema with ! as separator
+                  <option key={college._id} value={college.name+"!"+college.code}>      
                     {college.name}
                   </option>
                 ))}
@@ -113,7 +118,7 @@ const Register = () => {
               disabled={loading}
               onClick={() =>
                 sendOtp(
-                  { email, college, step: 2 },
+                  { email, college, code, step: 2 },
                   setStep,
                   startTimer,
                   "register"
@@ -191,7 +196,7 @@ const Register = () => {
                 disabled={timer <= 0 || otp.join("").length !== 4}
                 onClick={() =>
                   verifyOtp(
-                    { email, college, otp: otp.join("") },
+                    { email, college, code, otp: otp.join("") },
                     setStep,
                     "register"
                   )
@@ -213,7 +218,7 @@ const Register = () => {
             className="register-form"
             onSubmit={(e) => {
               e.preventDefault();
-              registerUser({ email, college, name, password });
+              registerUser({ email, college, name, password, code });
             }}
           >
             <label className="register-label">Name</label>

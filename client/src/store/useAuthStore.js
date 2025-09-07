@@ -74,7 +74,7 @@ export const useAuthStore = create((set, get) => ({
 
       return res.data;
     } catch (error) {
-      toast.error(error.response?.data?.error || error.message || "Something went wrong");
+      toast.error(error.response?.data?.message || error.message || "Something went wrong");
     } finally {
       set({ loading: false });
     }
@@ -102,8 +102,8 @@ export const useAuthStore = create((set, get) => ({
       sessionStorage.removeItem("login");
       set({ authUser: res.data.link });
 
-      //in case of registration otp verification , session storage will be updated
-      sessionStorage.setItem("register", JSON.stringify({ email: data.email, college: data.college, step: 3 }));
+      //in case of registration otp verification ,session storage will be updated
+      sessionStorage.setItem("register", JSON.stringify({ email: data.email, college: data.college, code: data.code, step: 3 }));
       
       //remove otp expiry from session storage so it doesn't interfere in future
       sessionStorage.removeItem("otpExpiry");
@@ -331,7 +331,6 @@ export const useAuthStore = create((set, get) => ({
   allColleges: async (setCollege_list)=> {
     try {
       const res = await axiosInstance.get('/college');
-      
       setCollege_list(res.data.colleges);
     } catch (error) {
       toast.error(error.response?.data?.error || "Error fetching colleges list");
