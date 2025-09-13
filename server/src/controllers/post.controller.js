@@ -81,6 +81,7 @@ export const createPost = asyncHandler(async (req, res) => {
             media,
             tag,
             endDate: tag === "Event" ? endDate : undefined,
+            code: user.code
         });
 
         await newPost.save();
