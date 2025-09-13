@@ -242,7 +242,6 @@ export const sendMe = asyncHandler((req, res) => {
       user: req.user,
     });
   } catch (error) {
-    console.log("Error in sendMe controller:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });

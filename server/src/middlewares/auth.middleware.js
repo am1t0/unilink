@@ -35,11 +35,11 @@ export const protectRoute = asyncHandler(async (req, res, next) => {
         return res.status(404).json({ message: "User not found" });
     }
 
+    //assigning user to req object
     req.user = currentUser;
 
     next();
 } catch (error) {
-    console.log("Error in Protected Route", error);
     if(error instanceof jwt.JsonWebTokenError){
         return res.status(401).json({
             success : false,
