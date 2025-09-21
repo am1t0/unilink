@@ -77,8 +77,6 @@ export const requestLink = asyncHandler(async (req, res) => {
     }
 });
 
-
-
 /**
  * @desc Accept a link request
  * @route POST /api/v1/links/:linkId
@@ -161,7 +159,6 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
     }
 });
 
-
 /**
  * @desc Fetch paginated links for infinite scroll
  * @route GET /api/v1/links/all-links?status=abc&page=x&limit=y
@@ -222,8 +219,6 @@ export const getLinks = asyncHandler(async (req, res) => {
     }
 });
 
-
-
 /**
  * @desc Fetch all links
  * @route GET /api/v1/links/recommendations?page=x?limit=y
@@ -239,7 +234,7 @@ export const getUserRecommendations = async (req, res) => {
       const { page = 1, limit = 10 } = req.query;
       const skip = (page - 1) * limit;
   
-      // Fetch already linked users (friends, requests, blocked)
+      // Fetch already linked users (friends, requests, blocked)        ///-----------------IMPROVE THIS QUERY LATER----------------///
       const linkedUsers = await Link.find({
         $or: [{ user1: loggedInUserId }, { user2: loggedInUserId }],
       }).select("user1 user2");
@@ -252,7 +247,7 @@ export const getUserRecommendations = async (req, res) => {
       // Define query: Prioritize college, exclude linked users
       const query = {
         _id: { $ne: loggedInUserId, $nin: linkedUserIds }, // Exclude self and linked users
-        college: currentUser.college, // Only same college
+        code: currentUser.code, // Only same college
       };
   
       // Fetch recommended users, prioritizing college matches

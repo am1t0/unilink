@@ -1,12 +1,11 @@
 import express from "express";
 import "dotenv/config";
 import morgan from "morgan";
-import { query as db } from "./src/db/index.js";
 import cookieParser from "cookie-parser";
-import connectDB from "./src/db/connectdb.js";
+import connectDB from "./src/config/db.js";
+import redis from "./src/config/cache.js";
 import cors from "cors";
-import mongoose from "mongoose";
-import College from "./src/models/college.model.js";
+
 
 const app = express();
 
@@ -57,7 +56,8 @@ app.use("/api/v1/college", collegeRouter);
 const port = process.env.PORT || 3001;
 
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Example app listening on port ${port}`);
-  connectDB();
+  await connectDB();
+  await redis.connect();
 });

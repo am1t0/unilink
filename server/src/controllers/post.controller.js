@@ -4,6 +4,11 @@ import cloudinary from "../utilities/cloudinary.js";
 import Post from "../models/post.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 
+/**
+ * @desc create a post
+ * @route GET /api/v1/posts/create-post
+ * @access Private
+ */
 export const createPost = asyncHandler(async (req, res) => {
     try {
         const { description, tag, endDate } = req.body;
@@ -101,13 +106,18 @@ export const createPost = asyncHandler(async (req, res) => {
     }
 });
 
-
+/**
+ * @desc get a specific post by id
+ * @route GET /api/v1/posts/get-post/:postId
+ * @access Private
+ */
 export const getPost = asyncHandler(async (req, res) => {
     const { postId } = req.params;
     try {
         //fetch post by it's id
         let post = await Post.findById(postId)
             .populate('user', 'name email avatar');    //stuff user's data
+
 
         //post not exists
         if (!post) {
@@ -117,7 +127,14 @@ export const getPost = asyncHandler(async (req, res) => {
             });
         }
 
-        //also we have to do with the comments??
+        //check if the post belongs to the same college as the user
+        if( post.code !== req.user.code ){
+            return res.status(403).json({
+                success: false,
+                message: "You are not authorized to view this post"
+            });
+        }
+        // ------------------------ COMMENTS FETCH ----------------------- //
 
         return res.status(200).json({
             success: true,
@@ -167,6 +184,11 @@ export const getAllUserPosts = asyncHandler(async (req, res) => {
     }
 });
 
+/**
+ * @desc get all posts (with pagination)
+ * @route GET /api/v1/posts/getAll-posts
+ * @access Private
+ */
 export const getAllPosts = async (req, res) => {
     try {
         let { page = 1, limit = 5 } = req.query;  // Default: page 1, 5 posts per page
@@ -176,7 +198,7 @@ export const getAllPosts = async (req, res) => {
         const skip = (page - 1) * limit; // Skip posts from previous pages
 
         // Fetch posts with required fields and user details
-        const posts = await Post.find()
+        const posts = await Post.find({code: req.user.code}) // Only posts from the same college
             .select("_id user description media likedBy tag likeCount commentCount share createdAt updatedAt") // Only required fields
             .populate('user', 'name email avatar position') // Fetch user details
             .sort({ createdAt: -1 })  // Newest first
@@ -200,7 +222,11 @@ export const getAllPosts = async (req, res) => {
     }
 };
 
-
+/**
+ * @desc update a post
+ * @route GET /api/v1/posts/update-post/:postId
+ * @access Private
+ */
 export const updatePost = asyncHandler(async (req, res) => {
     try {
 
@@ -247,9 +273,15 @@ export const updatePost = asyncHandler(async (req, res) => {
     }
 });
 
+/**
+ * @desc delete a post
+ * @route GET /api/v1/posts/delete-post/:postId
+ * @access Private
+ */
 export const deletePost = asyncHandler(async (req, res) => {
     const { postId } = req.params;
     try {
+        // Find and delete the post by its ID
         const deletedPost = await Post.findByIdAndDelete(postId);
 
         if (!deletedPost) {
