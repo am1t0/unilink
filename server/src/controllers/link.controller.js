@@ -2,6 +2,7 @@ import Link from "../models/links.model.js";
 import User from "../models/user.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import mongoose from "mongoose";
+import { getRecommendations, setRecommendations } from "../utilities/cache.js";
 
 /**
  * @desc Send a Link request
@@ -151,7 +152,6 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error in updateLinkStatus:", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error"
@@ -211,7 +211,6 @@ export const getLinks = asyncHandler(async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Error in getLinks:", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error"
@@ -225,45 +224,61 @@ export const getLinks = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const getUserRecommendations = async (req, res) => {
-    try {
-      const loggedInUserId = req.user._id;
-      const currentUser = await User.findById(loggedInUserId);
-  
-      if (!currentUser) return res.status(404).json({ message: "User not found" });
-  
-      const { page = 1, limit = 10 } = req.query;
-      const skip = (page - 1) * limit;
-  
-      // Fetch already linked users (friends, requests, blocked)        ///-----------------IMPROVE THIS QUERY LATER----------------///
-      const linkedUsers = await Link.find({
-        $or: [{ user1: loggedInUserId }, { user2: loggedInUserId }],
-      }).select("user1 user2");
-  
-      // Extract linked user IDs
-      const linkedUserIds = linkedUsers.flatMap(link =>
-        link.user1.equals(loggedInUserId) ? link.user2 : link.user1
-      );
-  
-      // Define query: Prioritize college, exclude linked users
-      const query = {
-        _id: { $ne: loggedInUserId, $nin: linkedUserIds }, // Exclude self and linked users
-        code: currentUser.code, // Only same college
-      };
-  
-      // Fetch recommended users, prioritizing college matches
-      const recommendedUsers = await User.find(query)
-        .skip(skip)
-        .limit(parseInt(limit));
-
-      res.status(200).json({
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total: recommendedUsers.length,
-        links: recommendedUsers,
-      });
-  
-    } catch (error) {
-      console.error("Error fetching recommendations:", error);
-      res.status(500).json({ message: "Server error" });
+  try {
+    const currentUser = req.user; // no need for await, req.user is usually already set by middleware
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
     }
-  };
+
+    const loggedInUserId = currentUser._id;
+
+    // ✅ check cache first
+    const recommendationsCache = await getRecommendations(loggedInUserId);
+    if (recommendationsCache) {
+      return res.status(200).json({
+        page: 1,
+        limit: recommendationsCache.length,
+        total: recommendationsCache.length,
+        links: recommendationsCache,
+      });
+    }
+
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (page - 1) * limit;
+ 
+    // ✅ Fetch already linked users (friends, requests, blocked)
+    const linkedUsers = await Link.find({
+      $or: [{ user1: loggedInUserId }, { user2: loggedInUserId }],
+    }).select("user1 user2");
+
+    // Extract linked user IDs
+    const linkedUserIds = linkedUsers.map(link =>
+      link.user1.equals(loggedInUserId) ? link.user2 : link.user1
+    );
+
+    // ✅ Define query: same college, exclude self + linked users
+    const query = {
+      _id: { $ne: loggedInUserId, $nin: linkedUserIds },
+      code: currentUser.code,
+    };
+
+    // ✅ Fetch only required fields
+    const recommendedUsers = await User.find(query)
+      .select("_id name college avatar") // only fetch these fields
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    // ✅ Store in cache
+    await setRecommendations(currentUser._id, recommendedUsers);
+
+    res.status(200).json({
+      page: parseInt(page),
+      limit: parseInt(limit),
+      total: recommendedUsers.length,
+      links: recommendedUsers,
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
