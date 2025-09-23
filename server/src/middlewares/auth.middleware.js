@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import User from "../models/user.model.js";
+import { getUserProfile, setUserProfile } from "../utilities/cache.js";
 
 export const protectRoute = asyncHandler(async (req, res, next) => {
   try {
@@ -12,6 +13,7 @@ export const protectRoute = asyncHandler(async (req, res, next) => {
      if (!token && req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         token = req.headers.authorization.split(" ")[1];
     }
+
 
     if(!token){
         return res.status(401).json({
@@ -28,12 +30,19 @@ export const protectRoute = asyncHandler(async (req, res, next) => {
             message: "Not Authorized - Invalid token"
         })
     }
+    // Check cache for user data
+    const cachedUser = await getUserProfile(decoded.id);
+    if(cachedUser){
+        req.user = cachedUser;
+        return next();
+    }
 
+    // Fetch the user from the database
     const currentUser = await User.findById(decoded.id).select("-password");
-
     if (!currentUser) {
         return res.status(404).json({ message: "User not found" });
     }
+    setUserProfile(currentUser._id, currentUser);
 
     //assigning user to req object
     req.user = currentUser;

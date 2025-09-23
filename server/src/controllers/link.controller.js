@@ -2,7 +2,7 @@ import Link from "../models/links.model.js";
 import User from "../models/user.model.js";
 import { asyncHandler } from "../utilities/asyncHandler.js";
 import mongoose from "mongoose";
-import { getRecommendations, setRecommendations } from "../utilities/cache.js";
+import { clearRecommendations, getRecommendations, setRecommendations } from "../utilities/cache.js";
 
 /**
  * @desc Send a Link request
@@ -54,16 +54,20 @@ export const requestLink = asyncHandler(async (req, res) => {
                 message: "Link request already exists"
             });
         }
-
+         
+        
         // Create a new Link request
         const newRequest = new Link({
             user1: userId,
             user2: receiverId,
             status: "Requested"
         });
-
+        
         await newRequest.save();
-
+        
+        // clearing cache for new one
+        clearRecommendations(userId);
+        
         return res.status(201).json({
             success: true,
             message: "Link request sent",
