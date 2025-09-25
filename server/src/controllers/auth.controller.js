@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator"
 import { validateCollegeEmail } from "../utilities/emailValidation.js";
 import { sendOtp } from "./mail.controller.js";
+import { clearUserProfile } from "../utilities/cache.js";
 
 
 //replace with REDIS IN FUTURE
@@ -246,7 +247,11 @@ export const sendMe = asyncHandler((req, res) => {
   }
 });
 
-
+/**
+ * @desc Update user profile
+ * @route POST /api/v1/auth/profileedit
+ * @access Private
+ */
 export const updateProfile = async (req, res) => {
   // image => cloudinary -> image.cloudinary.your => mongodb
 
@@ -288,7 +293,10 @@ export const updateProfile = async (req, res) => {
       }
     }
 
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedData, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, updatedData, { new: true });
+
+    //clear cache
+    clearUserProfile(req.user._id);
 
     return res.status(200).json({
       success: true,
@@ -323,7 +331,7 @@ export const uploadProfileImage = asyncHandler(async (req, res) => {
 
     // Update user profile
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
+      req.user._id,
       { avatar: result.secure_url },
       { new: true }
     );
@@ -359,7 +367,7 @@ export const uploadBannerImage = asyncHandler(async (req, res) => {
 
     // Update user profile
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
+      req.user._id,
       { banner: result.secure_url },
       { new: true }
     );
@@ -406,7 +414,7 @@ export const getProfile = asyncHandler(async (req, res) => {
 
 export const searchRelevantUsers = asyncHandler(async (req, res) => {
   const { searchTerm, maxResults = 10 } = req.query;
-  const userId = req.user.id;
+  const userId = req.user._id;
 
   try {
     const currentUser = await User.findById(userId).select("-password -phone");

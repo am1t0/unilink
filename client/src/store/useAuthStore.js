@@ -193,7 +193,6 @@ export const useAuthStore = create((set, get) => ({
       set({ authUser: res.data.user });
       toast.success("Profile updated successfully");
     } catch (error) {
-      console.log(error);
       if (error.response && error.response.status === 413) {
         toast.error("Image size exceeds the upload limit of 100 kB");
       } else {
