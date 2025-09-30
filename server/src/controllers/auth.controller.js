@@ -412,17 +412,13 @@ export const getProfile = asyncHandler(async (req, res) => {
 
 export const searchRelevantUsers = asyncHandler(async (req, res) => {
   const { searchTerm, maxResults = 10 } = req.query;
-  const userId = req.user._id;
+  const currentUser = req.user;
 
   try {
-    const currentUser = await User.findById(userId).select("-password -phone");
-    if (!currentUser) {
-      return res.status(404).json({ message: "Current user not found" });
-    }
 
     const query = {
       _id: { $ne: currentUser._id },
-      college: currentUser.college,
+      code: currentUser.code,
       $or: [
         { name: new RegExp(searchTerm, "i") },
         { email: new RegExp(searchTerm, "i") }

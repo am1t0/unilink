@@ -50,5 +50,7 @@ const PostSchema = mongoose.Schema({
     },
 }, { timestamps: true })
 
+PostSchema.index({ code: 1});
+
 
 export default mongoose.model('Post', PostSchema);

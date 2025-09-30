@@ -63,6 +63,10 @@ const userSchema = new mongoose.Schema(
   { timestamps: true } // Fixed typo
 );
 
+userSchema.index({ email: 1, code: 1 }, { unique: true }); // fast lookup by email in a college
+userSchema.index({ code: 1 });                             // fetch all users in a college
+
+
 // ✅ Hash the password before saving
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

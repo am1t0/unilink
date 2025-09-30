@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import connectDB from "./src/config/db.js";
 import redis from "./src/config/cache.js";
 import cors from "cors";
+import User from "./src/models/user.model.js";
 
 
 const app = express();
