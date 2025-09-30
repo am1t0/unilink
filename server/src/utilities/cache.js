@@ -1,5 +1,23 @@
 import redis from "../config/cache.js";
 
+//otp storage in redis
+export const setOTP = async (email, otp) => {
+    const key = `otp:user:${email}`;
+    await redis.set(key, otp, { EX: 120 }); // OTP expires in 2 minutes
+}
+
+// Get OTP from Redis cache
+export const getOTP = async (email) => {
+    const key = `otp:user:${email}`;
+    return await redis.get(key);
+}
+
+// Clear OTP from Redis cache
+export const clearOTP = async (email) => {
+    const key = `otp:user:${email}`;
+    await redis.del(key);
+}
+
 // Set user recommendations in Redis cache
 export const setRecommendations = async (userId, recommendations) => {
      const key = `recommendations:user:${userId}`;

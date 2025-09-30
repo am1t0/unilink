@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator"
 import { validateCollegeEmail } from "../utilities/emailValidation.js";
 import { sendOtp } from "./mail.controller.js";
-import { clearUserProfile } from "../utilities/cache.js";
+import { clearOTP, clearUserProfile, getOTP, setOTP } from "../utilities/cache.js";
 
 
 //replace with REDIS IN FUTURE
@@ -39,9 +39,8 @@ export const verifyCollegeEmail = asyncHandler(async (req, res) => {
     if( !pattern.test(email)) res.status(400).json({ error: "Invalid email"})
 
     // Generate and send OTP
-    const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
-    // CACHE TYPE STORAGE   
-    otpStore.set(email, { otp, expires: Date.now() + 2 * 60 * 1000 });  //2 minutes expiry 
+    const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false }) 
+    await setOTP(email, otp);  // OTP expires in 2 minutes
 
     await sendOtp(email, otp);
 
@@ -74,8 +73,7 @@ export const sendLoginOtp = asyncHandler(async (req, res) => {
     // Generate and send OTP
     const otp = otpGenerator.generate(4, { lowerCaseAlphabets: false, upperCaseAlphabets: false, specialChars: false })
 
-    // CACHE TYPE STORAGE   
-    otpStore.set(email, { otp, expires: Date.now() + 2 * 60 * 1000 });  //2 minutes expiry 
+    await setOTP(email, otp);  // OTP expires in 2 minutes
 
     await sendOtp(email, otp);
 
@@ -101,13 +99,13 @@ export const verifyOtp = asyncHandler(async (req, res) => {
     if (!email || !otp) {
       return res.status(400).json({ error: "Email and OTP are required" });
     }
-    const data = otpStore.get(email);
+    const storedOtp = await getOTP(email);
 
-    if (!data) return res.status(404).send({ error: 'OTP not found' });
-    if (Date.now() > data.expires) return res.status(400).send({ error: 'OTP expired' });
-    if (data.otp !== otp) return res.status(400).send({ error: 'Invalid OTP' });
-
-    otpStore.delete(email); // Clear OTP after verification
+    if (!storedOtp) return res.status(404).send({ error: 'OTP expired' });
+    if (storedOtp !== otp) return res.status(400).send({ error: 'Invalid OTP' });
+     
+    // OTP is valid, clear it from store
+    await clearOTP(email);
 
     let user = null;
     let token = null;
