@@ -12,7 +12,7 @@ export const createConversation = asyncHandler(async (req, res) => {
     try {
 
         const { members } = req.body;
-        const userId = req.user.id;
+        const userId = req.user._id;
 
         // Validate members format
         if (!members || members.length < 2) {
@@ -87,7 +87,7 @@ export const createConversation = asyncHandler(async (req, res) => {
  */
 export const getConversations = asyncHandler(async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const conversations = await Conversation.find({
             members: { $in: [userId] }
         })  

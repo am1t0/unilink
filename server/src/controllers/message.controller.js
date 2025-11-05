@@ -11,7 +11,7 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
 export const createMessage = asyncHandler(async (req, res) => {
     try {
         const { conversationId, text, receiverId } = req.body;
-        const userId = req.user.id;
+        const userId = req.user._id;
 
         // Validate conversationId and text
         if (!conversationId || !text) {
@@ -86,7 +86,7 @@ export const getAllMessage = asyncHandler( async ( req, res) =>{
     try {
         
         const { conversationId } = req.params;
-        const userId = req.user.id;
+        const userId = req.user._id;
 
         const conversationExist = await Conversation.findById(conversationId);
 

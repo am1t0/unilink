@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 
 export const toggleSave = asyncHandler(async (req, res) => {
     const { postId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     // Validate postId
     if (!mongoose.Types.ObjectId.isValid(postId)) {
@@ -73,7 +73,7 @@ export const toggleSave = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const getSavedPosts = asyncHandler(async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const page = parseInt(req.body.page) || 1;
     const limit = parseInt(req.body.limit) || 9;
     const skip = (page - 1) * limit;
@@ -112,7 +112,7 @@ export const getSavedPosts = asyncHandler(async (req, res) => {
  */
 export const isPostSaved = asyncHandler(async (req, res) => {
     const { postId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     // Validate postId
     if (!mongoose.Types.ObjectId.isValid(postId)) {

@@ -10,7 +10,7 @@ import mongoose from "mongoose";
  */
 export const toggleLike = asyncHandler(async (req, res) => {
     const { postId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
         const post = await Post.findById(postId);
@@ -62,7 +62,7 @@ export const addComment = asyncHandler(async (req, res) => {
 
     //comment text and parent comment id
     const { text, parentId } = req.body;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
           // empty comment text
@@ -229,7 +229,7 @@ export const getComments = asyncHandler(async (req, res) => {
 export const updateComment = asyncHandler(async (req, res) => {
     const { commentId } = req.params;
     const { text } = req.body; // New comment content
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
         const comment = await Comment.findById(commentId);
@@ -282,7 +282,7 @@ export const updateComment = asyncHandler(async (req, res) => {
  */
 export const deleteComment = asyncHandler(async (req, res) => {
     const { commentId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
         const comment = await Comment.findById(commentId);
@@ -339,7 +339,7 @@ export const deleteComment = asyncHandler(async (req, res) => {
  */
 export const toggleSave = asyncHandler(async (req, res) => {
     const { postId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
         let savedPost = await SavedPost.findOne({ user: userId });
@@ -425,7 +425,7 @@ export const sharePost = asyncHandler(async (req, res) => {
  */
 export const toggleCommentLike = asyncHandler(async (req, res) => {
     const { commentId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
         const comment = await Comment.findById(commentId);

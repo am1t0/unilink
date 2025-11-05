@@ -11,7 +11,7 @@ import { asyncHandler } from "../utilities/asyncHandler.js";
  */
 export const addNotification = asyncHandler(async (req, res) => {
   const { receiver, type, linkId, postId, commentId, notificationId } = req.body;
-  const sender = req.user.id; // Assuming sender is authenticated user
+  const sender = req.user._id; // Assuming sender is authenticated user
 
   try {
     // ✅ Don't notify yourself
@@ -118,7 +118,7 @@ export const allNotifications = asyncHandler(async (req, res) => {
   const pageSize = parseInt(req.query.pageSize) || 6; // Number of notifications per page
   const cursor = req.query.cursor; // Timestamp of the last notification
   const cursorId = req.query._id; // ID of the last notification
-  const userId = req.user.id; // Authenticated user's ID
+  const userId = req.user._id; // Authenticated user's ID
 
   const query = { receiver: userId }; // Fetch notifications for the logged-in user
 
@@ -188,7 +188,7 @@ export const allNotifications = asyncHandler(async (req, res) => {
  */
 export const getNotification = asyncHandler(async (req, res) => {
   const notificationId = req.params.notificationId;
-  const userId = req.user.id;
+  const userId = req.user._id;
 
   try {
     let notification = await Notification.findById(notificationId)
@@ -242,7 +242,7 @@ export const getNotification = asyncHandler(async (req, res) => {
 
 export const markAsRead = asyncHandler(async (req, res) => {
   const notificationId = req.params.notificationId;
-  const userId = req.user.id;
+  const userId = req.user._id;
   try {
     const notification = await Notification.findById(notificationId);
     if (!notification) {
@@ -279,7 +279,7 @@ export const markAsRead = asyncHandler(async (req, res) => {
  */
 
 export const markAllRead = asyncHandler(async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.user._id;
   try {
     await Notification.updateMany({ receiver: userId }, { status: "read" });
     res.status(200).json({

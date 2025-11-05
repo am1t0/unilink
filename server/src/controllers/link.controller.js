@@ -12,7 +12,7 @@ import { clearRecommendations, getRecommendations, setRecommendations } from "..
 export const requestLink = asyncHandler(async (req, res) => {
     
     const { receiverId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
         // Validate receiverId format
@@ -25,6 +25,7 @@ export const requestLink = asyncHandler(async (req, res) => {
 
         // Check if receiver exists
         const receiverExists = await User.findById(receiverId);
+
         if (!receiverExists) {
             return res.status(404).json({
                 success: false,
@@ -55,7 +56,6 @@ export const requestLink = asyncHandler(async (req, res) => {
             });
         }
          
-        
         // Create a new Link request
         const newRequest = new Link({
             user1: userId,
@@ -90,7 +90,7 @@ export const requestLink = asyncHandler(async (req, res) => {
 export const updateLinkStatus = asyncHandler(async (req, res) => {
     const { requestId } = req.params;
     const { status } = req.body; // "Link" or "Ignored" or "Blocked"
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     try {
         // Validate requestId format
@@ -169,7 +169,7 @@ export const updateLinkStatus = asyncHandler(async (req, res) => {
  * @access Private
  */
 export const getLinks = asyncHandler(async (req, res) => {
-    const userId = req.user.id;
+    const userId = req.user._id;
     const { status = "Link", limit = 10, page = 1 } = req.query;
 
     try {
