@@ -12,18 +12,23 @@ import {
   UserRound,
   X,
   Bookmark,
+  Sun,
+  Moon,
 } from "lucide-react";
 import "./header.css";
+import "../../assets/styles/theme.css";
 import { useAuthStore } from "../../store/useAuthStore";
-import { useMessageStore } from "../../store/useMessageStore";
 import { useNotificationsStore } from "../../store/useNotifications";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { resolveAvatar } from "../../utilities/defaultImages";
+import { useThemeStore } from "../../store/useThemeStore";
+import { theme } from "../../utilities/theme";
 
 const Header = () => {
   // Stores
   const { authUser, logout, searchUsers } = useAuthStore();
   const { notifications } = useNotificationsStore();
+  const { mode, toggleMode } = useThemeStore();
 
   // UI State
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,6 +44,7 @@ const Header = () => {
 
   //navigate
   const navigate = useNavigate();
+  const currTheme = theme[mode];
 
   // Handle scroll to hide/show navbar
   useEffect(() => {
@@ -99,6 +105,9 @@ const Header = () => {
     <div className="wrap">
       <header
         className={`headder ${!showNavbar ? "hidden-navbar" : "show-navbar"}`}
+        style={{
+          background: currTheme.background.primary,
+        }}
       >
         <div className="headder-left">
           <div className="headder-logo">Uni Link</div>
@@ -109,9 +118,21 @@ const Header = () => {
               className={({ isActive }) =>
                 `headder-nav-item ${isActive ? "active-link" : ""}`
               }
+              style={({ isActive }) => ({
+                boxShadow: isActive
+                  ? `inset 0 -1px 0 ${currTheme.iconColor.primary}`
+                  : "none",
+              })}
             >
-              <Home size={20} className="headder-icon" />
-              <span className="headder-nav-text">Home</span>
+              <Home size={20} color={currTheme.iconColor.primary} />
+              <span
+                style={{
+                  color: currTheme.color.tertiary,
+                  fontSize: currTheme.fontSize.small,
+                }}
+              >
+                Home
+              </span>
             </NavLink>
 
             <NavLink
@@ -119,9 +140,21 @@ const Header = () => {
               className={({ isActive }) =>
                 `headder-nav-item ${isActive ? "active-link" : ""}`
               }
+              style={({ isActive }) => ({
+                boxShadow: isActive
+                  ? `inset 0 -1px 0 ${currTheme.iconColor.primary}`
+                  : "none",
+              })}
             >
-              <MessageCircle size={20} className="headder-icon" />
-              <span className="headder-nav-text">Message</span>
+              <MessageCircle size={20} color={currTheme.iconColor.primary} />
+              <span
+                style={{
+                  color: currTheme.color.tertiary,
+                  fontSize: currTheme.fontSize.small,
+                }}
+              >
+                Message
+              </span>
             </NavLink>
 
             <NavLink
@@ -131,14 +164,26 @@ const Header = () => {
                   isActive ? "active-link" : ""
                 }`
               }
+              style={({ isActive }) => ({
+                boxShadow: isActive
+                  ? `inset 0 -1px 0 ${currTheme.iconColor.primary}`
+                  : "none",
+              })}
             >
-              <Bell size={20} className="headder-icon" />
+              <Bell size={20} color={currTheme.iconColor.primary} />
               {unreadNotifications?.length > 0 && (
                 <span className="notification-badge">
                   {unreadNotifications?.length}
                 </span>
               )}
-              <span className="headder-nav-text">Notification</span>
+              <span
+                style={{
+                  color: currTheme.color.tertiary,
+                  fontSize: currTheme.fontSize.small,
+                }}
+              >
+                Notification
+              </span>
             </NavLink>
 
             <NavLink
@@ -146,9 +191,21 @@ const Header = () => {
               className={({ isActive }) =>
                 `headder-nav-item ${isActive ? "active-link" : ""}`
               }
+             style={({ isActive }) => ({
+                boxShadow: isActive
+                  ? `inset 0 -1px 0 ${currTheme.iconColor.primary}`
+                  : "none",
+              })}
             >
-              <Bookmark size={20} className="headder-icon" />
-              <span className="headder-nav-text">Saved</span>
+              <Bookmark size={20} color={currTheme.iconColor.primary} />
+              <span
+                style={{
+                  color: currTheme.color.tertiary,
+                  fontSize: currTheme.fontSize.small,
+                }}
+              >
+                Saved
+              </span>
             </NavLink>
           </nav>
         </div>
@@ -158,16 +215,16 @@ const Header = () => {
           <input
             type="text"
             placeholder="Search users"
-            className="headder-search-input"
+            style={{
+              color: currTheme.color.primary,
+              background: currTheme.background.primary,
+            }}
             value={searchText}
             onChange={(e) => {
               setSearchText(e.target.value);
               setSearchDropdownVisible(true);
             }}
           />
-          <Search size={18} className="headder-search-icon" />
-          <Filter size={18} className="headder-filter-icon" />
-
           {searchDropdownVisible && searchText && (
             <div className="search-dropdown">
               {searchResults.length > 0 ? (
@@ -218,6 +275,12 @@ const Header = () => {
                   <img src={resolveAvatar(authUser)} alt="" />
                 </div>
               </Link>
+              {mode === "light" ? (
+                <Sun size={30} color="orange" onClick={toggleMode} />
+              ) : (
+                // </button>
+                <Moon size={30} color="white" onClick={toggleMode} />
+              )}
               <button className="headder-menu-item" onClick={logout}>
                 <LogOut size={16} />
               </button>

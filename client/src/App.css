@@ -37,3 +37,30 @@
     transform: rotate(360deg);
   }
 }
+
+
+input, textarea, select, button {
+  border: none;
+  outline: none;
+  padding: .3rem;
+}
+button {
+  cursor: pointer;
+}
+a {
+  text-decoration: none;
+}
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+  padding: 0;
+}
+
+svg {
+  cursor: pointer;
+}

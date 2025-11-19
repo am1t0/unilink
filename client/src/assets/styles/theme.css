@@ -1,0 +1,52 @@
+
+/* BACKGROUND COLORS */
+.dark-bg-primary {
+    background-color: #131428;
+    color: white;
+}
+
+.dark-bg-secondary {
+    background-color: #0A0F1E;
+    color: white;
+}
+
+.dark-bg-ternary {
+    background-color: #1E2230;
+    color: white;
+}
+
+.light-bg-primary {
+    background-color: #ffffff;
+    color: black;
+}
+
+.light-bg-secondary {
+    background-color: #f0f0f0;
+    color: black;
+}
+
+.light-bg-ternary {
+    background-color: #e0e0e0;
+    color: black;
+}
+
+/* TEXT COLORS */
+.dark-text-primary {
+    color: #ffffff;
+}
+.dark-text-secondary {
+    color: #bbbbbb;
+}
+.dark-text-ternary {
+    color: #888888;
+}
+
+.light-text-primary {
+    color: #000000;
+}
+.light-text-secondary {
+    color: #333333;
+}
+.light-text-ternary {
+    color: #666666;
+}

@@ -9,8 +9,8 @@
   align-items: center;
   justify-content: space-around;
   padding: 15px 25px;
-  background-color: #0A0F1E;
-  color: white;
+  /* background-color: #0A0F1E; */
+  /* color: white; */
   height:40px;
   position: fixed;
   top: 0;
@@ -62,14 +62,9 @@
 }
 
 .headder-nav-text {
-  color: rgb(156, 156, 156);
+  /* color: rgb(156, 156, 156); */
   font-size: 14px;
   margin: 0;
-}
-
-.active-link {
-  color: #007bff; /* blue shade */
-  border-bottom: 2px solid #007bff;
 }
 
 /* Optional: smooth hover effect */
@@ -103,15 +98,6 @@
   border: 1px solid rgb(83, 83, 83);
   padding: 4px 12px;
   gap: 8px;
-}
-
-.headder-search-input {
-  border: none;
-  outline: none;
-  padding: 6px;
-  width: 300px;
-  background: transparent;
-  color: white;
 }
 
 .headder-search-input::placeholder {
