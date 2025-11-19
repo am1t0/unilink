@@ -69,7 +69,7 @@ const Home = () => {
       { process && <Overlay message = {process} />}
       <Header />
      <center>
-      <h2>In case of negative response decrease the parameters</h2>
+      {/* <h2>In case of negative response decrease the parameters</h2> */}
       </center> 
       <Outlet />
     </div>

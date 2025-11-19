@@ -1,5 +1,42 @@
 .chats-page {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin-top: 30px;
+}
+
+/* Default mobile styles (no conversation selected) */
+@media (max-width: 768px) {
+  .chats-page .chat-window {
+    width: 0%;
+    height: 0%;
+    display: none;
+    flex-direction: column;
     overflow: hidden;
+  }
+
+  .chats-page .conversation {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
+
+/* When conversation is active (opposite styles) */
+@media (max-width: 768px) {
+  .chats-page.conversation-active .chat-window {
+    width: 100%;
+    height: 89vh;
+    display: flex;
+  }
+
+
+  .chats-page.conversation-active .conversation {
+    width: 0%;
+    height: 0%;
+    display: none;
+    overflow: hidden;
+  }
 }
