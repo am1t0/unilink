@@ -1,8 +1,13 @@
+require("dotenv").config();
+
 const io = require("socket.io")( 8900, {
     cors: {
-        origin: "http://localhost:3000",
+        origin: process.env.FRONTEND_URL || "http://localhost:3000",
     },
 });
+
+console.log(`the server is running on ${process.env.FRONTEND_URL}`);
+
 
 // Use a Map for efficient userId -> socketId mapping
 let users = new Map();

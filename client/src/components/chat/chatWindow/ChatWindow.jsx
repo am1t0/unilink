@@ -7,6 +7,7 @@ import {
   BsSend,
   BsPaperclip,
   BsEmojiSmile,
+  BsX,
 } from "react-icons/bs";
 import "./chatWindow.css";
 import { useAuthStore } from "../../../store/useAuthStore";
@@ -22,6 +23,7 @@ export default function ChatWindow({ isTyping }) {
     messages,
     sendMessage,
     updateConversationLastMessageAndOrder,
+    setCurrentConversation,
   } = useMessageStore();
   const { authUser } = useAuthStore();
   const { socket } = useSocket();
@@ -137,6 +139,9 @@ export default function ChatWindow({ isTyping }) {
               <button className="icon-button">
                 <BsThreeDotsVertical />
               </button>
+              <button className="icon-button" onClick={() => setCurrentConversation(null)}>
+                <BsX />
+              </button>
             </div>
           </nav>
 
@@ -171,7 +176,7 @@ export default function ChatWindow({ isTyping }) {
             })}
 
             {/* Scroll to the bottom of the messages */}
-          <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} />
 
             {/* Typing indicator */}
             {isTyping && (

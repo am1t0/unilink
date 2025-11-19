@@ -7,24 +7,17 @@ import Overlay from '../../components/overlay/Overlay';
 import { useMessageStore } from '../../store/useMessageStore';
 
 export default function Chats() {
-
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState({});
-
-  const { process } = useMessageStore();
+  const { process, currentConversation } = useMessageStore();
 
   useChatSocket({ setIsTyping, setTypingUsers });
 
   return (
-    <div className='chats-page'>
-      
-      {
-        process && <Overlay message = {process} />
-      }
-      <ChatList typingUsers = { typingUsers}/>
-
-      <ChatWindow  isTyping={ isTyping }/>
-    
+    <div className={`chats-page ${currentConversation ? 'conversation-active' : ''}`}>
+      {process && <Overlay message={process} />}
+      <ChatList typingUsers={typingUsers}/>
+      <ChatWindow isTyping={isTyping}/>
     </div>
   )
 }
